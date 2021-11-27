@@ -1,0 +1,66 @@
+Rates :
+
+    Fields : 
+                - Date 
+                - Product
+                - Supply Rate
+                - Retail Rate
+                - Wholesale Rate
+
+
+
+    Date                Product                 Retail Rate        Supply Rate         Wholesale Rate 
+    27-11-2021          Brolier Chicken             12                 11                   10
+    27-11-2021          Brolier Live                11                 10                   09
+    27-11-2021          Layer                       10                 09                   08 
+    27-11-2021          Egg                         08                 07                   06
+
+
+--------------------------------------------------------------------------------------------------------------------------
+
+
+Exceptional Rates :
+
+    Fields : 
+                - Date 
+                - Product
+                - Shop
+                - Supply Rate
+                - Retail Rate
+                - Wholesale Rate
+
+
+
+    Date                Product               Shop                  Retail Rate        Supply Rate         Wholesale Rate 
+    27-11-2021          Brolier Chicken       Bhuvan Shop              12                 11                   10
+    27-11-2021          Brolier Live          Bhuvan Shop              11                 10                   09
+    27-11-2021          Layer                 Bhuvan Shop              10                 09                   08 
+    27-11-2021          Egg                   Bhuvan Shop              08                 07                   06
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+Manage Stock :
+
+            -     Open Stock                        - Close Stock 
+                    100 kg                                20 kg 
+
+
+Stock Request :
+
+Date                Product               Shop                   Required Stock 
+7-11-2021           Brolier Chicken        Bhuvan Shop               20 kg
+27-11-2021          Brolier Live          Bhuvan Shop                11 kg 
+27-11-2021          Layer                 Bhuvan Shop                10 kg 
+27-11-2021          Egg                   Bhuvan Shop                08 kg 
+
+
+Add Stock : 
+
+            Fields : 
+                        - Date 
+                        - Product
+                        - Supply Stock
+                        - Open Stock
+
