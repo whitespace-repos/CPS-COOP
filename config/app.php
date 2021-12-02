@@ -176,7 +176,6 @@ return [
         App\Providers\RouteServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
         Darryldecode\Cart\CartServiceProvider::class,
-
     ],
 
     /*
@@ -235,6 +234,11 @@ return [
         // 
         'Customer' => App\Models\Customer::class,
         'User' => App\Models\User::class,
+        'Setting' => App\Models\Setting::class,
+        // 
+
+        'SettingTrait' => App\Http\Traits\SettingTrait::class,
+        
     ],
 
 ];

@@ -5,9 +5,9 @@
         </h2>
     </x-slot>
 
-    <div class="py-12 max-w-7xl flex mx-auto">
+    <div class="py-12 max-w-7xl flex mx-auto"> 
         <div class="sm:px-4 lg:px-3">
-            <div class="p-6 w-60 mx-auto bg-white rounded-xl shadow-sm flex items-center space-x-4">
+            <div class="p-6 w-60 mx-auto bg-white rounded-xl shadow-sm flex items-center space-x-4">                
                 <div class="flex-shrink-0">
                     <x-application-logo class="block h-10 w-auto fill-current text-gray-600" />
                 </div>

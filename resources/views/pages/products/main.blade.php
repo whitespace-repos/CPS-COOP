@@ -9,12 +9,12 @@
                     {{ __('Add New Product') }}                
             </a>           
         </div>     
-    </x-slot>
+    </x-slot>   
 
     <div class="py-12 max-w-7xl flex mx-auto">        
         <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
             <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                <table class="min-w-full divide-y divide-gray-200">
+                <table class="min-w-full divide-y divide-gray-200 table-xs">
                     <thead class="bg-gray-50">
                         <tr>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -49,8 +49,16 @@
                                 </td>
                             
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <a href="#" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                    <a href="{{ route('product.edit',$product->id) }}" class="text-indigo-600 hover:text-indigo-900 mr-4">Edit</a>
+                                    <!--  -->
+                                    <form action="{{ route('product.destroy',$product->id) }}" method="POST" class="inline-block">
+                                        @csrf 
+                                        @method("DELETE")
+                                        <!--  -->
+                                        <input type="submit" class="bg-transparent cursor-pointer text-indigo-600 hover:text-indigo-900 mr-3"  value="Remove" />
+                                    </form>
                                 </td>
+                                
                             </tr>
                         @endforeach
                         <!-- More people... -->

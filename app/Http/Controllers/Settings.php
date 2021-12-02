@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Product;
+use Setting;
 use SettingTrait;
 
-class Products extends Controller
+class Settings extends Controller
 {
     use SettingTrait;
+
     /**
      * Display a listing of the resource.
      *
@@ -17,8 +18,9 @@ class Products extends Controller
     public function index()
     {
         //
-        $products = Product::all();        
-        return view('pages.products.main',compact('products'));
+        $settings = Setting::all()->unique('group');        
+        return view('pages.advanced.main',compact('settings'));       
+        
     }
 
     /**
@@ -29,9 +31,6 @@ class Products extends Controller
     public function create()
     {
         //
-        $weightUnits = $this->setting('Weight Unit');
-        $rateFeilds = $this->setting('Rate Field');
-        return view('pages.products.create',compact('weightUnits','rateFeilds'));
     }
 
     /**
@@ -42,11 +41,16 @@ class Products extends Controller
      */
     public function store(Request $request)
     {
-        //  
-        
-              
-        Product::create($request->all());
-        return redirect()->route('product.index');
+        //
+        $setting = Setting::find($request->group);
+        // 
+        Setting::create([
+                            "group" => $setting->group,
+                            "name" => $request->value,
+                            "value" => $request->value,
+                            "key" => $request->key
+        ]);
+        return back();
     }
 
     /**
@@ -69,6 +73,11 @@ class Products extends Controller
     public function edit($id)
     {
         //
+        $setting = Setting::find($id);
+        $group = $setting->group;
+        $settings = $this->setting($group);        
+        return view('pages.advanced.create',compact('settings','group','setting'));
+
     }
 
     /**
@@ -92,9 +101,8 @@ class Products extends Controller
     public function destroy($id)
     {
         //
-        $product = Product::find($id);
-        $product->delete();
-        // 
+        $setting = Setting::find($id);
+        $setting->delete();
         return back();
     }
 }

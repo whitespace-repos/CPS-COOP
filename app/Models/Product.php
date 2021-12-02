@@ -9,7 +9,7 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['product_name','status'];
+    protected $fillable = ['product_name','status','weight_unit','fields'];
 
      /**
      * The shops that belong to the product.

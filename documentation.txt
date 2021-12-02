@@ -64,3 +64,4 @@ Add Stock :
                         - Supply Stock
                         - Open Stock
 
+Unit : Kilo Gram

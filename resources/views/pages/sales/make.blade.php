@@ -58,11 +58,10 @@
                     <div v-if="existingCustomer">
                         <label for="product" class="block text-sm font-medium text-gray-700">Product</label>
                         <select id="product" name="product" ref="product" autocomplete="product-name" @change="todayRate" data-placeholder="Choose Product"  class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" v-model="vue.form.cart.product">
-                            <option selected hidden default >Choose Product </option>
-                            <option value="Brolier Live" data-rate="1">Brolier Live ( INR 1 )</small> </option>
-                            <option value="Brolier Chicken" data-rate="2">Brolier Chicken (INR 2)</option>
-                            <option value="Layer" data-rate="3">Layer (INR 3)</option>
-                            <option value="Egg" data-rate="4">Egg (INR 4) </option>
+                            <option></option>
+                            @foreach($products as $product)
+                                <option value="{{ $product->id }}" data-rate="{{ $loop->iteration }}"> {{ $product->product_name }}  ( {{ 'INR '.$loop->iteration }} )</option>
+                            @endforeach
                         </select>
                     </div>
 

@@ -1,0 +1,398 @@
+/**
+ * FormValidation (http://formvalidation.io)
+ * The best jQuery plugin to validate form fields. Support Bootstrap, Foundation, Pure, SemanticUI, UIKit frameworks
+ *
+ * @author      http://twitter.com/nghuuphuoc
+ * @copyright   (c) 2013 - 2015 Nguyen Huu Phuoc
+ * @license     http://formvalidation.io/license/
+ */
+
+.fv-has-feedback {
+    position: relative;
+}
+.fv-control-feedback {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    display: block;
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
+    text-align: center;
+}
+.fv-has-feedback .fv-control-feedback {
+    /*right: 15px;*/
+}
+.fv-help-block {
+    display: block;
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* ~~~ For Bootstrap form ~~~ */
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.fv-form-bootstrap .help-block {
+    margin-bottom: 0;
+}
+.fv-form-bootstrap .tooltip-inner {
+    text-align: left;
+}
+/* Bootstrap stacked form without label */
+.fv-form-bootstrap .fv-icon-no-label {
+	top: 0;
+}
+.fv-form-bootstrap .fv-bootstrap-icon-input-group {
+	z-index: 100;
+}
+/* Bootstrap inline form */
+.form-inline.fv-form-bootstrap .form-group {
+    vertical-align: top;
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* ~~~ For Foundation form ~~~ */
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.fv-form-foundation .fv-control-feedback {
+    top: 21px;      /* The height of Foundation label */
+    right: 15px;    /* The padding-right of .columns */
+    width: 37px;
+    height: 37px;
+    line-height: 37px;
+}
+.fv-form-foundation .collapse .fv-control-feedback {
+    top: 0;
+    right: 0;
+}
+/* Foundation horizontal form */
+.fv-form-horizontal.fv-form-foundation .fv-control-feedback {
+    top: 0;
+}
+/* Foundation stacked form without label */
+.fv-form-foundation .fv-icon-no-label {
+	top: 0;
+}
+.fv-form-foundation .error .fv-control-feedback {
+    color: #f04124;
+}
+/**
+ * Foundation reset the bottom marin to 0 when the row has '.error' class
+ * I need to adjust it when using tooltip to show the error
+ */
+.fv-form-foundation .error.fv-has-tooltip input, .error.fv-has-tooltip textarea, .error.fv-has-tooltip select {
+    margin-bottom: 1rem;
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~ */
+/* ~~~ For Pure form ~~~ */
+/* ~~~~~~~~~~~~~~~~~~~~~ */
+
+.fv-form-pure .fv-control-feedback {
+    top: 22px;      /* Height of Pure label */
+    width: 36px;    /* Height of Pure input */
+    height: 36px;
+    line-height: 36px;
+}
+.pure-form-stacked.fv-form-pure .fv-control-feedback {
+    top: 4px;
+}
+.pure-form-aligned .pure-control-group .fv-help-block {
+    margin-top: 5px;
+    margin-left: 180px;
+}
+.pure-form-aligned.fv-form-pure .fv-control-feedback,    /* Pure horizontal form */
+.fv-form-pure .fv-icon-no-label {           /* Pure stacked form without label */
+	top: 0;
+}
+.fv-form-pure .fv-has-error label,
+.fv-form-pure .fv-has-error .fv-help-block,
+.fv-form-pure .fv-has-error .fv-control-feedback {
+    color: #CA3C3C;     /* Same as .button-error */
+}
+.fv-form-pure .fv-has-success label,
+.fv-form-pure .fv-has-success .fv-control-feedback {
+    /*color: #1CB841;*/     /* Same as .button-success */
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* ~~~ For Semantic form ~~~ */
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.fv-form-semantic .fv-control-feedback.icon {
+    right: 7px;
+}
+.fv-form-semantic .error .icon {
+    color: #d95c5c;
+}
+/* Semantic horizontal form */
+.fv-form-horizontal.fv-form-semantic .row {
+    padding-bottom: 0;
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~ */
+/* ~~~ For UIKit form ~~~ */
+/* ~~~~~~~~~~~~~~~~~~~~~~ */
+
+.fv-form-uikit .fv-control-feedback {
+    top: 25px;      /* Height of UIKit label */
+    width: 30px;    /* Height of UIKit input */
+    height: 30px;
+    line-height: 30px;
+}
+.fv-form-uikit .uk-text-danger {
+    display: block;
+}
+/* UIKit horizontal form */
+.uk-form-horizontal.fv-form-uikit .fv-control-feedback {
+    /*line-height: normal;*/
+    top: 0;
+}
+.fv-form-uikit .fv-has-error label,
+.fv-form-uikit .fv-has-error .uk-form-label,
+.fv-form-uikit .fv-has-error .fv-control-feedback {
+    color: #D85030;     /* Same as .uk-form-danger */
+}
+.fv-form-uikit .fv-has-success label,
+.fv-form-uikit .fv-has-success .uk-form-label,
+.fv-form-uikit .fv-has-success .fv-control-feedback {
+    /*color: #659F13;*/     /* Same as .uk-form-success */
+}
+/* UIKit stacked form without label */
+.fv-form-uikit .fv-icon-no-label {
+	top: 0;
+}
+
+
+
+.has-error .form-control[data-validation-icon=false], .has-success .form-control[data-validation-icon=false] {
+  background: none !important;
+}
+
+.has-error .form-control:not(.select2),
+.has-error .chosen-single:not(.select2) {
+  border-color: #dc3545;
+  padding-right: calc(1.5em + 0.75rem);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center right calc(0.375em + 0.1875rem);
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+.has-error .form-control:not(.select2):focus,
+.has-error .chosen-single:not(.select2):focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+.has-error .form-control:not(.select2) ~ .form-control-feedback,
+.has-error .chosen-single:not(.select2) ~ .form-control-feedback {
+  color: #dc3545;
+}
+.has-error .form-control:not(.select2) ~ [data-fv-validator] ,
+.has-error .chosen-single:not(.select2) ~ [data-fv-validator] {
+  color: #dc3545;
+}
+
+.has-error .select2-selection--single {
+  border-color: #dc3545 !important;
+}
+.has-error .select2-selection--single:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+.has-error .select2-selection--single ~ .form-control-feedback {
+  color: #dc3545;
+}
+.has-error .select2-selection--single ~ [data-fv-validator] {
+  color: #dc3545;
+}
+.has-error .select2-selection--multiple,
+.has-error .chosen-choices {
+  border-color: #dc3545 !important;
+  padding-right: calc(1.5em + 0.75rem);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center right calc(0.375em + 0.1875rem);
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+.has-error .select2-selection--multiple:focus,
+.has-error .chosen-choices:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+.has-error .select2-selection--multiple ~ .form-control-feedback {
+  color: #dc3545;
+}
+.has-error .select2-selection--multiple ~ [data-fv-validator] {
+  color: #dc3545;
+}
+
+.has-success .select2-selection--single {
+  border-color: #28a745 !important;
+}
+.has-success .select2-selection--single:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+.has-success .select2-selection--single ~ .form-control-feedback {
+  color: #28a745;
+}
+.has-success .select2-selection--single ~ [data-fv-validator] {
+  color: #28a745;
+}
+.has-success .select2-selection--multiple,
+.has-success .chosen-choices {
+  border-color: #28a745 !important;
+  padding-right: calc(1.5em + 0.75rem);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center right calc(0.375em + 0.1875rem);
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+.has-success .select2-selection--multiple:focus,
+.has-success .chosen-choices:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+.has-success .select2-selection--multiple ~ .form-control-feedback {
+  color: #28a745;
+}
+
+.has-success .form-control:not(.select2),
+.has-success .chosen-single:not(.select2)  {
+  border-color: #28a745;
+  padding-right: calc(1.5em + 0.75rem);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center right calc(0.375em + 0.1875rem);
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+.has-success .form-control:not(.select2):focus ,
+.has-success .chosen-single:not(.select2):focus{
+  border-color: #28a745;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+.has-success .form-control:not(.select2) ~ .form-control-feedback {
+  color: #28a745;
+}
+
+.has-error textarea.form-control {
+  padding-right: calc(1.5em + 0.75rem);
+  background-position: top calc(0.375em + 0.1875rem) right calc(0.375em + 0.1875rem);
+}
+
+.has-success textarea.form-control {
+  padding-right: calc(1.5em + 0.75rem);
+  background-position: top calc(0.375em + 0.1875rem) right calc(0.375em + 0.1875rem);
+}
+
+.has-error .custom-select {
+  border-color: #dc3545;
+  padding-right: calc((1em + 0.75rem) * 3 / 4 + 1.75rem);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center right 1.75rem;
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+.has-error .custom-select:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+.has-error .custom-select ~ [data-fv-validator] {
+  color: #dc3545;
+}
+.has-error .custom-select ~ .form-control-feedback {
+  color: #dc3545;
+}
+
+.has-success .custom-select {
+  border-color: #28a745;
+  padding-right: calc((1em + 0.75rem) * 3 / 4 + 1.75rem);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center right 1.75rem;
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+.has-success .custom-select:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+.has-success .custom-select ~ [data-fv-validator] {
+  color: #28a745;
+}
+.has-success .custom-select ~ .form-control-feedback {
+  color: #28a745;
+}
+
+.has-success .custom-control-input ~ .custom-control-label {
+  color: #28a745;
+}
+.has-success .custom-control-input ~ .custom-control-label::before {
+  border-color: #28a745;
+}
+.has-success .custom-control-input:checked ~ .custom-control-label::before {
+  border-color: #34ce57;
+  background-color: #34ce57;
+}
+.has-success .custom-control-input:focus ~ .custom-control-label::before {
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+.has-success .custom-control-input:focus:not(:checked) ~ .custom-control-label::before {
+  border-color: #28a745;
+}
+
+.has-error .custom-control-input ~ .custom-control-label {
+  color: #dc3545;
+}
+.has-error .custom-control-input ~ .custom-control-label::before {
+  border-color: #dc3545;
+}
+.has-error .custom-control-input:checked ~ .custom-control-label::before {
+  border-color: #e4606d;
+  background-color: #e4606d;
+}
+.has-error .custom-control-input:focus ~ .custom-control-label::before {
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+.has-error .custom-control-input:focus:not(:checked) ~ .custom-control-label::before {
+  border-color: #dc3545;
+}
+.has-error [data-fv-validator] {
+  color: #dc3545;
+}
+.has-error .form-control-feedback {
+  color: #dc3545;
+}
+
+.has-success .custom-file-input ~ .custom-file-label {
+  border-color: #28a745;
+}
+.has-success .custom-file-input:focus ~ .custom-file-label {
+  border-color: #28a745;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.has-error .custom-file-input ~ .custom-file-label {
+  border-color: #dc3545;
+}
+.has-error .custom-file-input:focus ~ .custom-file-label {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.has-error .ck-editor {
+  border: 1px solid #dc3545 !important;
+}
+.has-error .ck-editor .ck-sticky-panel {
+  border-bottom: 1px solid #dc3545;
+}
+
+.has-success .ck-editor {
+  border: 1px solid #28a745 !important;
+}
+.has-success .ck-editor .ck-sticky-panel {
+  border-bottom: 1px solid #28a745;
+}
+
+
+.has-error .ck-focused { border :none !important; }
+.has-success .ck-focused { border :none !important; }
