@@ -4,11 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
-use SettingTrait;
+use SettingGroup;
 
 class Products extends Controller
-{
-    use SettingTrait;
+{    
     /**
      * Display a listing of the resource.
      *
@@ -29,9 +28,8 @@ class Products extends Controller
     public function create()
     {
         //
-        $weightUnits = $this->setting('Weight Unit');
-        $rateFeilds = $this->setting('Rate Field');
-        return view('pages.products.create',compact('weightUnits','rateFeilds'));
+        $weightUnits = SettingGroup::where('group','Weight Unit')->first();        
+        return view('pages.products.create',compact('weightUnits'));
     }
 
     /**

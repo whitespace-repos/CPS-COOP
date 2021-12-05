@@ -164,10 +164,17 @@
     <script>
         $(document).ready(function(){
             // 
+            table = cps('Rate');
+            // 
             $("select").select2();
-            
+            const createRecord = async (fields) => {
+    const createdRecord = await table.create(fields);
+    console.log(minifyRecord(createdRecord));
+};
+
             $('#customer').mask('0000000000',{
-                onComplete: function(phone) {                    
+                onComplete: function(phone) {                     
+                    //vue.rate;
                     $.post("{{ route('customer.existance') }}",{"phone":phone , "_token":vue.token},function(response){   
                         vue.existingCustomer = response.existance;
                         vue.customer = response.customer;

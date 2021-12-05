@@ -111,6 +111,11 @@ class Shops extends Controller
     public function destroy($id)
     {
         //
+        //
+        $shop = Shop::find($id);
+        $shop->delete();
+        // 
+        return back();
     }
 
     /**

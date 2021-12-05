@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Setting;
+use SettingGroup;
 use SettingTrait;
 
 class Settings extends Controller
@@ -18,8 +19,8 @@ class Settings extends Controller
     public function index()
     {
         //
-        $settings = Setting::all()->unique('group');        
-        return view('pages.advanced.main',compact('settings'));       
+        $setting_groups = SettingGroup::all();        
+        return view('pages.advanced.main',compact('setting_groups'));       
         
     }
 
@@ -40,17 +41,15 @@ class Settings extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        //
-        $setting = Setting::find($request->group);
+    { 
         // 
         Setting::create([
-                            "group" => $setting->group,
+                            "setting_group_id" => $request->setting_group_id,
                             "name" => $request->value,
                             "value" => $request->value,
                             "key" => $request->key
         ]);
-        return back();
+        return redirect()->route('settings.edit',$request->setting_group_id);
     }
 
     /**
@@ -73,10 +72,8 @@ class Settings extends Controller
     public function edit($id)
     {
         //
-        $setting = Setting::find($id);
-        $group = $setting->group;
-        $settings = $this->setting($group);        
-        return view('pages.advanced.create',compact('settings','group','setting'));
+        $setting_group = SettingGroup::find($id);      
+        return view('pages.advanced.create',compact('setting_group'));
 
     }
 
@@ -98,7 +95,7 @@ class Settings extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
         //
         $setting = Setting::find($id);

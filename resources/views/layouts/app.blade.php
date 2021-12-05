@@ -26,7 +26,8 @@
         <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
 
         <script src="https://unpkg.com/feather-icons"></script>
-
+        <script src="{{ asset('js/airtable.browser.js') }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
@@ -45,10 +46,17 @@
             </main>
         </div>
         
-        @stack('append-scripts')
+        
 
         <script>
-            feather.replace()
-        </script>
+            feather.replace(); 
+            const Airtable = require('airtable');
+            const cps = new Airtable({ apiKey: "keyHth59tbLj9BPEe" }).base(
+                'appfXSBpzN5Xh4B0e'
+            );
+        </script>     
+        <!--  -->
+        <!--  -->
+        <script src="{{ asset('js/cps.airtable.js') }}"></script>
     </body>
 </html>

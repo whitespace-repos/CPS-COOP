@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSettingsTable extends Migration
+class CreateSettingGroupsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,10 @@ class CreateSettingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('settings', function (Blueprint $table) {
+        Schema::create('setting_groups', function (Blueprint $table) {
             $table->id();
             $table->string('group');
-            $table->string('name')->nullable();
-            $table->string('key')->nullable();
-            $table->string('options')->nullable();
-            $table->string('value')->nullable();
+            $table->string('slug')->nullable();
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ class CreateSettingsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('settings');
+        Schema::dropIfExists('setting_groups');
     }
 }

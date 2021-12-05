@@ -9,6 +9,6 @@ class Setting extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['group','name','key','options','value'];
+    protected $fillable = ['setting_group_id','name','key','options','value'];
 
 }

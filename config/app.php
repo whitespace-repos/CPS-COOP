@@ -235,6 +235,7 @@ return [
         'Customer' => App\Models\Customer::class,
         'User' => App\Models\User::class,
         'Setting' => App\Models\Setting::class,
+        'SettingGroup' => App\Models\SettingGroup::class,
         // 
 
         'SettingTrait' => App\Http\Traits\SettingTrait::class,

@@ -1,65 +1,36 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex" id="header">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight mr-auto">
-                {{ __('CPS Shop') }}         
-            </h2>
+    <a href="{{ route('shop.create') }}" class="btn btn-primary btn-sm my-4 px-5">Add Shop </a>
 
-            <a href="{{ route('shop.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150" >
-                    {{ __('Add New Shop') }}                
-            </a>           
-        </div>  
-    </x-slot>
-
-    <div class="py-12 max-w-7xl flex mx-auto">        
-        <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-            <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                <table class="min-w-full divide-y divide-gray-200" >
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Name
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Number of Products
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Status
-                            </th>                        
-                            <th scope="col" class="relative px-6 py-3">
-                                <span class="sr-only">Edit</span>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($shops as $key => $shop)
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    {{ $shop->shop_name }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @foreach($shop->products as $key => $product)
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                            {{ $product->product_name }}
-                                        </span>
-                                    @endforeach    
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                    {{ $shop->status }}
-                                    </span>
-                                </td>
-                            
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">                                    
-                                    <a href="{{ route('shop.edit',$shop->id) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                                    <a href="#" class="text-indigo-600 hover:text-indigo-900">View</a>
-                                </td>
-                            </tr> 
-                        @endforeach                        
-                        <!-- More people... -->
-                    </tbody>
-                </table>
-            </div>
-        </div>               
+    <div class="table-responsive">
+        <table class="table table-striped table-sm  ">
+            <thead class="bg-dark text-white">
+                <tr>
+                    <th>Name</th>
+                    <th>Number of Products</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($shops as $shop)
+                    <tr>
+                        <td>{{ $shop->shop_name }}</td>
+                        <td> 
+                            @foreach($shop->products as $product)
+                                <span class="badge badge-primary badge-pill">{{ $product->product_name }}</span>
+                            @endforeach
+                        </td>
+                        <td> 
+                            <a href="{{ route('shop.edit',$shop->id) }}">Edit</a>
+                            <form action="{{ route('shop.destroy',$shop->id) }}" method="POST" class="d-inline-flex">                                
+                                @csrf 
+                                @method("DELETE")
+                                <!--  -->
+                                <input type="submit" class="py-0 btn btn-link btn-xs"  value="Remove" />
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 </x-app-layout>
