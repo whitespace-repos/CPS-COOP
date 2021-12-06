@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Rate;
+use Product;
+use Carbon;
 
 class Rates extends Controller
 {
@@ -14,6 +17,10 @@ class Rates extends Controller
     public function index()
     {
         //
+        $rates = Rate::where( 'date', Carbon::today())
+                        ->where('status','Active')
+                        ->get();
+        return view('pages.rates.main',compact('rates'));
     }
 
     /**
@@ -24,6 +31,8 @@ class Rates extends Controller
     public function create()
     {
         //
+        $products = Product::all();
+        return view('pages.rates.create',compact('products'));
     }
 
     /**
@@ -34,7 +43,19 @@ class Rates extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //        
+        $productTodayRate = Rate::where( 'date', Carbon::today())
+                        ->where('status','Active')
+                        ->where('product_id',$request->product_id)
+                        ->first();
+        if(!empty($productTodayRate)){
+            $productTodayRate->status = 'Inactive';
+            $productTodayRate->save();
+        }        
+        // 
+        $request->request->add(['date' => Carbon::today()]);        
+        Rate::create($request->all());
+        return redirect()->route('rate.index');
     }
 
     /**
@@ -57,6 +78,9 @@ class Rates extends Controller
     public function edit($id)
     {
         //
+        $products = Product::all();
+        $rate = Rate::find($id);
+        return view('pages.rates.create',compact('products','rate'));
     }
 
     /**

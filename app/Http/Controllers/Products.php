@@ -40,9 +40,7 @@ class Products extends Controller
      */
     public function store(Request $request)
     {
-        //  
-        
-              
+        //             
         Product::create($request->all());
         return redirect()->route('product.index');
     }
@@ -67,6 +65,9 @@ class Products extends Controller
     public function edit($id)
     {
         //
+        $weightUnits = SettingGroup::where('group','Weight Unit')->first();
+        $product = Product::find($id);
+        return view('pages.products.edit',compact('product','weightUnits'));
     }
 
     /**
@@ -79,6 +80,9 @@ class Products extends Controller
     public function update(Request $request, $id)
     {
         //
+        $product = Product::find($id);
+        $product->update($request->all());
+        return redirect()->route('product.index');
     }
 
     /**
@@ -91,6 +95,7 @@ class Products extends Controller
     {
         //
         $product = Product::find($id);
+        $shops = $product->shops()->detach();
         $product->delete();
         // 
         return back();

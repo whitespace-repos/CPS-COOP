@@ -6,6 +6,8 @@
             <tr>
                 <th>Name</th>
                 <th>Shop</th>
+                <th>Wholesale Weight</th>
+                <th>Weight Unit</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -18,8 +20,11 @@
                             <span class="badge badge-primary badge-pill">{{ $shop->shop_name }}</span>
                         @endforeach
                     </td>
+                    <td>{{ $product->wholesale_weight }}
+                    </td>
+                    <td>{{ $product->weight_unit }}</td>
                     <td> 
-                        <a href="#">Edit</a>
+                        <a href="{{ route('product.edit',$product->id) }}">Edit</a>
                         <form action="{{ route('product.destroy',$product->id) }}" method="POST" class="d-inline-flex ml-2">                                
                             @csrf 
                             @method("DELETE")

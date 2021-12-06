@@ -107,7 +107,7 @@
 
     <!--  -->
     <div class="d-flex bd-highlight">
-        <div class="bg-warning w-25 rounded">
+        <div class="bg-warning rounded" style="width: 30%;">
             <form action="#" method="POST" class="container my-4" @submit="onSubmit">
                 @csrf
                 <div class="form-group">                
@@ -167,8 +167,8 @@
                 </form>    
             </div>
         </div>
-        <div class="bd-highlight flex-grow-1 w-75">
-            <div class="container-fluid">
+        <div class="bd-highlight flex-grow-1 w-75"  >
+            <div class="container-fluid" v-if="existingCustomer">
                 <div class="row">
                     <div class="col-md-6" v-for="product in products" :key="product.productName">
                         <div class="card mb-4" >                

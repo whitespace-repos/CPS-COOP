@@ -8,6 +8,7 @@ use App\Http\Controllers\Sales;
 use App\Http\Controllers\Customers;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Settings;
+use App\Http\Controllers\Rates;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +26,7 @@ Route::resource('product',Products::class);
 Route::resource('shop',Shops::class);
 Route::resource('user',Users::class);
 Route::resource('settings',Settings::class);
+Route::resource('rate',Rates::class);
 
 Route::get('make-sale',[Sales::class,'make'])->name('make-sale');
 Route::get('fetch/products',[Sales::class,'getProducts'])->name('fetch.products');

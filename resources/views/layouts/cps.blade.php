@@ -38,6 +38,11 @@
                         <li class="nav-item @if(request()->routeIs('shop.index')) active @endif">
                             <a class="nav-link" href="{{ route('shop.index') }}">Shops</a>
                         </li>
+
+                        <li class="nav-item @if(request()->routeIs('rate.index')) active @endif">
+                            <a class="nav-link" href="{{ route('rate.index') }}">Rate</a>
+                        </li>
+
                         <li class="nav-item @if(request()->routeIs('settings.index') || request()->routeIs('settings.edit')) active @endif">
                             <a class="nav-link" href="{{ route('settings.index') }}">Advanced</a>
                         </li>
@@ -83,6 +88,7 @@
     <script src="{{ asset('js/cps.airtable.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{{ asset('js/jquery.mask.min.js') }}" defer></script>
+    <script src="{{ asset('js/jquery.numeric.js') }}" defer></script> 
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 

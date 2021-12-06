@@ -237,6 +237,7 @@ return [
         'Setting' => App\Models\Setting::class,
         'SettingGroup' => App\Models\SettingGroup::class,
         'Shop' => App\Models\Shop::class,
+        'Rate' => App\Models\Rate::class,
         'Product' => App\Models\Product::class,
         // 
 
