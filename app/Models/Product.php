@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon;
 
 class Product extends Model
 {
@@ -17,5 +18,12 @@ class Product extends Model
     public function shops()
     {
         return $this->belongsToMany(Shop::class);
+    }
+
+    /**
+     * 
+     */
+    public function rate(){
+        return $this->hasOne(Rate::class)->where( 'date', Carbon::today());
     }
 }

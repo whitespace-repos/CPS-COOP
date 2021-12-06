@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Cart;
 use Customer;
+use Product;
 
 class CartController extends Controller
 {
     //
     public function cartList()
     {
+        
         $cartItems = Cart::getContent();        
         return view('cart', compact('cartItems'))->with([
                                                             "items" => $cartItems->pluck('items')
@@ -19,29 +21,30 @@ class CartController extends Controller
 
 
     public function addToCart(Request $request)
-    {
+    {        
         $customer = Customer::where('phone',$request->customer)->first();
         // 
-
-        \Log::info($request);
+        $product = Product::where('product_name',$request->product)->first();
+        $wholeSaleRate = $product->rate->wholesale_rate;
+        $retailRate = $product->rate->retail_rate;
+        $weight = (float) $request->weight;
+        
+        // 
+        $price = ($weight < 10) ? $weight * $retailRate : $weight * $wholeSaleRate;
         // 
         $cart = Cart::add([
             'id' => Cart::getTotalQuantity() + 1,
-            'name' => $request->product,
-            'price' => $request->amount,  
+            'name' => $product->product_name,
+            'price' =>$price,  
             'quantity' => 1,          
             'attributes' => array(
                 "customer" => $customer,
-                "weight" => $request->weight,
-                "rate" => $request->rate,
+                "weight" => $weight,
+                "rate" => ($weight < 10) ? $retailRate : $wholeSaleRate,
             )
         ]);
         session()->flash('success', 'Product is Added to Cart Successfully !');
-        return response()->json([
-                                    "cart" => $cart ,
-                                    "customer" => $customer,
-                                    "totalCartItem" => Cart::getTotalQuantity(),
-        ]);
+        return response()->json(Cart::getContent());
     }
 
     public function updateCart(Request $request)

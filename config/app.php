@@ -236,9 +236,12 @@ return [
         'User' => App\Models\User::class,
         'Setting' => App\Models\Setting::class,
         'SettingGroup' => App\Models\SettingGroup::class,
+        'Shop' => App\Models\Shop::class,
+        'Product' => App\Models\Product::class,
         // 
 
         'SettingTrait' => App\Http\Traits\SettingTrait::class,
+        'Carbon' => Carbon\Carbon::class
         
     ],
 

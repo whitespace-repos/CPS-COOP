@@ -27,6 +27,7 @@ Route::resource('user',Users::class);
 Route::resource('settings',Settings::class);
 
 Route::get('make-sale',[Sales::class,'make'])->name('make-sale');
+Route::get('fetch/products',[Sales::class,'getProducts'])->name('fetch.products');
 // 
 Route::post('customer/existance',[Customers::class,'customerExistance'])->name('customer.existance');
 Route::post('customer/store',[Customers::class,'store'])->name('customer.store');
