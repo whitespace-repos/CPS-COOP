@@ -119,23 +119,24 @@
                 </div>
                 <!--  -->
                 <div class="form-group">                
-                    <input name="email" class="form-control form-control-sm" placeholder="E-Mail" autocomplete="off" v-model="form.customer.email" :disabled="existingCustomer ? true : false"/>
+                    <input name="email" type="hidden" class="form-control form-control-sm" placeholder="E-Mail" autocomplete="off" v-model="form.customer.email" :disabled="existingCustomer ? true : false"/>
                 </div>
                 <!--  -->
                 <div class="form-group">                
-                    <input name="location" class="form-control form-control-sm" placeholder="Location" autocomplete="off" v-model="form.customer.location" :disabled="existingCustomer ? true : false"/>
+                    <input name="location" type="hidden" class="form-control form-control-sm" placeholder="Location" autocomplete="off" v-model="form.customer.location" :disabled="existingCustomer ? true : false"/>
                 </div>
                 <h6 class="text-center my-4" v-if="existingCustomer"> @{{ form.customer.name }} </h6>
                 <button type="submit" class="btn btn-sm btn-info mx-auto" v-else> Save Customer </button>
             </form>
             
-            <table class="table table-striped table-sm small-xs">
+            <table class="table table-striped table-sm small">
                 <thead class="bg-dark small text-white">
                         <tr>
                             <th>Product</th>
                             <th>Price</th>
                             <th>Qty</th>
                             <th>Amt</th>
+                            <th width="6"></th>
                         </tr>
                 </thead>
                 <tbody>
@@ -143,7 +144,14 @@
                         <td>@{{ cart.name }}</td>
                         <td v-currency>@{{ cart.attributes.rate }}</td>
                         <td>@{{ cart.attributes.weight }} <sup>kg</sup></td>                                                     
-                        <td v-currency>@{{ cart.price }}</td>                                                     
+                        <td v-currency>@{{ cart.price }}</td>   
+                        <td>
+                            <form action="{{ route('cart.remove') }}" method="POST" class="mr-2 small" @submit="removeCart">
+                                <input type="hidden" :value="cart.id" name='id' />
+                                @csrf 
+                                <input type="submit" value ="x" class="btn btn-sm btn-danger m-auto small py-0"/>
+                            </form>                            
+                        </td>                                              
                     </tr>
                 </tbody>
             </table>
@@ -313,16 +321,19 @@
                     let url = "{{ route('customer.store') }}";
                     let data = this.form.customer;
                     
-                    $.post(url,data,function(response){                                  
-                        vue.carts = response.carts;
+                    $.post(url,data,function(response){                                                                      
+                        vue.existingCustomer = response.existance;
+                        _.assignIn(vue.form.customer,response.customer);
                     });
                 },
                 todayRate(event) {
-                    // this.rate = this.$refs.product.selectedOptions[0].dataset.rate;
+                    // this`.rate = this.$refs.product.selectedOptions[0].dataset.rate;
                 },
                 addToCart(event){
                     event.preventDefault();
                     $form = $(event.target);
+                    // 
+                    $form.find("[type=submit]").hide();
                     $el = $form.find('[name=weight]');
                     let url = "{{ route('cart.store') }}";
                     // 
@@ -344,6 +355,19 @@
                         $el.val(0);
                         $form.find(".pro-price").html(parseFloat(0));
                     });                    
+                },
+                removeCart(event){
+                    event.preventDefault();
+                    $form = $(event.target);
+                    $.post($form.attr("action"),$form.serialize(),function(response){                                  
+                        vue.carts = response;
+                        // console.log(response);
+                        if(_.size(vue.carts))
+                            vue.cartFlag = true;
+                        else 
+                            vue.cartFlag = false;                        
+                       
+                    });
                 },
                 calateprice(event){
                     $el = $(event.target);   

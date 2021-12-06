@@ -69,7 +69,7 @@ class CartController extends Controller
         Cart::remove($request->id);
         session()->flash('success', 'Item Cart Remove Successfully !');
 
-        return redirect()->route('cart.list');
+        return response()->json(Cart::getContent());
     }
 
     public function clearAllCart()
