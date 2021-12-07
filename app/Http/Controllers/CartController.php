@@ -30,7 +30,7 @@ class CartController extends Controller
         $weight = (float) $request->weight;
         
         // 
-        $price = ($weight < 10) ? $weight * $retailRate : $weight * $wholeSaleRate;
+        $price = ($weight < $product->wholesale_weight) ? $weight * $retailRate : $weight * $wholeSaleRate;
         // 
         $cart = Cart::add([
             'id' => Cart::getTotalQuantity() + 1,
@@ -40,7 +40,7 @@ class CartController extends Controller
             'attributes' => array(
                 "customer" => $customer,
                 "weight" => $weight,
-                "rate" => ($weight < 10) ? $retailRate : $wholeSaleRate,
+                "rate" => ($weight < $product->wholesale_weight) ? $retailRate : $wholeSaleRate,
             )
         ]);
         session()->flash('success', 'Product is Added to Cart Successfully !');

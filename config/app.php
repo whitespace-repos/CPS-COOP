@@ -239,6 +239,7 @@ return [
         'Shop' => App\Models\Shop::class,
         'Rate' => App\Models\Rate::class,
         'Product' => App\Models\Product::class,
+        'PurchaseHistory' => App\Models\PurchaseHistory::class,
         // 
 
         'SettingTrait' => App\Http\Traits\SettingTrait::class,

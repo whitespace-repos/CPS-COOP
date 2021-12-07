@@ -32,16 +32,17 @@
                     @endrole 
 
                     @role('Admin')
-                        <li class="nav-item @if(request()->routeIs('product.index')) active @endif">
-                            <a class="nav-link" href="{{ route('product.index') }}">Products <span class="sr-only">(current)</span></a>
-                        </li>
-                        <li class="nav-item @if(request()->routeIs('shop.index')) active @endif">
-                            <a class="nav-link" href="{{ route('shop.index') }}">Shops</a>
-                        </li>
-
                         <li class="nav-item @if(request()->routeIs('rate.index')) active @endif">
                             <a class="nav-link" href="{{ route('rate.index') }}">Rate</a>
                         </li>
+
+                        <li class="nav-item @if(request()->routeIs('product.index')) active @endif">
+                            <a class="nav-link" href="{{ route('product.index') }}">Products <span class="sr-only">(current)</span></a>
+                        </li>
+
+                        <li class="nav-item @if(request()->routeIs('shop.index')) active @endif">
+                            <a class="nav-link" href="{{ route('shop.index') }}">Shops</a>
+                        </li>                      
 
                         <li class="nav-item @if(request()->routeIs('settings.index') || request()->routeIs('settings.edit')) active @endif">
                             <a class="nav-link" href="{{ route('settings.index') }}">Advanced</a>

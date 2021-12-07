@@ -43,7 +43,10 @@ Route::post('cart/clear', [CartController::class, 'clearAllCart'])->name('cart.c
 
 
 Route::get('/', function () {
-    return view('dashboard');
+    if(auth()->user()->hasRole('Admin'))
+        return redirect()->route('rate.index');
+    else 
+        return redirect()->route('make-sale');
 })->middleware(['auth'])->name('dashboard');
 
 require __DIR__.'/auth.php';

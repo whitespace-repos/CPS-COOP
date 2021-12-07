@@ -191,7 +191,7 @@
                                          <form action="#" method="POST" class="font-weight-bold" @submit="addToCart">
                                              <div class="form-group d-flex">
                                                 <label>Weight</label>
-                                                <input class="form-control form-control-sm flex-grow-1 ml-2 rounded-0" name="weight"  @keyup="calateprice"  :data-wholesale-rate="product.wholesaleRate" :data-retail-rate="product.retail_rate" :data-product="product.productName"/>
+                                                <input class="form-control form-control-sm flex-grow-1 ml-2 rounded-0" name="weight"  @keyup="calateprice"  :data-wholesale-rate="product.wholesaleRate" :data-retail-rate="product.retail_rate" :data-product="product.productName" :data-wholesale-weight="product.wholesaleWeight"/>
                                                 <span class="w-25 form-control border-left-0 form-control-sm bg-light rounded-0">@{{product.weight_unit}}</span>
                                                 <input v-model="form.customer.phone" type="hidden"/>                                                
                                                 <button type="submit" class="btn btn-sm btn-outline-success ml-2 px-2 py-0" style="display:none;"> <i data-feather="shopping-bag"></i> </button>
@@ -374,11 +374,11 @@
                     $product =  $el.data('wholesaleRate');
                     $wholesaleRate = parseFloat($el.data('wholesaleRate'));
                     $retailRate = parseFloat($el.data('retailRate'));  
-
+                    $wholesaleWeight = parseInt($el.data('wholesaleWeight')); 
                                  
                     // 
                     if($el.val() > 0 && ($wholesaleRate > 0 || $retailRate > 0 )){
-                        if($el.val() < 10){
+                        if($el.val() < $wholesaleWeight){
                             $el.closest('form').find(".pro-price").html(parseFloat($el.val() * $retailRate));
                         }else {
                             $el.closest('form').find(".pro-price").html(parseFloat($el.val() * $wholesaleRate));

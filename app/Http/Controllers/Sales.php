@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use Shop;
 use Cart;
+use PurchaseHistory;
 
 class Sales extends Controller
 {
@@ -16,6 +17,7 @@ class Sales extends Controller
         foreach ($shop->products as $key => $product) {
             $products->push([
                             'productName' => $product->product_name,
+                            'wholesaleWeight' => $product->wholesale_weight,
                             'wholesaleRate' => (empty($product->rate)) ? 0  : $product->rate->wholesale_rate,
                             'supply_rate' => (empty($product->rate)) ? 0  : $product->rate->supply_rate,
                             'retail_rate' => (empty($product->rate)) ? 0  : $product->rate->retail_rate,
@@ -35,10 +37,11 @@ class Sales extends Controller
                             'supply_rate' => (empty($product->rate)) ? 0  : $product->rate->supply_rate,
                             'retail_rate' => (empty($product->rate)) ? 0  : $product->rate->retail_rate,
                             'weight_unit' => $product->weight_unit,
+                            'wholesaleWeight' => $product->wholesale_weight,
                 ]);
         }   
 
-        $purchaseHistory = [[ "id"=>1, "date" => '11/01/21' , "total" => 123 , "receive" => 120],["id"=>2,"date"=> '11/01/21' , "total"=> 123 , "receive" => 120]];
+        $purchaseHistory = PurchaseHistory::all();
         // 
 
         return response()->json([ 
