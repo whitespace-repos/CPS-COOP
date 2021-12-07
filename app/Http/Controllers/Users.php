@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use User;
+use Shop;
 
 class Users extends Controller
 {
@@ -14,7 +17,8 @@ class Users extends Controller
     public function index()
     {
         //
-        return view('pages.users.main');
+        $users = User::all();
+        return view('pages.users.main',compact('users'));
     }
 
     /**
@@ -24,7 +28,9 @@ class Users extends Controller
      */
     public function create()
     {
-        //
+        //  
+        $shops = Shop::all();
+        return view('pages.users.create',compact('shops'));
     }
 
     /**
@@ -35,7 +41,16 @@ class Users extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //        
+        $user = User::create([
+                                'name' => $request->name,
+                                'email' => $request->email,
+                                'password' => Hash::make($request->password),
+                                'phone' => $request->phone,
+                                'shop_id' => $request->shop_id
+                ]);
+        $user->assignRole($request->role);
+        return redirect()->route('user.index');
     }
 
     /**
@@ -58,6 +73,9 @@ class Users extends Controller
     public function edit($id)
     {
         //
+        $shops = Shop::all();
+        $user = User::find($id);
+        return view('pages.users.edit',compact('user','shops'));
     }
 
     /**
@@ -70,6 +88,9 @@ class Users extends Controller
     public function update(Request $request, $id)
     {
         //
+        $user = User::find($id);
+        $user->update($request->all());
+        return redirect()->route('user.index');
     }
 
     /**
@@ -81,5 +102,6 @@ class Users extends Controller
     public function destroy($id)
     {
         //
+
     }
 }

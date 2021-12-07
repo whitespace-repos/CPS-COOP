@@ -104,9 +104,10 @@
             </div>
         </div>
     </div>
-
+    <h3 class="text-center my-4"> {{ auth()->user()->shop->shop_name }} </h3>
     <!--  -->
     <div class="d-flex bd-highlight">
+        
         <div class="bg-warning rounded" style="width: 30%;">
             <form action="#" method="POST" class="container my-4" @submit="onSubmit">
                 @csrf

@@ -36,6 +36,10 @@
                             <a class="nav-link" href="{{ route('rate.index') }}">Rate</a>
                         </li>
 
+                        <li class="nav-item @if(request()->routeIs('user.index')) active @endif">
+                            <a class="nav-link" href="{{ route('user.index') }}">Users</a>
+                        </li>
+
                         <li class="nav-item @if(request()->routeIs('product.index')) active @endif">
                             <a class="nav-link" href="{{ route('product.index') }}">Products <span class="sr-only">(current)</span></a>
                         </li>

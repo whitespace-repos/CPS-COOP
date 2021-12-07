@@ -12,7 +12,7 @@ class Sales extends Controller
 {
     //
     public function make(){
-        $shop = Shop::where('shop_name','Bhuvan Shop')->first();
+        $shop = auth()->user()->shop;
         $products = collect([]);
         foreach ($shop->products as $key => $product) {
             $products->push([
@@ -28,7 +28,7 @@ class Sales extends Controller
     }
 
     public function getProducts(){
-        $shop = Shop::where('shop_name','Bhuvan Shop')->first();
+        $shop = auth()->user()->shop;
         $products = collect([]);
         foreach ($shop->products as $key => $product) {
             $products->push([
