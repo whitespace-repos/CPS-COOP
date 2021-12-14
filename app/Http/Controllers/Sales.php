@@ -23,7 +23,8 @@ class Sales extends Controller
                             'retail_rate' => (empty($product->rate)) ? 0  : $product->rate->retail_rate,
                             'weight_unit' => $product->weight_unit,
                 ]);
-        }      
+        } 
+        //return view('layouts.coop');     
         return view('pages.sales.make',compact('products'));
     }
 

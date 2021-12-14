@@ -1,398 +1,379 @@
-<x-app-layout>
-    <style>
-        .small-xs{
-            font-size: 85%;
-            font-weight: 400;
-        }
-    </style>
-<div id="app">
-    
-    {{-- <ul id="example-1">
-
-        <li v-for="item in products" :key="item.productName">
-            @{{ item }}
-        </li>
-      </ul> --}}
-    <div class="container">
-        <div class="card-deck my-4">
-            <div class="card">
-               <div class="card-header">Number Of Stocks</div>
-               <div class="card-body">
-                    <div class="media mb-3">
-                        <img src="{{ asset('images/brolier_chicken.jpg') }}" class="mr-3 w-25" alt="...">
-                        <div class="media-body">
-                            <h6 class="mt-0">Brolier Chicken</h6>
-                            130 KG
+<x-coop-layout>
+    <section id="app">
+        <div class="BodyTop">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="current_stock">
+                        <div class="CS_header">
+                            <h2>Current Stock</h2>
+                            <a href="#" class="Btn" data-toggle="modal" data-target="#myModal">Stock Request</a> 
                         </div>
-                    </div>
-                    <div class="media mb-3">
-                        <img src="{{ asset('images/brolier_chicken.jpg') }}" class="mr-3 w-25" alt="...">
-                        <div class="media-body">
-                            <h6 class="mt-0">Layer</h6>
-                            10 KG
-                        </div>
-                    </div>
-                    <div class="media">
-                        <img src="{{ asset('images/brolier_chicken.jpg') }}" class="mr-3 w-25" alt="...">
-                        <div class="media-body">
-                            <h6 class="mt-0">Brolier Egg</h6>
-                            130 
-                        </div>
-                    </div>
-               </div>
-            </div>
-            <div class="card">
-                <div class="card-header">Stocks Request</div>
-                <div class="card-body">
-                    <div class="media mb-3">
-                        <img src="{{ asset('images/brolier_chicken.jpg') }}" class="mr-3 w-25" alt="...">
-                        <div class="media-body">
-                            <h6 class="mt-0">Broiler Chicken</h6>
-                            <form action="#" method="POST" class="d-flex">
-                                <input class="form-control form-control-sm w-50" name="broiler_chicken" value="10 KG" />
-                                <input  type="submit" value="Rquest" class="btn btn-warning btn-sm ml-2" />
-                            </form>
-                        </div>
-                    </div>
-                    <div class="media mb-3">
-                        <img src="{{ asset('images/brolier_chicken.jpg') }}" class="mr-3 w-25" alt="...">
-                        <div class="media-body">
-                            <h6 class="mt-0">Layer</h6>
-                            <form action="#" method="POST" class="d-flex">
-                                <input class="form-control form-control-sm w-50" name="layer" value="10 KG" />
-                                <input  type="submit" value="Rquest" class="btn btn-warning btn-sm ml-2" />
-                            </form>
-                        </div>
-                    </div>
-                    <div class="media">
-                        <img src="{{ asset('images/brolier_chicken.jpg') }}" class="mr-3 w-25" alt="...">
-                        <div class="media-body">
-                            <h6 class="mt-0">Brolier Egg</h6>
-                            <form action="#" method="POST" class="d-flex">
-                                <input class="form-control form-control-sm w-50" name="egg" value="12" />
-                                <input  type="submit" value="Rquest" class="btn btn-warning btn-sm  ml-2" />
-                            </form>
-                        </div>
-                    </div>
-               </div>
-            </div>
-            <div class="card">
-                <div class="card-header">Today Sales</div>
-                <div class="card-body">
-                    <div class="media mb-3">
-                        <img src="{{ asset('images/brolier_chicken.jpg') }}" class="mr-3 w-25" alt="...">
-                        <div class="media-body">
-                            <h6 class="mt-0">Brolier Chicken</h6>
-                            130 KG
-                        </div>
-                    </div>
-                    <div class="media mb-3">
-                        <img src="{{ asset('images/brolier_chicken.jpg') }}" class="mr-3 w-25" alt="...">
-                        <div class="media-body">
-                            <h6 class="mt-0">Layer</h6>
-                            10 KG
-                        </div>
-                    </div>
-                    <div class="media">
-                        <img src="{{ asset('images/brolier_chicken.jpg') }}" class="mr-3 w-25" alt="...">
-                        <div class="media-body">
-                            <h6 class="mt-0">Brolier Egg</h6>
-                            130 
-                        </div>
-                    </div>
-               </div>
-            </div>
-        </div>
-    </div>
-    <h3 class="text-center my-4"> {{ auth()->user()->shop->shop_name }} </h3>
-    <!--  -->
-    <div class="d-flex bd-highlight">
-        
-        <div class="bg-warning rounded" style="width: 30%;">
-            <form action="#" method="POST" class="container my-4" @submit="onSubmit">
-                @csrf
-                <div class="form-group">                
-                    <input name="mobile" class="form-control form-control-sm" placeholder="Mobile" id="customer" autocomplete="off" v-model="form.customer.phone" :disabled="cartFlag ? true : false"/>
-                </div>
-                <!--  -->
-                <div class="form-group">                
-                    <input name="name" class="form-control form-control-sm" placeholder="Name" autocomplete="off" v-model="form.customer.name" :disabled="existingCustomer ? true : false"/>
-                </div>
-                <!--  -->
-                <div class="form-group">                
-                    <input name="email" type="hidden" class="form-control form-control-sm" placeholder="E-Mail" autocomplete="off" v-model="form.customer.email" :disabled="existingCustomer ? true : false"/>
-                </div>
-                <!--  -->
-                <div class="form-group">                
-                    <input name="location" type="hidden" class="form-control form-control-sm" placeholder="Location" autocomplete="off" v-model="form.customer.location" :disabled="existingCustomer ? true : false"/>
-                </div>
-                <h6 class="text-center my-4" v-if="existingCustomer"> @{{ form.customer.name }} </h6>
-                <button type="submit" class="btn btn-sm btn-info mx-auto" v-else> Save Customer </button>
-            </form>
-            
-            <table class="table table-striped table-sm small">
-                <thead class="bg-dark small text-white">
-                        <tr>
-                            <th>Product</th>
-                            <th>Price</th>
-                            <th>Qty</th>
-                            <th>Amt</th>
-                            <th width="6"></th>
-                        </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="cart in carts" :key="cart.id">
-                        <td>@{{ cart.name }}</td>
-                        <td v-currency>@{{ cart.attributes.rate }}</td>
-                        <td>@{{ cart.attributes.weight }} <sup>kg</sup></td>                                                     
-                        <td v-currency>@{{ cart.price }}</td>   
-                        <td>
-                            <form action="{{ route('cart.remove') }}" method="POST" class="mr-2 small" @submit="removeCart">
-                                <input type="hidden" :value="cart.id" name='id' />
-                                @csrf 
-                                <input type="submit" value ="x" class="btn btn-sm btn-danger m-auto small py-0"/>
-                            </form>                            
-                        </td>                                              
-                    </tr>
-                </tbody>
-            </table>
-            <div class="d-flex justify-content-end">                
-                <form action="{{ route('cart.clear') }}" method="POST" class="mr-2" v-show="cartFlag">
-                    @csrf 
-                    <input type="submit" value ="Clear Cart" class="btn btn-sm btn-danger m-auto"/>
-                </form>
-                
-                <form action="{{ route('cart.clear') }}" method="POST" v-show="cartFlag">
-                    @csrf 
-                    <input type="submit" value ="Generate Bill"  class="btn btn-sm btn-primary"/> 
-                </form>    
-            </div>
-        </div>
-        <div class="bd-highlight flex-grow-1 w-75"  >
-            <div class="container-fluid" v-if="existingCustomer">
-                <div class="row">
-                    <div class="col-md-6" v-for="product in products" :key="product.productName">
-                        <div class="card mb-4" >                
-                            <div class="card-body p-2 small">
-                                <div class="bg-white d-flex p-0 justify-content-between  mb-3  font-weight-bold">
-                                    <div class="wholesale">
-                                        <span class="text-primary">Wholesale</span>
-                                        <span class="ml-2" v-currency>@{{ product.wholesaleRate}}</span>
-                                    </div>
-                                    {{--  --}}
-                                    <div class="retail">
-                                        <span class="text-primary">Retail</span>
-                                        <span class="ml-2" v-currency>@{{ product.retail_rate}}</span>
+                        <div class="CS_body">
+                            <div class="owl-carousel owl-theme">
+                                <div class="item">
+                                    <div class="itemBox"> <span class="img"><img src="{{ asset('assets/img/hean.png') }}" alt="icon"></span> <span class="txt">
+                                        <h3>243 kg</h3>
+                                        <p>Broiler Live</p>
+                                        </span> 
                                     </div>
                                 </div>
-                                 <div class="media">
-                                     <img src="{{ asset('images/brolier_chicken.jpg') }}" class="mr-3 w-25" alt="...">
-                                     <div class="media-body">
-                                         <h6 class="mt-0 small">@{{ product.productName}}</h6>
-                                         <form action="#" method="POST" class="font-weight-bold" @submit="addToCart">
-                                             <div class="form-group d-flex">
-                                                <label>Weight</label>
-                                                <input class="form-control form-control-sm flex-grow-1 ml-2 rounded-0" name="weight"  @keyup="calateprice"  :data-wholesale-rate="product.wholesaleRate" :data-retail-rate="product.retail_rate" :data-product="product.productName" :data-wholesale-weight="product.wholesaleWeight"/>
-                                                <span class="w-25 form-control border-left-0 form-control-sm bg-light rounded-0">@{{product.weight_unit}}</span>
-                                                <input v-model="form.customer.phone" type="hidden"/>                                                
-                                                <button type="submit" class="btn btn-sm btn-outline-success ml-2 px-2 py-0" style="display:none;"> <i data-feather="shopping-bag"></i> </button>
-                                             </div>                                            
-                                             <div class="d-flex">
-                                                <label>Price</label>
-                                                <strong class="ml-4 text-danger price"  v-currency>0</strong>
-                                            </div> 
-                                        </form>
-                                     </div>
-                                 </div>
+                                <div class="item">
+                                    <div class="itemBox"> <span class="img"><img src="{{ asset('assets/img/egg.png') }}" alt="icon"></span> <span class="txt">
+                                        <h3>3500 Nr.</h3>
+                                        <p>Eggs</p>
+                                        </span> 
+                                    </div>
+                                </div>
+                                <div class="item">
+                                    <div class="itemBox"> <span class="img"><img src="{{ asset('assets/img/hean1.png') }}" alt="icon"></span> <span class="txt">
+                                        <h3>243 kg</h3>
+                                        <p>Layer Live</p>
+                                        </span> 
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>                 
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="today_sales">
+                        <div class="CS_header">
+                            <h2>Today's Sales</h2>
+                        </div>
+                        <div class="CS_body">
+                            <div class="owl-carousel today-carousel owl-theme">
+                                <div class="item">
+                                    <div class="itemBox"> <span class="img"><img src="{{ asset('assets/img/hean.png') }}" alt="icon"></span> <span class="txt">
+                                        <h3>23 kg</h3>
+                                        <p>Broiler Live</p>
+                                        <h4>Rs.3,450</h4>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="item">
+                                    <div class="itemBox"> <span class="img"><img src="{{ asset('assets/img/egg.png') }}" alt="icon"></span> <span class="txt">
+                                        <h3>9000 Nr.</h3>
+                                        <p>Eggs</p>
+                                        <h4>Rs.45,000</h4>
+                                        </span> 
+                                    </div>
+                                </div>
+                                <div class="item">
+                                    <div class="itemBox"> <span class="img"><img src="{{ asset('assets/img/hean1.png') }}" alt="icon"></span> <span class="txt">
+                                        <h3>23 kg</h3>
+                                        <p>Layer Live</p>
+                                        <h4>Rs.3,450</h4>
+                                        </span> 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="bg-warning w-25 rounded">
-            <h5 class="mt-2 mb-4 px-2"> Purchase History </h5>
-            <table class="table table-striped table-sm small-xs">
-                <thead class="bg-dark text-white">
-                        <tr>
-                            <th>Date</th>
-                            <th>Total</th>
-                            <th>Receive Amt</th>                            
-                        </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="history in purchaseHistory" :key="history.id">
-                        <td>@{{ history.date }}</td>
-                        <td v-currency>@{{ history.total }}</td>
-                        <td v-currency>@{{ history.receive }}</td>                                                     
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-    
-    @push('append-scripts')
-    <script>
-        $(document).ready(function () {
-            $('#customer').mask('kg');
-            $('#customer').mask('0000000000',{
-                onComplete: function(phone) {                                        
-                    //vue.rate;
-                    $.post("{{ route('customer.existance') }}",{"phone":phone , "_token":vue.token},function(response){   
-                        vue.existingCustomer = response.existance;
-                        if(vue.existingCustomer){
-                            _.assignIn(vue.form.customer,response.customer);                        
-                        } else{
-                            vue.form.customer.name = "";
-                            vue.form.customer.email = "";
-                            vue.form.customer.location = "";
-                        }
-                        
-                        //vue.formUrl = (response.existance) ? "{{ route('cart.store') }}" : " {{ route('login') }}";                           
-                    });
-                },
-                onChange:function(){
-                    vue.existingCustomer = false;
-                    vue.form.customer.name = "";
-                    vue.form.customer.email = "";
-                    vue.form.customer.location = "";
-                }
-            }); 
-            // 
-            $.get("/fetch/products",function(r){ 
-                                                    vue.products = r.products; 
-                                                    vue.purchaseHistory = r.purchaseHistory;  
-                                                    vue.carts = r.carts;                                                    
-                                                    if(_.size(vue.carts)){
-                                                        $head = vue.carts[1]; 
-                                                        vue.cartFlag = true;   
-                                                        vue.existingCustomer=true;                                                   
-                                                        _.assignIn(vue.form.customer,$head.attributes.customer); 
-                                                    }                                                  
-                                });
-        });
+        <div class="BodyBottom">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="customer_info">
+                        <div class="CI_header">
+                            <h3>Customer Info</h3>
+                        </div>
+                        <div class="CI_body">
+                            <div class="info_input">
+                                <ul>
+                                    <li>
+                                        <input placeholder="Mobile" id="customer" autocomplete="off" v-model="form.customer.phone" :disabled="cartFlag ? true : false">
+                                    </li>
+                                    <li :class="{'border-0 text-danger': existingCustomer }">
+                                        <h4 v-if="existingCustomer" class="text-center"> @{{ form.customer.name }}</h4>
+                                        <input name="name"  placeholder="Name" autocomplete="off" v-model="form.customer.name"  v-else/>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="info_table">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Rate</th>
+                                            <th>Qty</th>
+                                            <th>Total</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="cart in carts" :key="cart.id">
+                                            <td>@{{ cart.name }}</td>
+                                            <td v-currency>@{{ cart.attributes.rate }}</td>
+                                            <td>@{{ cart.attributes.weight }} <sup>kg</sup></td>                                                     
+                                            <td v-currency>@{{ cart.price }}</td>   
+                                            <td>
+                                                <form action="{{ route('cart.remove') }}" method="POST" class="mr-2 small" @submit="removeCart">
+                                                    <input type="hidden" :value="cart.id" name='id' />
+                                                    @csrf 
+                                                    <button class="btn" type="submit"><img src="{{ asset('assets/img/cross_btn.png') }}" alt=""></button>
+                                                </form> 
+                                            </td>                                           
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3"><strong>Total Amount:</strong></td>
+                                            <td colspan="2"><strong>Rs.0</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <button class="btn btn-primary" type="button" >Generate Bill</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        var vue = new Vue({
-            el: '#app',
-            data: {
-                existingCustomer:false,
-                token:$("[name='csrf-token']").attr("content"),
-                formUrl:"{{ route('customer.store') }}",
-                rate:0, 
-                products:[], 
-                purchaseHistory:[], 
-                carts:[],    
-                customer:'',
-                cartFlag:false,
-                form:{
-                    customer :{
-                        name:null,
-                        email:null,
-                        location:null,
-                        phone:null,
-                        _token:$("[name='csrf-token']").attr("content"),
+                <div class="col-lg-6 ">                                       
+                    <div class="customer_info" v-if="existingCustomer">
+                        <div class="CI_header">
+                            <h3>Stock Request</h3>
+                        </div>
+                        <div class="CI_body">
+                            <div class="Stock_list" id="style-3">
+                                <ul>
+                                    <li v-for="product in products" :key="product.productName"> 
+                                        <span class="product_info"> 
+                                            <em class="img"><img src="{{ asset('assets/img/hean.png') }}" alt="icon"></em> 
+                                            <em class="txt">
+                                                <h4>@{{ product.productName}}</h4>
+                                            </em> 
+                                        </span> 
+                                        <span class="product_radio">
+                                            <label class="radioPart">
+                                                Retail:
+                                                <p v-currency>@{{ product.retail_rate}}</p>
+                                                <input type="radio"  name="radio1" class="tbName" data-btn="submit1">
+                                                <span class="checkmark"></span>
+                                            </label>
+                                            <label class="radioPart">
+                                                Wholesale:
+                                                <p v-currency>@{{ product.wholesaleRate}}</p>
+                                                <input type="radio" name="radio1" class="tbName" data-btn="submit1">
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </span>
+                                        <span class="product_btn">
+                                            <form action="#" method="POST" class="font-weight-bold" @submit="addToCart">
+                                                <div class="input-group">
+                                                    <input  class="form-control" placeholder="10"  name="weight"  @keyup="calateprice"  :data-wholesale-rate="product.wholesaleRate" :data-retail-rate="product.retail_rate" :data-product="product.productName" :data-wholesale-weight="product.wholesaleWeight" autocomplete="off"/>
+                                                    <input v-model="form.customer.phone" type="hidden"/>
+                                                    <div class="input-group-append">
+                                                        <small class="input-group-text">@{{product.weight_unit}}</small>
+                                                        <p class="price" v-currency>0</p>
+                                                    </div>
+                                                    <button class="btn btn-primary submit" type="submit" disabled="disabled">ADD</button>
+                                                </div>
+                                           </form>                                            
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="customer_info black" v-else>
+                        <img src="{{ asset('assets/img/blank_img1.png') }}" alt="icon">
+                        <h6>Please add customer information to show order list.</h6>                    
+                    </div> 
+                </div>
+                {{--  --}}     
+                <div class="col-lg-3 displayNoneIpad">
+                    <div class="Purchase_History" v-if="existingCustomer">
+                        <div class="PH_header">
+                            <h3>Purchase History</h3>
+                        </div>
+                        <div class="PH_body">                   
+                            <div class="table-responsive">
+                                <table class="table table-fixed">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="col-3">Date</th>
+                                            <th scope="col" class="col-4">Total</th>
+                                            <th scope="col" class="col-5">Received Amt</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyBar">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="Purchase_History black-history " v-else>                    
+                        <img src="{{ asset('assets/img/blank_img2.png') }}" alt="icon">
+                        <h6>No History Available</h6>                    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @push('append-scripts')
+        <script>
+            $(document).ready(function () {
+                $('#customer').mask('kg');
+                $('#customer').mask('0000000000',{
+                    onComplete: function(phone) {                                        
+                        //vue.rate;
+                        $.post("{{ route('customer.existance') }}",{"phone":phone , "_token":vue.token},function(response){   
+                            vue.existingCustomer = response.existance;
+                            if(vue.existingCustomer){
+                                _.assignIn(vue.form.customer,response.customer);                        
+                            } else{
+                                vue.form.customer.name = "";
+                                vue.form.customer.email = "";
+                                vue.form.customer.location = "";
+                            }
+                            
+                            //vue.formUrl = (response.existance) ? "{{ route('cart.store') }}" : " {{ route('login') }}";                           
+                        });
                     },
-                    cart :{
-                        product:"",
-                        customer:"",
-                        weight:0,
-                        amount:0,
-                        rate:0,
-                        _token:$("[name='csrf-token']").attr("content"),
+                    onChange:function(){
+                        vue.existingCustomer = false;
+                        vue.form.customer.name = "";
+                        vue.form.customer.email = "";
+                        vue.form.customer.location = "";
                     }
-                }
-            },
-            computed:{
-                    // Make a request for a user with a given ID
-                    // get only
-                    totalAmount: function () {
-                        // 
-                        this.form.cart.customer = this.form.customer.phone;
-                        this.form.cart.rate = this.rate;
-                        // 
-                        this.form.cart.amount =  parseFloat(this.form.cart.weight) * parseFloat(this.rate);
-                        return this.form.cart.amount;
-                    }                                              
-            },
-            methods: {
-                onSubmit(event) {
-                    event.preventDefault();
-                    //                             
-                    let url = "{{ route('customer.store') }}";
-                    let data = this.form.customer;
-                    
-                    $.post(url,data,function(response){                                                                      
-                        vue.existingCustomer = response.existance;
-                        _.assignIn(vue.form.customer,response.customer);
-                    });
-                },
-                todayRate(event) {
-                    // this`.rate = this.$refs.product.selectedOptions[0].dataset.rate;
-                },
-                addToCart(event){
-                    event.preventDefault();
-                    $form = $(event.target);
-                    // 
-                    $form.find("[type=submit]").hide();
-                    $el = $form.find('[name=weight]');
-                    let url = "{{ route('cart.store') }}";
-                    // 
-                    var data = {
-                                product:$el.data('product'),
-                                customer:vue.form.customer.phone,
-                                weight:$el.val(),
-                                _token:$("[name='csrf-token']").attr("content"),
-                            }; 
-                    
-                    $.post(url,data,function(response){                                  
-                        vue.carts = response;
-                        // console.log(response);
-                        if(_.size(vue.carts))
-                            vue.cartFlag = true;
-                        else 
-                            vue.cartFlag = false;
-                        // 
-                        $el.val(0);
-                        $form.find(".pro-price").html(parseFloat(0));
-                    });                    
-                },
-                removeCart(event){
-                    event.preventDefault();
-                    $form = $(event.target);
-                    $.post($form.attr("action"),$form.serialize(),function(response){                                  
-                        vue.carts = response;
-                        // console.log(response);
-                        if(_.size(vue.carts))
-                            vue.cartFlag = true;
-                        else 
-                            vue.cartFlag = false;                        
-                       
-                    });
-                },
-                calateprice(event){
-                    $el = $(event.target);   
-                    $product =  $el.data('wholesaleRate');
-                    $wholesaleRate = parseFloat($el.data('wholesaleRate'));
-                    $retailRate = parseFloat($el.data('retailRate'));  
-                    $wholesaleWeight = parseInt($el.data('wholesaleWeight')); 
-                                 
-                    // 
-                    if($el.val() > 0 && ($wholesaleRate > 0 || $retailRate > 0 )){
-                        if($el.val() < $wholesaleWeight){
-                            $el.closest('form').find(".pro-price").html(parseFloat($el.val() * $retailRate));
-                        }else {
-                            $el.closest('form').find(".pro-price").html(parseFloat($el.val() * $wholesaleRate));
+                }); 
+                // 
+                $.get("/fetch/products",function(r){ 
+                                                        vue.products = r.products; 
+                                                        vue.purchaseHistory = r.purchaseHistory;  
+                                                        vue.carts = r.carts;                                                    
+                                                        if(_.size(vue.carts)){
+                                                            $head = vue.carts[1]; 
+                                                            vue.cartFlag = true;   
+                                                            vue.existingCustomer=true;                                                   
+                                                            _.assignIn(vue.form.customer,$head.attributes.customer); 
+                                                        }                                                  
+                                    });
+            });
+
+            var vue = new Vue({
+                el: '#app',
+                data: {
+                    existingCustomer:false,
+                    token:$("[name='csrf-token']").attr("content"),
+                    formUrl:"{{ route('customer.store') }}",
+                    rate:0, 
+                    products:[], 
+                    purchaseHistory:[], 
+                    carts:[],    
+                    customer:'',
+                    cartFlag:false,
+                    form:{
+                        customer :{
+                            name:null,
+                            email:null,
+                            location:null,
+                            phone:null,
+                            _token:$("[name='csrf-token']").attr("content"),
+                        },
+                        cart :{
+                            product:"",
+                            customer:"",
+                            weight:0,
+                            amount:0,
+                            rate:0,
+                            _token:$("[name='csrf-token']").attr("content"),
                         }
-                        // 
-                        $el.closest('form').find("[type=submit]").show();
-                    }else{
-                        $el.closest('form').find("[type=submit]").hide();
-                        $el.closest('form').find(".pro-price").html(parseFloat(0));
                     }
-                }
-            },
-        });
-    </script>        
+                },
+                computed:{
+                        // Make a request for a user with a given ID
+                        // get only
+                        totalAmount: function () {
+                            // 
+                            this.form.cart.customer = this.form.customer.phone;
+                            this.form.cart.rate = this.rate;
+                            // 
+                            this.form.cart.amount =  parseFloat(this.form.cart.weight) * parseFloat(this.rate);
+                            return this.form.cart.amount;
+                        }                                              
+                },
+                methods: {
+                    onSubmit(event) {
+                        event.preventDefault();
+                        //                             
+                        let url = "{{ route('customer.store') }}";
+                        let data = this.form.customer;
+                        
+                        $.post(url,data,function(response){                                                                      
+                            vue.existingCustomer = response.existance;
+                            _.assignIn(vue.form.customer,response.customer);
+                        });
+                    },
+                    todayRate(event) {
+                        // this`.rate = this.$refs.product.selectedOptions[0].dataset.rate;
+                    },
+                    addToCart(event){
+                        event.preventDefault();
+                        $form = $(event.target);
+                        // 
+                        $form.find("[type=submit]").attr("disabled","disabled");
+                        $el = $form.find('[name=weight]');
+                        let url = "{{ route('cart.store') }}";
+                        // 
+                        var data = {
+                                    product:$el.data('product'),
+                                    customer:vue.form.customer.phone,
+                                    weight:$el.val(),
+                                    _token:$("[name='csrf-token']").attr("content"),
+                                }; 
+                        
+                        $.post(url,data,function(response){                                  
+                            vue.carts = response;
+                            // console.log(response);
+                            if(_.size(vue.carts))
+                                vue.cartFlag = true;
+                            else 
+                                vue.cartFlag = false;
+                            // 
+                            $el.val(0);
+                            $form.find(".pro-price").html(parseFloat(0));
+                        });                    
+                    },
+                    removeCart(event){
+                        event.preventDefault();
+                        $form = $(event.target);
+                        $.post($form.attr("action"),$form.serialize(),function(response){                                  
+                            vue.carts = response;
+                            // console.log(response);
+                            if(_.size(vue.carts))
+                                vue.cartFlag = true;
+                            else 
+                                vue.cartFlag = false;                        
+                        
+                        });
+                    },
+                    calateprice(event){
+                        $el = $(event.target);   
+                        $product =  $el.data('wholesaleRate');
+                        $wholesaleRate = parseFloat($el.data('wholesaleRate'));
+                        $retailRate = parseFloat($el.data('retailRate'));  
+                        $wholesaleWeight = parseInt($el.data('wholesaleWeight')); 
+                                    
+                        // 
+                        if($el.val() > 0 && ($wholesaleRate > 0 || $retailRate > 0 )){
+                            if($el.val() < $wholesaleWeight){
+                                $el.closest('form').find(".pro-price").html(parseFloat($el.val() * $retailRate));
+                            }else {
+                                $el.closest('form').find(".pro-price").html(parseFloat($el.val() * $wholesaleRate));
+                            }
+                            // 
+                            $el.closest('form').find("[type=submit]").removeAttr("disabled");
+                        }else{
+                            $el.closest('form').find("[type=submit]").attr("disabled","disabled");
+                            $el.closest('form').find(".pro-price").html(parseFloat(0));
+                        }
+                    }
+                },
+            });
+        </script>        
     @endpush
-</x-app-layout>
+</x-coop-layout>
+
