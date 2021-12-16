@@ -25,12 +25,21 @@
         <header id="header" >
             <div class="custom-container">
                 <div class="logo"><a href="#"><img src="{{ asset('assets/img/logo.png') }}" alt="logo"></a></div>
+                <h4 style="align-self:center; color:brown;">{{ auth()->user()->shop->shop_name  }}</h4>
                 <div class="header-top-language d-flex">
                     <button class="btn dropdown-toggle header-action-btn" type="button" id="languageButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <label>Robert Del Naja</label>
+                        <label>{{ auth()->user()->name }}</label>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="languageButton">
-                        <li> <a class="dropdown-item" href="#">Logout</a> </li>
+                        <li> 
+                              <!-- Authentication -->
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <a class="dropdown-item" href="{{ route('logout') }}"  onclick="event.preventDefault();
+                                this.closest('form').submit();">Logout</a> </li>
+
+                            </form>
+                
                     </ul>
                 </div>
             </div>

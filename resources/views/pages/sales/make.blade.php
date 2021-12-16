@@ -81,15 +81,23 @@
                         </div>
                         <div class="CI_body">
                             <div class="info_input">
-                                <ul>
-                                    <li>
-                                        <input placeholder="Mobile" id="customer" autocomplete="off" v-model="form.customer.phone" :disabled="cartFlag ? true : false">
-                                    </li>
-                                    <li :class="{'border-0 text-danger': existingCustomer }">
-                                        <h4 v-if="existingCustomer" class="text-center"> @{{ form.customer.name }}</h4>
-                                        <input name="name"  placeholder="Name" autocomplete="off" v-model="form.customer.name"  v-else/>
-                                    </li>
-                                </ul>
+                                <form action="#" method="POST" class="container my-4" @submit="onSubmit">
+                                    @csrf
+                                    <ul>
+                                        <li>
+                                            <input placeholder="Mobile" id="customer" autocomplete="off" v-model="form.customer.phone" :disabled="cartFlag ? true : false">
+                                        </li>
+                                        <li :class="{'border-0 text-danger': existingCustomer }" class="pb-0">
+                                            <h4 v-if="existingCustomer" class="text-center"> @{{ form.customer.name }}</h4>
+                                            <div class="input-group" v-else>
+                                                <input name="name"  placeholder="Name" class="form-control" autocomplete="off" v-model="form.customer.name" />
+                                                <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary border-0 btn-sm rounded" type="submit" id="button-addon2">Save</button>
+                                                </div>
+                                            </div>                              
+                                        </li>
+                                    </ul>
+                                </form>
                             </div>
                             <div class="info_table">
                                 <table class="table">
