@@ -9,6 +9,9 @@ use App\Http\Controllers\Customers;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Settings;
 use App\Http\Controllers\Rates;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\Stocks;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +30,9 @@ Route::resource('shop',Shops::class);
 Route::resource('user',Users::class);
 Route::resource('settings',Settings::class);
 Route::resource('rate',Rates::class);
+
+Route::resource('stocks',Stocks::class);
+Route::post('stock/request/submit',[Stocks::class,'requested'])->name('stock.request.submit');
 
 Route::get('make-sale',[Sales::class,'make'])->name('make-sale');
 Route::get('fetch/products',[Sales::class,'getProducts'])->name('fetch.products');
@@ -48,5 +54,47 @@ Route::get('/', function () {
     else 
         return redirect()->route('make-sale');
 })->middleware(['auth'])->name('dashboard');
+
+Route::get("clear-cache",function(){
+    Artisan::call('cache:clear');
+    Artisan::call('config:cache');
+    Artisan::call('route:cache');
+    Artisan::call('view:cache');
+    Artisan::call('key:generate');
+    Artisan::call('storage:link');
+    return "All Done";
+});
+
+
+
+Route::get("hello",function(){
+    DB::table('roles')->insert([
+        'name' => 'Admin',
+        'guard_name' => 'web', 
+        'created_at' => '2021-11-18 02:46:57',
+        'updated_at' => '2021-11-18 02:47:01',
+    ]);
+
+    DB::table('roles')->insert([
+        'name' => 'Employee',
+        'guard_name' => 'web', 
+        'created_at' => '2021-11-18 02:46:57',
+        'updated_at' => '2021-11-18 02:47:01',
+    ]);
+
+    return "working";
+});
+
+
+Route::get('migrate',function(){
+    Artisan::call('migrate');
+    dd(DB::select('SHOW TABLES'));
+ });
+ 
+
+ 
+ Route::get('rollback',function(){
+    Artisan::call('migrate:rollback');
+ });
 
 require __DIR__.'/auth.php';

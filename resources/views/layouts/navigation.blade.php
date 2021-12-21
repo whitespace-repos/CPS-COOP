@@ -43,6 +43,12 @@
                             {{ __('Advanced') }}
                         </x-nav-link>
                     </div>
+
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-nav-link :href="route('stock.index')" :active="request()->routeIs('stock.index')">
+                            {{ __('Stocks') }}
+                        </x-nav-link>
+                    </div>
                 @endrole 
 
 

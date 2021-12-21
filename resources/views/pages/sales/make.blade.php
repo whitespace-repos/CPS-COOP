@@ -1,6 +1,6 @@
 <x-coop-layout>
     <section id="app">
-        <div class="BodyTop">
+       <div class="BodyTop">
             <div class="row">
                 <div class="col-lg-6">
                     <div class="current_stock">
@@ -10,27 +10,15 @@
                         </div>
                         <div class="CS_body">
                             <div class="owl-carousel owl-theme">
-                                <div class="item">
-                                    <div class="itemBox"> <span class="img"><img src="{{ asset('assets/img/hean.png') }}" alt="icon"></span> <span class="txt">
-                                        <h3>243 kg</h3>
-                                        <p>Broiler Live</p>
-                                        </span> 
+                                @foreach ($products as $product)
+                                    <div class="item">
+                                        <div class="itemBox"> <span class="img"><img src="{{ $product['productImage'] }}" alt="icon"></span> <span class="txt">
+                                            <h3>{{ '0 '. $product['weight_unit'] }}</h3>
+                                            <p class="small">{{ $product['productName'] }}</p>
+                                            </span> 
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="item">
-                                    <div class="itemBox"> <span class="img"><img src="{{ asset('assets/img/egg.png') }}" alt="icon"></span> <span class="txt">
-                                        <h3>3500 Nr.</h3>
-                                        <p>Eggs</p>
-                                        </span> 
-                                    </div>
-                                </div>
-                                <div class="item">
-                                    <div class="itemBox"> <span class="img"><img src="{{ asset('assets/img/hean1.png') }}" alt="icon"></span> <span class="txt">
-                                        <h3>243 kg</h3>
-                                        <p>Layer Live</p>
-                                        </span> 
-                                    </div>
-                                </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>
@@ -42,30 +30,16 @@
                         </div>
                         <div class="CS_body">
                             <div class="owl-carousel today-carousel owl-theme">
-                                <div class="item">
-                                    <div class="itemBox"> <span class="img"><img src="{{ asset('assets/img/hean.png') }}" alt="icon"></span> <span class="txt">
-                                        <h3>23 kg</h3>
-                                        <p>Broiler Live</p>
-                                        <h4>Rs.3,450</h4>
-                                        </span>
+                                @foreach ($products as $product)
+                                    <div class="item">
+                                        <div class="itemBox"> <span class="img"><img src="{{ $product['productImage'] }}" alt="icon"></span> <span class="txt">
+                                            <h3>{{ '0 '. $product['weight_unit'] }}</h3>
+                                            <p>{{ $product['productName'] }}</p>
+                                            <h4 v-currency>0</h4>
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="item">
-                                    <div class="itemBox"> <span class="img"><img src="{{ asset('assets/img/egg.png') }}" alt="icon"></span> <span class="txt">
-                                        <h3>9000 Nr.</h3>
-                                        <p>Eggs</p>
-                                        <h4>Rs.45,000</h4>
-                                        </span> 
-                                    </div>
-                                </div>
-                                <div class="item">
-                                    <div class="itemBox"> <span class="img"><img src="{{ asset('assets/img/hean1.png') }}" alt="icon"></span> <span class="txt">
-                                        <h3>23 kg</h3>
-                                        <p>Layer Live</p>
-                                        <h4>Rs.3,450</h4>
-                                        </span> 
-                                    </div>
-                                </div>
+                                @endforeach                                
                             </div>
                         </div>
                     </div>
@@ -146,7 +120,7 @@
                                 <ul>
                                     <li v-for="product in products" :key="product.productName"> 
                                         <span class="product_info"> 
-                                            <em class="img"><img src="{{ asset('assets/img/hean.png') }}" alt="icon"></em> 
+                                            <em class="img"><img :src="product.productImage" alt="icon"></em> 
                                             <em class="txt">
                                                 <h4>@{{ product.productName}}</h4>
                                             </em> 
@@ -218,6 +192,73 @@
                 </div>
             </div>
         </div>
+
+        {{--  --}}
+                <!-- The Modal -->
+                <div class="modal" id="myModal">
+                    <div class="modal-dialog modal-lg">
+                        <form action="{{ route('stock.request.submit') }}" method="post">    
+                            <input type="hidden" name="stock_remaining" value="0" />                            
+                            @csrf
+                             <div class="modal-content"> 
+                            
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Request Stock</h4>
+                                    <button type="button" class="close" data-dismiss="modal"><img src="{{ asset('assets/img/cross_btn.png') }}" alt=""></button>
+                                </div>
+
+                                <!-- Modal body -->
+                                <div class="modal-body">
+                                    <div class="poupDiv">
+                                    <ul>
+                                        @foreach ($products as $product)
+                                        <li>
+                                            <div class="itemBox">
+                                                <span class="img"><img src="{{ $product['productImage'] }}" alt="icon"></span> 
+                                                <span class="txt">
+                                                    <h3>{{ '0 '.$product['weight_unit'] }}</h3>
+                                                    <p>{{ $product['productName'] }}</p>
+                                                </span> 
+                                            </div>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" placeholder="10"  name="{{ $product['id'] }}" />                                                                                                  
+                                                <div class="input-group-append">
+                                                    <small class="input-group-text">{{ $product['weight_unit'] }} </small>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        @endforeach
+                                    </ul>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label class="control-label">Payment Method </label>
+                                            <select name="payment_method" class="custom-select" v-model="paymentMethod">
+                                                @foreach (config('enum.paymentMethods') as $method)
+                                                    <option value="{{ $method }}">{{ $method }}</option>
+                                                @endforeach                            
+                                            </select>
+                                        </div>
+                                        {{--  --}}
+                                        <div class="col-md-6" v-if="paymentMethod == 'EMI'">
+                                            <label class="control-label">Payment Period </label>
+                                            <input type="number"  name="payment_period"  class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                    
+                                    <button type="submit" class="btn" >Stock Request</button>
+                                </div>                                            
+                            </div>
+                        </form> 
+                    </div>
+            </div>
     </section>
 
     @push('append-scripts')
@@ -273,6 +314,7 @@
                     carts:[],    
                     customer:'',
                     cartFlag:false,
+                    paymentMethod:'EMI',
                     form:{
                         customer :{
                             name:null,

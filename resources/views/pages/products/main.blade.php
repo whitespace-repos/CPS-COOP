@@ -14,7 +14,7 @@
         <tbody>
             @foreach($products as $product)
                 <tr>
-                    <td>{{ $product->product_name }}</td>
+                    <td><img src="{{ $product->product_image }}"  alt="product-image" width="40" > {{ $product->product_name }}</td>
                     <td> 
                         @foreach($product->shops as $shop)
                             <span class="badge badge-primary badge-pill">{{ $shop->shop_name }}</span>

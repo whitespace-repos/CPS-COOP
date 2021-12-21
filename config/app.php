@@ -1,5 +1,7 @@
 <?php
 
+if(! defined('STDIN')) define('STDIN', fopen("php://stdin","r"));
+
 return [
 
     /*
@@ -240,6 +242,8 @@ return [
         'Rate' => App\Models\Rate::class,
         'Product' => App\Models\Product::class,
         'PurchaseHistory' => App\Models\PurchaseHistory::class,
+        'Stock' => App\Models\Stock::class,
+        'StockRequest' => App\Models\StockRequest::class,
         // 
 
         'SettingTrait' => App\Http\Traits\SettingTrait::class,

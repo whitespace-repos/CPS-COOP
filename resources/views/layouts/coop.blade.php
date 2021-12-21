@@ -3,7 +3,8 @@
     <head>
         <meta charset="utf-8">
         <title>Coop Billing System</title>
-        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta content="" name="keywords">
         <meta content="" name="description">
@@ -59,68 +60,7 @@
 
 
 
-        <!-- The Modal -->
-        <div class="modal" id="myModal">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content"> 
-            
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h4 class="modal-title">Request Stock</h4>
-                <button type="button" class="close" data-dismiss="modal"><img src="{{ asset('assets/img/cross_btn.png') }}" alt=""></button>
-            </div>
-            
-            <!-- Modal body -->
-            <div class="modal-body">
-                <div class="poupDiv">
-                <ul>
-                    <li>
-                    <div class="itemBox"> <span class="img"><img src="{{ asset('assets/img/hean.png') }}" alt="icon"></span> <span class="txt">
-                        <h3>243 kg</h3>
-                        <p>Broiler Live</p>
-                        </span> </div>
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="10" >
-                        <div class="input-group-append">
-                        <small class="input-group-text">kg</small>
-                        </div>
-                    </div>
-                    </li>
-                    <li>
-                    <div class="itemBox"> <span class="img"><img src="{{ asset('assets/img/egg.png') }}" alt="icon"></span> <span class="txt">
-                        <h3>9000 Nr.</h3>
-                        <p>Eggs</p>
-                        </span> </div>
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="10" >
-                        <div class="input-group-append">
-                        <small class="input-group-text">kg</small>
-                        </div>
-                    </div>
-                    </li>
-                    <li>
-                    <div class="itemBox"> <span class="img"><img src="{{ asset('assets/img/hean1.png') }}" alt="icon"></span> <span class="txt">
-                        <h3>243 kg</h3>
-                        <p>Layer Live</p>
-                        </span> </div>
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="10" >
-                        <div class="input-group-append">
-                        <small class="input-group-text">kg</small>
-                        </div>
-                    </div>
-                    </li>
-                </ul>
-                </div>
-            </div>
-            
-            <!-- Modal footer -->
-            <div class="modal-footer">
-                <button type="button" class="btn" data-dismiss="modal">Stock Request</button>
-            </div>
-            </div>
-        </div>
-        </div>
+
 
         <!-- JavaScript Libraries --> 
         <script src="{{ asset('assets/lib/jquery/jquery.min.js') }}"></script> 
@@ -142,6 +82,13 @@
             Vue.directive('currency', {
                 bind: function (el, binding, vnode) {
                     el.innerHTML = "<sup class='small'>INR</sup> <span class='pro-price'>"+el.innerText+"</span>";
+                }
+            }); 
+
+
+            Vue.directive('weight', {
+                bind: function (el, binding, vnode) {             
+                    el.innerHTML = "<span>"+el.innerText+"<sup class='small'> "+binding.value+"</sup> </span>";
                 }
             });       
         </script>

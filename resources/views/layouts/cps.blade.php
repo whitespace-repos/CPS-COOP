@@ -16,8 +16,7 @@
   <body>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand" href="#">
-                <img src="https://uploads-ssl.webflow.com/613be460d23ae1845cc4f3aa/613be64b3ae59b1f8c2dd651_chicken.png" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
-                        CPS     
+                <img src="{{ asset('images/logo.png') }}" />                             
             </a>
             
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,6 +49,11 @@
 
                         <li class="nav-item @if(request()->routeIs('settings.index') || request()->routeIs('settings.edit')) active @endif">
                             <a class="nav-link" href="{{ route('settings.index') }}">Advanced</a>
+                        </li>
+
+                        
+                        <li class="nav-item @if(request()->routeIs('stocks.index') || request()->routeIs('stocks.edit')) active @endif">
+                            <a class="nav-link" href="{{ route('stocks.index') }}">Stocks</a>
                         </li>
                     @endrole
                 </ul>
