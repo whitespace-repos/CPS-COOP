@@ -10,14 +10,14 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['product_name','status','weight_unit','fields','wholesale_weight','image'];
+    protected $fillable = ['product_name','status','weight_unit','fields','wholesale_weight','image','stock'];
 
      /**
      * The shops that belong to the product.
      */
     public function shops()
     {
-        return $this->belongsToMany(Shop::class);
+        return $this->belongsToMany(Shop::class)->as('association')->withPivot('stock');
     }
 
     /**

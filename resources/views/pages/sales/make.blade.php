@@ -11,13 +11,15 @@
                         <div class="CS_body">
                             <div class="owl-carousel owl-theme">
                                 @foreach ($products as $product)
-                                    <div class="item">
-                                        <div class="itemBox"> <span class="img"><img src="{{ $product['productImage'] }}" alt="icon"></span> <span class="txt">
-                                            <h3>{{ '0 '. $product['weight_unit'] }}</h3>
-                                            <p class="small">{{ $product['productName'] }}</p>
-                                            </span> 
+                                    @if($product->stock)
+                                        <div class="item">
+                                            <div class="itemBox"> <span class="img"><img src="{{ $product->product_image }}" alt="icon"></span> <span class="txt">
+                                                <h3>{{ $product->association->stock .' '. $product->weight_unit }}</h3>
+                                                <p class="small">{{ $product->product_name   }}</p>
+                                                </span> 
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 @endforeach
                             </div>
                         </div>
@@ -30,15 +32,15 @@
                         </div>
                         <div class="CS_body">
                             <div class="owl-carousel today-carousel owl-theme">
-                                @foreach ($products as $product)
+                                @foreach ($products as $product)                                    
                                     <div class="item">
-                                        <div class="itemBox"> <span class="img"><img src="{{ $product['productImage'] }}" alt="icon"></span> <span class="txt">
-                                            <h3>{{ '0 '. $product['weight_unit'] }}</h3>
-                                            <p>{{ $product['productName'] }}</p>
+                                        <div class="itemBox"> <span class="img"><img src="{{ $product->product_image }}" alt="icon"></span> <span class="txt">
+                                            <h3>{{ $product->association->stock .' '. $product->weight_unit }}</h3>
+                                            <p>{{ $product->product_name }}</p>
                                             <h4 v-currency>0</h4>
                                             </span>
                                         </div>
-                                    </div>
+                                    </div>                                    
                                 @endforeach                                
                             </div>
                         </div>
@@ -211,27 +213,29 @@
                                 <!-- Modal body -->
                                 <div class="modal-body">
                                     <div class="poupDiv">
-                                    <ul>
-                                        @foreach ($products as $product)
-                                        <li>
-                                            <div class="itemBox">
-                                                <span class="img"><img src="{{ $product['productImage'] }}" alt="icon"></span> 
-                                                <span class="txt">
-                                                    <h3>{{ '0 '.$product['weight_unit'] }}</h3>
-                                                    <p>{{ $product['productName'] }}</p>
-                                                </span> 
-                                            </div>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" placeholder="10"  name="{{ $product['id'] }}" />                                                                                                  
-                                                <div class="input-group-append">
-                                                    <small class="input-group-text">{{ $product['weight_unit'] }} </small>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        @endforeach
-                                    </ul>
+                                        <ul>
+                                            @foreach ($products as $product)
+                                                @if($product->stock)
+                                                    <li>
+                                                        <div class="itemBox">
+                                                            <span class="img"><img src="{{ $product->product_image }}" alt="icon"></span> 
+                                                            <span class="txt">
+                                                                <h3>{{ $product->association->stock .' '.$product->weight_unit }}</h3>
+                                                                <p>{{ $product->product_name }}</p>
+                                                            </span> 
+                                                        </div>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" placeholder="10"  name="{{ $product->id }}" />                                                                                                  
+                                                            <div class="input-group-append">
+                                                                <small class="input-group-text">{{ $product->weight_unit }} </small>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                @endif
+                                            @endforeach
+                                        </ul>
                                     </div>
-
+{{-- 
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label class="control-label">Payment Method </label>
@@ -241,12 +245,12 @@
                                                 @endforeach                            
                                             </select>
                                         </div>
-                                        {{--  --}}
+                                        
                                         <div class="col-md-6" v-if="paymentMethod == 'EMI'">
                                             <label class="control-label">Payment Period </label>
                                             <input type="number"  name="payment_period"  class="form-control" />
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
 
 

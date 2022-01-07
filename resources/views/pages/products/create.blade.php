@@ -39,6 +39,21 @@
                     <small class="help-block">Valid Type : only image type is allowed</small>
                 </div>
             </div>
+
+
+            <div class="col-md-10">
+                <div class="form-group">
+                    <label for="stock" class="d-block">Stock</label>
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="stock-yes" name="stock" class="custom-control-input" value="1">
+                        <label class="custom-control-label" for="stock-yes">Yes</label>
+                      </div>
+                      <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="stock-no" name="stock" class="custom-control-input" value="0" checked="checked">
+                        <label class="custom-control-label" for="stock-no">No</label>
+                      </div>
+                </div>
+            </div>
             {{--  --}}
             <div class="col-md-10 mt-2">
                 <input type="submit" class="btn btn-primary px-5 btn-sm" value="Add Product" />

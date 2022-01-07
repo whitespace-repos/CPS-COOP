@@ -16,16 +16,17 @@
                         <td>{{ $shop->shop_name }}</td>
                         <td> 
                             @foreach($shop->products as $product)
-                                <span class="badge badge-primary badge-pill">{{ $product->product_name }}</span>
+                                <span class="badge badge-primary badge-pill">{{ $product->product_name .' ('.$product->association->stock .' '. $product->weight_unit .')' }}</span>
                             @endforeach
                         </td>
                         <td> 
-                            <a href="{{ route('shop.edit',$shop->id) }}">Edit</a>
+                            <a href="{{ route('shop.show',$shop->id) }}" class="btn btn-info btn-sm">View</a>
+                            <a href="{{ route('shop.edit',$shop->id) }}" class="btn btn-primary btn-sm">Edit</a>
                             <form action="{{ route('shop.destroy',$shop->id) }}" method="POST" class="d-inline-flex">                                
                                 @csrf 
                                 @method("DELETE")
                                 <!--  -->
-                                <input type="submit" class="py-0 btn btn-link btn-xs"  value="Remove" />
+                                <input type="submit" class="btn btn-danger btn-sm"  value="Remove" />
                             </form>
                         </td>
                     </tr>

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Shop;
 use App\Models\Product;
 use App\Models\ProductShop;
+use App\Models\StockRequest;
 
 class Shops extends Controller
 {
@@ -64,9 +65,8 @@ class Shops extends Controller
     public function show($id)
     {
         //
-        $shop = Shop::find($id);
-        $products = Product::all();
-        return view('pages.shops.edit',compact('products','shop'));
+        $shop = Shop::find($id);       
+        return view('pages.shops.show',compact('shop'));
     }
 
     /**

@@ -8,6 +8,7 @@
                 <th>Shop</th>
                 <th>Wholesale Weight</th>
                 <th>Weight Unit</th>
+                <th>Stock </th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -23,6 +24,7 @@
                     <td>{{ $product->wholesale_weight }}
                     </td>
                     <td>{{ $product->weight_unit }}</td>
+                    <td>{{ $product->stock }} </td>
                     <td> 
                         <a href="{{ route('product.edit',$product->id) }}">Edit</a>
                         <form action="{{ route('product.destroy',$product->id) }}" method="POST" class="d-inline-flex ml-2">                                

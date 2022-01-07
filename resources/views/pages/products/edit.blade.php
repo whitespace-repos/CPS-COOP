@@ -45,6 +45,20 @@
             </div>
 
             <div class="col-md-10">
+                <div class="form-group">
+                    <label for="stock" class="d-block">Stock</label>
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="stock-yes" name="stock" class="custom-control-input" value="1" @if($product->stock) {{ _('checked')}} @endif>
+                        <label class="custom-control-label" for="stock-yes">Yes</label>
+                      </div>
+                      <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="stock-no" name="stock" class="custom-control-input" value="0" @if(!$product->stock) {{ _('checked')}} @endif>
+                        <label class="custom-control-label" for="stock-no">No</label>
+                      </div>
+                </div>
+            </div>
+
+            <div class="col-md-10">
                 <input type="submit" class="btn btn-primary px-5 btn-sm" value="Update Product" />
             </div>     
 

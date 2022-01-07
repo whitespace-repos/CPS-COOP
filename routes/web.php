@@ -33,7 +33,15 @@ Route::resource('rate',Rates::class);
 
 Route::resource('stocks',Stocks::class);
 Route::post('stock/request/submit',[Stocks::class,'requested'])->name('stock.request.submit');
+Route::get('stock/request/approved/{id}',[Stocks::class,'approved'])->name('approve.stock.request');
+Route::post('stock/request/payment/options/{id}',[Stocks::class,'payment_options'])->name('stock.request.payment.option');
+Route::get('stock/send/{id}',[Stocks::class,'stock_send'])->name('send.stock');
+Route::get('stock/received/{id}',[Stocks::class,'stock_received'])->name('received.stock');
+Route::get('stock/completed/{id}',[Stocks::class,'stock_completed'])->name('completed.stock');
+Route::get('stock/request/detail/{id}',[Stocks::class,'stock_request_detail'])->name('stock.request.detail');
 
+
+// 
 Route::get('make-sale',[Sales::class,'make'])->name('make-sale');
 Route::get('fetch/products',[Sales::class,'getProducts'])->name('fetch.products');
 // 

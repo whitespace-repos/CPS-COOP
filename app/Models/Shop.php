@@ -26,6 +26,16 @@ class Shop extends Model
      */
     public function products()
     {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class)->as('association')->withPivot('stock');
+    }
+
+ 
+
+    /**
+     * Get all of the stock_requests for the shop.
+    */
+    public function  stock_requests()
+    {
+        return $this->hasMany(StockRequest::class);
     }
 }
