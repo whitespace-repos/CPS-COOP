@@ -1,0 +1,2 @@
+npm i vue-split-carousel
+npm install moment --save
