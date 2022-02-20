@@ -1,7 +1,7 @@
 <template>
     <Head title="Dashboard" />
     <BreezeAuthenticatedLayout>
-    <section>
+    <section>        
       <div class="BodyTop">
         <div class="row">
             <div class="col" >
@@ -12,7 +12,7 @@
                   <inertia-link :href="route('stock.view.request')" class="Btn">View All</inertia-link>
                 </div>
                 <div class="card-body d-flex justify-content-center">
-                    <div class="item mr-3" v-for="product in shop.products" :key="product.id">
+                    <div class="item mr-3" v-for="product in productCurrentStock" :key="product.id">
                     <div class="itemBox px-4" v-if="product.stock"> <span class="img mr-2"><img :src="product.image" alt="icon"></span> <span class="">
                       <h3>{{ product.association.stock +' ' + product.weight_unit }}</h3>
                       <p>{{ product.product_name }}</p>
@@ -26,14 +26,21 @@
                 <div class="card-header CS_header">
                   <h5 class="my-2">Today's Sales</h5> 
                 </div>
-                <div class="card-body d-flex justify-content-center p-0">
-                  <div class="item" v-for="product  in shop.products" :key="product.id">
-                    <div class="itemBox pb-4 pt-4"> <span class="img mr-2 my-2"><img :src="product.image" alt="icon"></span> <span class="">
-                       <h6>{{ product.association.stock +' ' + product.weight_unit }}</h6>
-                      <p>{{ product.product_name }}</p>
-                      </span> 
-                    </div>
-                  </div>               
+                <div class="card-body d-flex justify-content-center p-0" :class="{'p-4':(sales.length == 0)}" >
+                  <template v-if="sales.length > 0">
+                    <div class="item" v-for="sale  in sales" :key="sale.id">
+                        <div class="itemBox pb-4 pt-4">
+                            <span class="img mr-2 my-2"><img :src="sale.product.image" alt="icon"></span> <span class="">
+                                <h6>{{ sale.total_sales }} <sup>INR</sup> </h6>
+                                <p>{{ sale.product.product_name }}</p>
+                            </span> 
+                        </div>
+                    </div> 
+                  </template>
+                  <template v-else>
+                        <h6 class="p-4 mb-0">No Sale Found For Today</h6>
+                  </template>
+                               
                 </div>
               </div>
             </div>            
@@ -51,7 +58,7 @@
                             <form action="#" method="POST" class="container my-4" @submit.prevent="saveCustomerForm">                               
                                 <ul>
                                     <li>                                     
-                                        <input placeholder="Mobile" id="customer" autocomplete="off" v-model="form.customer.phone" :disabled="cartFlag ? true : false">
+                                        <input placeholder="Mobile" id="customer" autocomplete="off" v-model="form.customer.phone" :disabled="Object.keys(carts).length > 0">
                                     </li>
                                     <li :class="{'border-0 text-danger': existingCustomer }" class="pb-0">
                                         <h4 v-if="existingCustomer" class="text-center"> {{ form.customer.name }}</h4>
@@ -80,11 +87,11 @@
                                 <tbody>
                                     <tr v-for="cart in carts" :key="cart.id">
                                         <td>{{ cart.name }}</td>
-                                        <td>{{ cart.attributes.rate }}</td>
+                                        <td>{{ cart.attributes.rate }} <sup>INR</sup> </td>
                                         <td>{{ cart.attributes.weight }} <sup>kg</sup></td>                                                     
                                         <td>{{ cart.price }}</td>   
                                         <td>
-                                            <form  method="POST" class="mr-2 small" @submit.prevent="removeCart">
+                                            <form  method="POST" class="mr-2 small" @submit.prevent="removeCart($event,cart)">
                                                 <input type="hidden" :value="cart.id" name='id' />
                                                 <button class="btn text-danger small" type="submit">x</button>
                                             </form> 
@@ -92,11 +99,12 @@
                                     </tr>
                                     <tr>
                                         <td colspan="3"><strong>Total Amount:</strong></td>
-                                        <td colspan="2"><strong>Rs.0</strong></td>
+                                        <td colspan="2"><strong><sup>INR</sup> {{ totalAmount }}</strong></td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <button class="btn btn-primary" type="button"  >Generate Bill</button>
+                            
+                            <inertia-link :href="this.route('cart.list')" type="button" class="btn btn-primary"> Generate Bill </inertia-link>                           
                         </div>
                     </div>
                 </div>
@@ -105,7 +113,7 @@
             <div class="col-lg-6 ">                                       
                 <div class="customer_info" v-if="existingCustomer">
                     <div class="CI_header">
-                        <h3>Stock Request</h3>
+                        <h3>Billing System</h3>
                     </div>
                     <div class="CI_body">
                         <div class="Stock_list" id="style-3">
@@ -128,8 +136,9 @@
                                         </label>
                                         <label class="radioPart">
                                             Wholesale: 
-                                            <p>
-                                               <span class="font-weight-normal d-block" v-for="range in product.weight_ranges" :key="range.id" style="font-size:11px">{{ range.wholesale_rate }} <sup>INR </sup> {{ ' : ' + range.from +'-'+range.to+' '+ product.weight_unit }}</span>                                              
+                                            <!-- JSON.parse(product.rate.wholesale_rate) -->
+                                            <p v-if="product.rate != null && product.rate != ''">                                               
+                                               <span class="font-weight-normal d-block" v-for="range in parseToJSON(product.rate.wholesale_rate)" :key="range.id" style="font-size:11px">{{ range.rate }} <sup>INR </sup> {{ ' : ' + range.from +'-'+range.to+' '+ product.weight_unit }}</span>                                              
                                             </p>
                                             <input type="radio" :name="'product_'+product.id+'_radio'"  :class="['tbName' , 'product_' +product.id+ '_wholesale_radio' ]" value="wholesale" data-btn="submit1">
                                             <span class="checkmark"></span>
@@ -138,12 +147,12 @@
                                     <span class="product_btn">
                                         <form action="#" method="POST" class="font-weight-bold" @submit.prevent="addToCart">
                                             <div class="input-group">
-                                                <input  class="form-control" placeholder="0"  name="weight"  @input="calateprice" :data-wholesale-range="JSON.stringify(product.weight_ranges)"  :data-retail-rate="(product.rate == null ) ? 0 : product.rate.retail_rate" :data-product="product.product_name" :data-product-id="product.id" :data-wholesale-weight="product.wholesale_weight" autocomplete="off" data-amount="0" data-rate="0"/>
+                                                <input  class="form-control" placeholder="0"  name="weight" v-model="billingWeightInput['product-'+product.id]" @input="calateprice" :data-wholesale-range="(product.rate != null && product.rate != '') ? product.rate.wholesale_rate : []"  :data-retail-rate="(product.rate == null ) ? 0 : product.rate.retail_rate" :data-product="product.product_name" :data-product-id="product.id" :data-wholesale-weight="product.wholesale_weight" autocomplete="off" data-amount="0" data-rate="0"/>
                                                 <div class="input-group-append">
                                                     <small class="input-group-text">{{product.weight_unit}}</small>
                                                     <p class="price">0 <sup>INR</sup></p>
                                                 </div>
-                                                <button class="btn btn-primary submit" type="submit" :disabled="product.rate == null">ADD</button>
+                                                <button class="btn btn-primary submit ml-1" type="submit" :disabled="product.rate == null">ADD</button>
                                             </div>
                                         </form>                                            
                                     </span>
@@ -159,31 +168,36 @@
             </div>
     
             <div class="col-lg-3 displayNoneIpad">
-                <div class="Purchase_History" v-if="existingCustomer">
+                <div class="Purchase_History">
                     <div class="PH_header">
                         <h3>Purchase History</h3>
                     </div>
                     <div class="PH_body">                   
                         <div class="table-responsive">
-                            <table class="table table-fixed">
+                            <table class="table table-striped table-sm table-hover">
                                 <thead>
                                     <tr>
-                                        <th scope="col" class="col-3">Date</th>
-                                        <th scope="col" class="col-4">Total</th>
-                                        <th scope="col" class="col-5">Received Amt</th>
+                                        <th>Date</th>
+                                        <th>Total</th>
+                                        <th>Received Amt</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tbodyBar">
+                                <tbody class="text-white">
+                                     <tr v-for="history in shop.purchase_history" :key="history.id" >
+                                        <td>{{ history.date }}</td>
+                                        <td>{{ history.total }} <sup>INR </sup></td>
+                                        <td>{{ history.receive }} <sup>INR </sup></td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
 
-                <div class="Purchase_History black-history " v-else>                    
+                <!-- <div class="Purchase_History black-history " v-else>                    
                     <img src="/assets/img/blank_img2.png" alt="icon">
                     <h6>No History Available</h6>                    
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -200,7 +214,7 @@
             </div>
             
             <!-- Modal body -->
-            <div class="modal-body">
+            <div class="modal-body d-flex">
                 <div class="poupDiv">
                 <ul>
                     <template v-for="product in shop.products" :key="product.id">
@@ -229,17 +243,34 @@
              </form>
             </div>
         </div>
-    </div>
+    </div>      
   </section>
+
     </BreezeAuthenticatedLayout>
 </template>
 
 <script>          
 import { SplitCarousel, SplitCarouselItem } from  'vue-split-carousel'
 import BreezeAuthenticatedLayout from '@/Layouts/BillingSystem.vue'
-import { Head } from '@inertiajs/inertia-vue3'
+import { Head , Link} from '@inertiajs/inertia-vue3'
 import _ from 'lodash'
 
+
+const options = {
+  name: '_blank',
+  specs: [
+    'fullscreen=yes',
+    'titlebar=yes',
+    'scrollbars=yes'
+  ],
+  styles: [
+    'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css',
+    'https://unpkg.com/kidlat-css/css/kidlat.css'
+  ],
+  timeout: 1000, // default timeout before the print window appears
+  autoClose: true, // if false, the window will not close after printing
+  windowTitle: window.document.title, // override the window title
+}
 
 export default {
     components: {
@@ -248,7 +279,7 @@ export default {
         SplitCarousel,
         SplitCarouselItem
     },
-    props:['products','shop','carts'],
+    props:['products','shop','carts','sales'],
     data () {
       return {
                   existingCustomer:false,
@@ -259,6 +290,8 @@ export default {
                   customer:'',
                   cartFlag:false,
                   paymentMethod:'EMI',
+                  currentStock:[],
+                  billingWeightInput:{},
                   form:{
                       customer :this
                                   .$inertia
@@ -294,51 +327,48 @@ export default {
       },
     mounted(){
       var _this = this;
+      // 
+      this.currentStock = this.shop.products;
 
+      console.log(this.currentStock);
+      //   
       if(Object.keys(this.carts).length > 0 ){
           this.existingCustomer = true;
           this.form.customer = _.get(_.values(this.carts), 0).attributes.customer;
+          //
+          let _this = this;
+          _.forIn(this.carts, function(o, k) {
+            _this.currentStock.filter(function(s){                
+                 if(o.attributes.product.id == s.id){
+                     s.association.stock = s.association.stock - o.attributes.weight;
+                 }
+            })
+          });           
       }
 
       $('#customer').mask('0000000000',{
           onComplete: function(phone) {  
-                    this
-                        .axios
-                        .post(
-                                this.route('customer.existance'),
-                                {
-                                  "phone":phone , 
-                                  "_token":_this.token
-                                }
-                        )                        
-                        .then(response => {
-                               _this.existingCustomer = response.data.existingCustomer;
-                               _this.form.customer = response.data.customer;
-                               console.log(_this.existingCustomer);
-                            }
-                        )
-
-            // alert(phone);
-            //   vue.rate;
-            //   $.post("{{ route('customer.existance') }}",{"phone":phone , "_token":vue.token},function(response){   
-            //       vue.existingCustomer = response.existance;
-            //       if(vue.existingCustomer){
-            //           _.assignIn(vue.form.customer,response.customer);                        
-            //       } else{
-            //           vue.form.customer.name = "";
-            //           vue.form.customer.email = "";
-            //           vue.form.customer.location = "";
-            //       }
-                  
-            //       //vue.formUrl = (response.existance) ? "{{ route('cart.store') }}" : " {{ route('login') }}";                           
-            //   });
+            this
+                .axios
+                .post(
+                        this.route('customer.existance'),
+                        {
+                            "phone":phone , 
+                            "_token":_this.token
+                        }
+                )                        
+                .then(response => {
+                        _this.existingCustomer = response.data.existingCustomer;
+                        // 
+                        if(_this.existingCustomer)  
+                            _.merge(_this.form.customer,response.data.customer);                      
+                        
+                    }
+                )
           },
           onChange:function(){
               _this.existingCustomer = false;
-              // vue.existingCustomer = false;
-              // vue.form.customer.name = "";
-              // vue.form.customer.email = "";
-              // vue.form.customer.location = "";
+              _this.form.customer.name="";
           }
       }); 
     },
@@ -347,25 +377,31 @@ export default {
               // Make a request for a user with a given ID
               // get only
               totalAmount: function () {
-                  // 
-                  this.form.cart.customer = this.form.customer.phone;
-                  this.form.cart.rate = this.rate;
-                  // 
-                  this.form.cart.amount =  parseFloat(this.form.cart.weight) * parseFloat(this.rate);
-                  return this.form.cart.amount;
-              } 
+                  //
+                  let total = 0;
+                   _.forIn(this.carts, function(o, k) {  
+                       total += o.price;
+                   });                 
+                  return total;
+              },
+              productCurrentStock(){                  
+                return this.currentStock;
+              }
               
 
       },
       methods: {
           saveCustomerForm(event) {
             this.form.customer.post(this.route('customer.store',), {
-                only: ["existance","customer","totalCartItem"],
+                only: ["existingCustomer","customer","totalCartItem"],
                 onSuccess: (response) => { 
                                     this.form.customer.reset('name');
                                     window.history.pushState('data', 'Save Customer', '/make-sale');   
-                                    //  
+                                    // 
                                     this.existingCustomer = response.props.existingCustomer;
+                                    // 
+                                    if(this.existingCustomer)  
+                                        _.merge(this.form.customer,response.props.customer);                      
                 },
             })
               // this
@@ -393,6 +429,8 @@ export default {
           },
           addToCart(event){
               // 
+
+              
               var $form = $(event.target),
                   $el = $form.find('[name=weight]');
               //   
@@ -405,7 +443,16 @@ export default {
               this.form.cart.post(this.route('cart.store'), {
                     only: ["carts"],
                     onSuccess: (response) => {                                    
-                                    window.history.pushState('data', 'Add to Cart', '/make-sale'); 
+                                    window.history.pushState('data', 'Add to Cart', '/make-sale');                                     
+                                    let _this = this;
+                                    this.currentStock.filter(function(o) {
+                                            if(o.id == _this.form.cart.product){
+                                                o.association.stock = o.association.stock - _this.form.cart.weight;
+                                            } 
+                                    })
+                                    this.billingWeightInput["product-"+this.form.cart.product] = 0;
+                                    $el.closest('form').find(".price").html(parseFloat(0));
+                                    $(".product_"+_this.form.cart.product+"_retail_radio").prop("checked",true);
                     },
                 })
 
@@ -428,22 +475,27 @@ export default {
             //       $form.find(".pro-price").html(parseFloat(0));
             //   });                    
           },
-          removeCart(event){
+          removeCart(event,item){
               var  $form = $(event.target),
                     $el = $form.find("[name='id']");
 
-            
+                console.log(item);
               this.form.removeCart.id = $el.val();
-              console.log(this.form.removeCart);
-
               this.form.removeCart.post(this.route('cart.remove') ,{
                     only: ["carts"],
                     onSuccess: (response) => {                                     
                                     window.history.pushState('data', 'Remove from Cart', '/make-sale'); 
-                                    if(Object.keys(this.carts).length == 0 ){
-                                        this.existingCustomer = false; 
-                                        this.form.customer.name = null;                                       
-                                    }
+                                    // 
+                                    this.currentStock.filter(function(o) {
+                                        console.log(o);
+                                        if(o.id == item.attributes.product.id){
+                                            o.association.stock = o.association.stock + item.attributes.weight;
+                                        } 
+                                    })
+                                    // 
+                                    // if(Object.keys(this.carts).length == 0 ){                                        
+                                                                    
+                                    // }
                     },
                 })
             //   event.preventDefault();
@@ -463,10 +515,12 @@ export default {
                 weight = $el.val(),
                 wholesale = _.find($el.data('wholesaleRange'), function(r) { return  (r.from <= weight && weight <= r.to) ; }),
                 retail = $el.data('retailRate'),
-                rate = (_.isNaN(wholesale) || _.isNil(wholesale)) ? parseFloat(retail) : parseFloat(wholesale.wholesale_rate),
+                rate = (_.isNaN(wholesale) || _.isNil(wholesale)) ? parseFloat(retail) : parseFloat(wholesale.rate),
                 product = $el.data('product'),
                 productId = $el.data('productId'),
-                totalCost = parseFloat(rate) * parseFloat(weight);
+                totalCost = parseFloat(rate) * parseFloat(weight);               
+
+                console.log($el.data('wholesaleRange'));
 
                 if(_.isNaN(wholesale) || _.isNil(wholesale)){
                     $(".product_"+productId+"_retail_radio").prop("checked",true);
@@ -483,7 +537,10 @@ export default {
                     $(".product_"+productId+"_wholesale_radio").prop("checked",false);
                     $el.attr('data-amount',0).attr('data-rate',0);
                 }
-          }
+          },
+          parseToJSON(data){               
+               return JSON.parse(data);                
+          } 
       },
 }
 </script>

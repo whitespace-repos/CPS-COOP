@@ -16,6 +16,7 @@ class PurchaseHistory extends Model
                                 'quantity',
                                 'sold_by',
                                 'shop_id',
+                                'cart',
     ];
 
 

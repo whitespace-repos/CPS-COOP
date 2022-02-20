@@ -18,7 +18,7 @@
         </div>
     </header>
     <!-- Page Content -->
-    <main id="main">
+    <main id="main" style="height: calc(100vh - 90px);padding-top: 90px;">
         <slot />
     </main>       
 </template>

@@ -31,16 +31,17 @@ Route::resource('user',Users::class);
 Route::resource('settings',Settings::class);
 Route::resource('rate',Rates::class);
 Route::get('filter/product/shops/{product}',[Shops::class,'filter_shops_by_product']);
+Route::get('print-receipt',[CartController::class, 'printReceipt'])->name('print-receipt');
 
 Route::resource('stocks',Stocks::class);
 
 Route::get('stock/view/requests',[Stocks::class,'viewRequests'])->name('stock.view.request');
 Route::post('stock/request/submit',[Stocks::class,'requested'])->name('stock.request.submit');
-Route::get('stock/request/approved/{id}',[Stocks::class,'approved'])->name('approve.stock.request');
+Route::post('stock/request/approved/{id}',[Stocks::class,'approved'])->name('approve.stock.approved');
 Route::post('stock/request/payment/options/{id}',[Stocks::class,'payment_options'])->name('stock.request.payment.option');
-Route::get('stock/send/{id}',[Stocks::class,'stock_send'])->name('send.stock');
-Route::get('stock/received/{id}',[Stocks::class,'stock_received'])->name('received.stock');
-Route::get('stock/completed/{id}',[Stocks::class,'stock_completed'])->name('completed.stock');
+Route::post('stock/send/{id}',[Stocks::class,'stock_send'])->name('send.stock');
+Route::post('stock/received/{id}',[Stocks::class,'stock_received'])->name('received.stock');
+Route::post('stock/completed/{id}',[Stocks::class,'stock_completed'])->name('completed.stock');
 Route::get('stock/request/detail/{id}',[Stocks::class,'stock_request_detail'])->name('stock.request.detail');
 
 
@@ -57,6 +58,7 @@ Route::post('cart', [CartController::class, 'addToCart'])->name('cart.store');
 Route::post('update-cart', [CartController::class, 'updateCart'])->name('cart.update');
 Route::post('cart/remove', [CartController::class, 'removeCart'])->name('cart.remove');
 Route::post('cart/clear', [CartController::class, 'clearAllCart'])->name('cart.clear');
+Route::post('cart/checkout',[CartController::class,'checkout'])->name('cart.checkout');
 
 
 Route::get('/', function () {

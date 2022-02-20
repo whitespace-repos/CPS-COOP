@@ -119,18 +119,22 @@ class Stocks extends Controller
 
     public function approved(Request $request,$id){        
         $stockRequest = StockRequest::find($id);
-        $stockRequest->status = 'Approved';
-        $stockRequest->supply_rate = $request->supply_rate;
+        $stockRequest->status = 'Approved';        
         $stockRequest->save();
         // 
-        $stockRequest->requested_products()->update([ 'status' => 'Approved' ]);
+        foreach ($stockRequest->requested_products as $key => $rp) {
+            # code...
+            $rp->status = 'Approved';
+            $rp->supply_rate = (empty($request->supply_rates['product-'.$rp->id])) ? 0 : $request->supply_rates['product-'.$rp->id] ;
+            $rp->save();
+        }        
         return back();
     }
 
     public function payment_options(Request $request , $id){
         $stockRequest = StockRequest::find($id);
-        $stockRequest->payment_method = $request->payment_option;
-        $stockRequest->payment_period  =  $request->payment_option_period;
+        $stockRequest->payment_method = $request->payment_method;
+        $stockRequest->payment_period  =  $request->payment_period;
         $stockRequest->status = 'Processing';
         $stockRequest->save();
         // 
@@ -144,11 +148,9 @@ class Stocks extends Controller
         $stockRequest->save();
         // 
         foreach($stockRequest->requested_products as $rp){
-            if($request->filled($rp->id)){
-                $rp->stock_sent = $request->get($rp->id);
-                $rp->status = 'Sent';
-                $rp->save();
-            }
+            $rp->status = 'Sent';
+            $rp->stock_sent = (empty($request->send_stocks['product-'.$rp->id])) ? $rp->stock_request : $request->send_stocks['product-'.$rp->id];
+            $rp->save();
         }
         return back();
     }
@@ -168,23 +170,23 @@ class Stocks extends Controller
             $stockRequest = StockRequest::find($id);
             $stockRequest->status = 'Received';
             $stockRequest->save();
-
+            // 
             foreach($stockRequest->requested_products as $product){ 
-                
-                if($request->filled($product->id)){
-                    $product->stock_received = $request->get($product->id);
-                    $product->stock_wastage = (float) $product->stock_sent - (float) $request->get($product->id);
+                // 
+                if(!empty($request->receive_stocks['product-'.$product->id])){
+                    $product->stock_received = $request->receive_stocks['product-'.$product->id];
+                    $product->stock_wastage = (float) $product->stock_sent - (float) $request->receive_stocks['product-'.$product->id];
                     $product->save();
                 }
-
+                // 
                 $p = $shop->products()->find($product->product_id);
                 $assoc = $p->association;
-                $assoc->stock += $product->stock_request;
+                $assoc->stock += $product->stock_received;
                 $assoc->save();
             }                
             $stockRequest->requested_products()->update([ 'status' => 'Received' ]);
         }       
-       return redirect()->route('make-sale');
+       return back();
     }
 
     public function stock_request_detail($id){

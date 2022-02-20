@@ -8,13 +8,23 @@ use Shop;
 use Cart;
 use PurchaseHistory;
 use Inertia;
+use DB;
 
 class Sales extends Controller
 {
     //
     public function make(){
-        $shop = auth()->user()->shop()->with('products.weightRanges','products.rate')->first();   
-        return Inertia::render('Sale/Make', ["products" => [] ,  "shop" => $shop ,"carts" => Cart::getContent()->toArray() ]);
+        $shop = auth()->user()->shop()->with('products.weightRanges','products.rate','purchase_history')->first();   
+        $sales = auth()
+                        ->user()
+                        ->shop
+                        ->today_sales()
+                        ->with('product')
+                        ->select('*', DB::raw('SUM(receive) as total_sales'))
+                        ->orderBy('created_at','desc')
+                        ->groupBy('product_id')
+                        ->get();
+        return Inertia::render('Sale/Make', ["products" => [] ,  "shop" => $shop ,"carts" => Cart::getContent()->toArray() , "sales" => $sales ]);
     }
 
     public function getProducts(){

@@ -16,22 +16,15 @@ class Rates extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($id = NULL)
+    public function index()
     {        
         //
         $rates = Rate::where( 'date', Carbon::today())
                         ->with('product.weightRanges')
                         ->where('status','Active')
                         ->get();
-
-        \Log::info($rates);
-        //return view('pages.rates.main',compact('rates'));
-        $products = Product::all();
-        if(empty($id))
-            $id = empty($products) ? null : $products->first()->id;
-        //
-        $product = Product::where('id',$id)->with('shops','weightRanges')->first();
-
+        $products = Product::all();        
+        $product = empty($products) ? [] : Product::with('shops','weightRanges')->first();
         return Inertia::render('Rate/Rates', ["products" => $products ,"selectedProduct" => $product , "rates" => $rates ]);
     }
 
@@ -68,15 +61,26 @@ class Rates extends Controller
         }        
         // 
         $request->request->add(['date' => Carbon::today()]);        
-        Rate::create($request->all());
+        $rate = Rate::create($request->all());
        
 
         // Save Whole weight Range Rate
+        $wholesaleRangeRates = collect();
+
         foreach($product->weightRanges as $key => $range){              
-            $weightRange = ProductWholesaleRateRange::find($range->id);
-            $weightRange->wholesale_rate = (empty($request->range["range-".$range->id])) ? 0 : $request->range["range-".$range->id];                
-            $weightRange->save();            
+            $range->wholesale_rate = (empty($request->range["range-".$range->id])) ? 0 : $request->range["range-".$range->id];                
+            $range->save();  
+            $wholesaleRangeRates->push([
+                                "from" => $range->from,
+                                "to" => $range->to,
+                                "product_id" => $range->product_id,
+                                "id" => $range->id,
+                                "rate" => (empty($request->range["range-".$range->id])) ? 0 : $request->range["range-".$range->id],            
+            ]);            
         }
+
+        $rate->wholesale_rate =  $wholesaleRangeRates->toJson();
+        $rate->save(); 
 
         return redirect()->route('rate.index');
     }

@@ -11,7 +11,7 @@ class StockRequestedProduct extends Model
     protected $table = "stock_requested_products";
 
     // 
-    protected $fillable = ['product_id','stock_request_id','stock_request','current_stock','status','stock_received','stock_sent','stock_wastage'];
+    protected $fillable = ['product_id','stock_request_id','stock_request','current_stock','status','stock_received','stock_sent','stock_wastage','supply_rate'];
 
     public function product(){
         return $this->belongsTo('Product');

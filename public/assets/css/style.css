@@ -147,7 +147,7 @@ a {
 	-webkit-flex-direction: row;
 	flex-direction: row; */
 	position: relative;
-	padding-top: 90px;
+	padding-top: 50px;
 }
 /*=========== wrapper End ===========*/
 
@@ -163,7 +163,7 @@ a {
 	height: 93%;
 	background: #fff;
 	position: absolute;
-	top: 90px;
+	top: 91px;
 	left: 0;
 	transition: 0.5s;
 }
@@ -234,7 +234,7 @@ a {
 	-webkit-flex-direction: column;
 	flex-direction: column;
 	width: calc(100% - 175px);
-	padding: 30px 35px;
+	padding: 70px 35px 30px;
 	margin-left: 175px;
 }
 /*=========== main-panel End ===========*/
@@ -4255,7 +4255,7 @@ a {
 }
 #main {
 	height: calc(100vh - 90px);
-	padding-top:40px;
+	/* padding-top:40px; */
 }
 .BodyTop {
 	padding: 30px;
@@ -4693,14 +4693,14 @@ a {
 .btn-primary {
 	background: #984346 !important;
 	border: none !important;
-	font-size: 14px;
+	/* font-size: 14px;
 	border-radius: 30px;
 	text-align: center;
 	width: 62px;
 	height: 45px;
 	font-weight: 700;
 	margin-left: 15px;
-	box-shadow: none !important;
+	box-shadow: none !important; */
 }
 .input-group p {
 	display: block;

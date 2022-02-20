@@ -19,7 +19,7 @@ class CreateStockRequestsTable extends Migration
             $table->foreignId('shop_id')->constrained('shops');
             $table->double('stock_request', 8, 2)->default(0)->nullable();
             $table->double('stock_remaining', 8, 2)->default(0)->nullable();
-            $table->enum('payment_method',['EMI','Cash','Checks','Debit cards','Credit cards','Mobile payments','UPI','Electronic bank transfers'])->default("Cash")->nullable();
+            $table->enum('payment_method',['Pay When Stock Received','Pay After Sales Completed','EMI','Cash','Checks','Debit cards','Credit cards','Mobile payments','UPI','Electronic bank transfers'])->default("Cash")->nullable();
             $table->integer('payment_period')->nullable();
             $table->foreignId('stock_requested_by')->nullable()->constrained('users');
             $table->enum('status',['Requested','Pending','Rejected','Approved'])->default('Requested')->nullable();

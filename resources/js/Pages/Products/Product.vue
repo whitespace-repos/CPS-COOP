@@ -18,44 +18,38 @@
         <div class="ProTop mt-4">
           <div class="row TopDiv">
             <div class="col-lg-4">
-              <div class="Pro_info  overflow-hidden">
-                <div class="Pro_infoHr">
-                  <h2>Create Weight Units</h2>
-                </div>
-                <div class="Pro_infoBody">
-                  <div class="proAdd"> 
-                    <form action="" method="POST" @submit.prevent="saveWeightUnit">
-                      <span>
-                          <label>Value</label>
-                          <input v-model="form.weightUnit.value" />
-                      </span> 
-                      <span>
-                          <label>Key</label>
-                          <input v-model="form.weightUnit.key"  />
-                      </span>
-                      <button type="submit" class="btn">Add</button>
-                    </form>
-                  </div>
-                  <div class="proHistory pb-0">
-                    <div class="proHistoryHr">
-                      <h3>Unit History</h3>
+              <div class="card h-100">
+                <div class="card-header font-weight-normal"> Create Weight Units </div>
+                <div class="card-body px-0">                 
+                  <form action="" method="POST" @submit.prevent="saveWeightUnit">
+                    <div class="d-flex">
+                      <div class="form-group m-2">                          
+                          <input v-model="form.weightUnit.value" class="form-control" placeholder="Value"/>
+                      </div> 
+                      <div class="form-group m-2">                          
+                          <input v-model="form.weightUnit.key"  class="form-control" placeholder="Key" />
+                      </div>
                     </div>
-                    <div class="table-responsive pl-2 pr-0">
-                      <table class="table table-fixed">
+                    <button type="submit" class="btn btn-primary  px-5 m-2">Add</button>
+                  </form>                  
+                  <div class="proHistory pb-0">
+                    <div class="px-2">
+                      <h6>Unit History</h6>
+                    </div>
+                    <div class="table-responsive p-0 small">
+                      <table class="table">
                         <thead>
                           <tr>
-                            <th scope="col" class="col-4">Group </th>
-                            <th scope="col" class="col-4">Value</th>
-                            <th scope="col" class="col-2">Key </th>
-                            <th scope="col" class="col-2">Action </th>
+                            <th>Group </th>
+                            <th>Value</th>                            
+                            <th>Action </th>
                           </tr>
                         </thead>
                         <tbody id="tbodyBar">
                           <tr v-for="unit in weightUnits" :key="unit.id">
-                            <td scope="row" class="col-4">Weight Unit</td>
-                            <td class="col-4">{{ unit.value }}</td>
-                            <td class="col-2">{{ unit.key }}</td>
-                            <td class="col-2"><a href="#"><img src="/assets/img/delete_icon.png" alt="icon"> Delete</a></td>
+                            <td>Weight Unit</td>
+                            <td>{{ unit.value +'( '+unit.key + ' )' }}</td>
+                            <td><a href="#"><img src="/assets/img/delete_icon.png" alt="icon"> Delete</a></td>
                           </tr>                         
                         </tbody>
                       </table>
@@ -65,73 +59,80 @@
               </div>
             </div>
             <div class="col-lg-8">
-              <div class="NewProAdd">
-                <div class="NewProAddHr">
-                  <h2>Add New Product</h2>
-                </div>
-                <div class="NewProAddBody">
-                  <form action="" method="POST" @submit.prevent="saveProduct">
-                  <div class="NewProAddFrm">
-                    <ul>
-                      <li>
-                        <label>Product name</label>
-                        <input v-model="form.product.product_name" placeholder="Type product name here" class="form-control">
-                      </li>
-                      <li class="mb-5">
-                        <div class="row">
-                          <div class="col-md-5 mb-5">
-                            <label>Add Weight Ranges</label>
-                            <label class="form-check checkbox">
-                              <input type="checkbox" v-model="form.product.weight_range_flag" style="zoom:2" class="float-left mr-2"/> <span v-if="form.product.weight_range_flag"> Yes </span><span v-else>No</span>
-                            </label>
-                          </div>
-                          <div class="col-md-7" v-if="form.product.weight_range_flag">
-                            <label>Weight for wholesale</label>
-                            <div class="form-group mb-0">
-                                <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.product.weightUnits[0].from"/>
-                                -
-                                <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.product.weightUnits[0].to"/>
-                                {{ form.product.weight_unit }}
+              <div class="card h-100">
+                <div class="card-header"> Add New Product </div>
+                <div class="card-body">
+                  <form action="" class="small" method="POST" @submit.prevent="saveProduct">
+                    <div class="row">
+                      <div class="col">
+                        <div class="form-group">
+                          <label>Product name</label>
+                          <input v-model="form.product.product_name" placeholder="Type product name here" class="form-control">
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="form-group">
+                          <div class="row">
+                            <div class="col mb-5">
+                              <label>Add Weight Ranges</label>
+                              <label class="form-check checkbox">
+                                <input type="checkbox" v-model="form.product.weight_range_flag" style="zoom:2" class="float-left mr-2"/> <span v-if="form.product.weight_range_flag"> Yes </span><span v-else>No</span>
+                              </label>
                             </div>
-                            <div class="form-group mb-0">
-                                <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.product.weightUnits[1].from"/>
-                                -
-                                <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.product.weightUnits[1].to"/>
-                                {{ form.product.weight_unit }}
-                            </div>
-                            <div class="form-group mb-0">
-                                <input class="border-gray w-25 border rounded"    v-model="form.product.weightUnits[2].from"/>
-                                -
-                                <input class="border-gray w-25 border rounded" v-model="form.product.weightUnits[2].to"/>
-                                {{ form.product.weight_unit }}
+                            <div class="col-md-7" v-if="form.product.weight_range_flag">
+                              <label>Weight for wholesale</label>
+                              <div class="form-group mb-0">
+                                  <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.product.weightUnits[0].from"/>
+                                  -
+                                  <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.product.weightUnits[0].to"/>
+                                  {{ form.product.weight_unit }}
+                              </div>
+                              <div class="form-group mb-0">
+                                  <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.product.weightUnits[1].from"/>
+                                  -
+                                  <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.product.weightUnits[1].to"/>
+                                  {{ form.product.weight_unit }}
+                              </div>
+                              <div class="form-group mb-0">
+                                  <input class="border-gray w-25 border rounded"    v-model="form.product.weightUnits[2].from"/>
+                                  -
+                                  <input class="border-gray w-25 border rounded" v-model="form.product.weightUnits[2].to"/>
+                                  {{ form.product.weight_unit }}
+                              </div>
                             </div>
                           </div>
                         </div>
-                     </li>
-                      <li>
-                        <label>Weight unit</label>
-                        <select class="form-control custom-select" v-model="form.product.weight_unit">
-                          <option v-for="unit in weightUnits" :value="unit.key" :key="unit.id">{{ unit.value }} </option>
-                        </select>
-                      </li>
+                      </div>
+                    </div>
 
-                      <li>
-                        <label>Product Image</label>
-                        <input type="file"  class="form-control p-3"  @input="form.product.product_image = $event.target.files[0]"  />
-                      </li>
-
-
-                      <li>
+                    <div class="row">
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <label>Product Image</label>
+                          <input type="file"  class="form-control p-1"  @input="form.product.product_image = $event.target.files[0]"  />
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="form-group">
+                          <label>Weight unit</label>
+                          <select class="form-control custom-select" v-model="form.product.weight_unit">
+                            <option v-for="unit in weightUnits" :value="unit.key" :key="unit.id">{{ unit.value }} </option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="form-group">
                           <label>Manage Stock</label>
                           <label class="form-check checkbox">
                             <input type="checkbox" v-model="form.product.stock" style="zoom:2" class="float-left mr-2"/> <span v-if="form.product.stock"> Yes </span><span v-else>No</span>
                           </label>
-                        </li>
-                      <li>
-                        <button class="btn btn-primary add-btn" type="submit">Add Product</button>
-                      </li>  
-                    </ul>
-                  </div>
+                        </div>
+                      </div>
+                      <div class="col-md-12 text-right">
+                         <hr />
+                        <button class="btn btn-primary add-btn py-2 px-5" type="submit">Add Product</button>
+                      </div>
+                    </div>
                   </form>
                 </div>
               </div>
@@ -144,12 +145,12 @@
             <div class="col-lg-12">
               <div class="Product_List">
                 <div class="proHistory">
-                  <div class="proHistoryHr">
-                    <h3>Product List</h3>
+                  <div class="px-2">
+                    <h6>Product List</h6>
                   </div>
                   <div class="">
                     <table class="table">
-                      <thead>
+                      <thead class="small">
                         <tr>
                           <th>Product Name</th>
                           <th>Shop</th>

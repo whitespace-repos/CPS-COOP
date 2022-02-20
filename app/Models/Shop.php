@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class Shop extends Model
 {
@@ -36,6 +37,20 @@ class Shop extends Model
     */
     public function  stock_requests()
     {
-        return $this->hasMany(StockRequest::class);
+        return $this->hasMany(StockRequest::class)->orderBy('created_at');
+    }
+
+    public function  purchase_history()
+    {
+        return $this->hasMany(PurchaseHistory::class)
+                                                        ->orderBy('created_at')
+                                                        ->where('date',\Carbon\Carbon::today());
+    }
+
+    public function  today_sales()
+    {
+        return $this
+                    ->hasMany(Sale::class)                    
+                    ->where('date',\Carbon\Carbon::today());
     }
 }

@@ -79,7 +79,11 @@ class Shops extends Controller
     public function show($id)
     {
         //
-        $shop = Shop::where("id",$id)->with('products')->first();
+        $shop = Shop::where("id",$id)->with(['products','stock_requests' => function ($query) {
+                    $query->orderBy('created_at', 'desc');
+                },
+                'stock_requests.requested_products.product'])->first();
+
         $products = Product::all();  
         return Inertia::render('Shops/ViewShop', [ "shop" => $shop ,"products" => $products ]);
         //return view('pages.shops.show',compact('shop'));

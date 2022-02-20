@@ -1,2 +1,3 @@
 npm i vue-split-carousel
 npm install moment --save
+npm install vue-html-to-paper

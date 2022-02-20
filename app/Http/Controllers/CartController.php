@@ -7,17 +7,40 @@ use Cart;
 use Customer;
 use Product;
 use Inertia;
+use PurchaseHistory;
+use Carbon;
+use Sale;
+use Twilio\Rest\Client;
 
 class CartController extends Controller
 {
+    private $weight;
     //
     public function cartList()
     {
         
-        $cartItems = Cart::getContent();        
-        return view('cart', compact('cartItems'))->with([
-                                                            "items" => $cartItems->pluck('items')
-        ]);
+        $cartItems = Cart::getContent(); 
+        
+        // 
+        // $receiverNumber = $cartItems->first()->attributes->customer->phone;
+        // $message = "This is testing from ItSolutionStuff.com";  
+        // try {
+  
+        //     $account_sid = getenv("TWILIO_ACCOUNT_SID");
+        //     $auth_token = getenv("TWILIO_AUTH_TOKEN");
+              
+        //     $client = new Client($account_sid, $auth_token);
+        //     $client->messages->create($receiverNumber, [
+        //         'from' => '+18596961154', 
+        //         'body' => $message]);              
+        // } catch (Exception $e) {
+        //     dd("Error: ". $e->getMessage());
+        // }
+
+        return Inertia::render('Sale/Cart', [
+                                                "carts" => Cart::getContent(),
+                                                "items" => $cartItems->pluck('items')
+                                        ]);       
     }
 
 
@@ -37,16 +60,14 @@ class CartController extends Controller
         $customer = Customer::where('phone',$request->customer)->first();
         // 
         $product = Product::with('weightRanges')->where("id",$request->product)->first();
-        $weight = (float) $request->weight;
-        try {
-            $wholesale = $product->weightRanges->sole(function ($range, $key) {
-                            return ($range->from <= 92 && 92 <= $range->to); 
-                        });
-        } catch (\Throwable $th) {
-            $wholesale = null;
-        } 
+        $this->weight = (float) $request->weight;
+        $ranges = collect(json_decode($product->rate->wholesale_rate),true);                
+        $wholesale = $ranges->filter(function ($range, $key) {                            
+            return ($range->from <= $this->weight && $this->weight <= $range->to); 
+        });      
+         
         $retail = empty($product->rate) ? 0 : $product->rate->retail_rate;
-        $rate = (empty($wholesale))  ? (float) $retail : (float) $wholesale->wholesale_rate;
+        $rate = ($wholesale->count() == 0)  ? (float) $retail : (float) $wholesale->first()->rate;
         // 
         $weight = (float) $request->weight;        
         // 
@@ -59,6 +80,7 @@ class CartController extends Controller
             'quantity' => 1,          
             'attributes' => array(
                 "customer" => $customer,
+                "product" => $product,
                 "weight" => $weight,
                 "rate" => $rate,
                 "type" => $request->type    
@@ -99,5 +121,49 @@ class CartController extends Controller
         session()->flash('success', 'All Item Cart Clear Successfully !');
 
         return back();
+    }
+
+    public function checkout(Request $request){        
+        $cartItems = Cart::getContent(); 
+        $products = Product::with(['shops' => function ($query) {
+                        $query->where('shops.id', auth()->user()->shop->id);
+                    }])->get();        
+        foreach ($cartItems as $key => $cart) { 
+            //            
+            $product = $products->find($cart->attributes->product->id);
+            $currentStock = $product->shops->first()->association;
+            // 
+            $currentStock->stock -= $cart->attributes->weight;
+            $currentStock->save();
+
+            $sale = Sale::create([
+                        "date" => Carbon::today(),
+                        "total" => $request->total,
+                        "receive" =>($request->receive == 0 || empty($request->receive)) ? $request->total : $request->receive,
+                        "quantity" => $cart->attributes->weight,
+                        "sold_by" => auth()->id(),
+                        "product_id" => $product->id,
+                        "shop_id" => auth()->user()->shop->id,
+                        "cart" => Cart::getContent()->toJson(),
+            ]);
+
+            //               
+        }      
+        $history = PurchaseHistory::create([
+                    "date" => Carbon::today(),
+                    "total" => $request->total,
+                    "receive" =>$request->receive,
+                    "quantity" => Cart::getContent()->count(),
+                    "sold_by" => auth()->id(),
+                    "shop_id" => auth()->user()->shop->id,
+                    "cart" => Cart::getContent()->toJson(),
+        ]);   
+        //         
+        return redirect()->route('make-sale');
+    }
+
+    public function printReceipt(){
+        return view('print')->with(["carts" =>  Cart::getContent() ]);
+        Cart::clear();
     }
 }

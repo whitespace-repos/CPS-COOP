@@ -171,32 +171,50 @@
                         <li class="nav-item"> <a id="StkReq" class="nav-link active" data-toggle="tab" href="#StockRequest">Stock Request</a> </li>
                         <li class="nav-item"> <a id="SndStk" class="nav-link" data-toggle="tab" href="#SendNewStock">Send New Stock</a> </li>
                       </ul>
-                      <div class="tab-content">
+                      <div class="tab-content px-1 py-3">
                         <div id="StockRequest" class="tab-pane active">
-                          <ul class="StkReq">
-                            <li>
-                              <div class="itemBox"> <span class="img"><img src="/assets/img/hean.png" alt="icon"></span> <span class="txt">
-                                <h3>243 kg</h3>
-                                <p>Broiler Live</p>
-                                </span> <span class="txt"> <a href="javascript:void(0);" class="snd" id="notiSend">Send</a> </span> <span class="Notify"> <a href="#" class="NotiFyNo">01</a> </span> </div>
-                            </li>
-                            <li>
-                              <div class="itemBox"> <span class="img"><img src="/assets/img/egg.png" alt="icon"></span> <span class="txt">
-                                <h3>3500 Nr.</h3>
-                                <p>Eggs</p>
-                                </span><span class="txt">
-                                <div class="Pcs"><img src="/assets/img/ProcessIcon.png" alt="icon">
-                                  <p>Process</p>
-                                </div>
-                                </span> </div>
-                            </li>
-                            <li>
-                              <div class="itemBox"> <span class="img"><img src="/assets/img/hean1.png" alt="icon"></span> <span class="txt">
-                                <h3>243 kg</h3>
-                                <p>Layer Live</p>
-                                </span> <span class="txt"> <a href="javascript:void(0);" class="snd">Send</a> </span> </div>
-                            </li>
-                          </ul>
+                          <div class="container-fluid">
+                            <div class="row">
+                              <div class="col-md-12" v-for="request in shop.stock_requests" :key="request.id">                     
+                                  <div class="card today_sales mb-4">
+                                      <div class="card-header d-flex justify-content-between">
+                                          <h6 class="my-2">Status - {{ request.status }} </h6>                                           
+                                          <button type="button" data-target="#sendStockConfirmRequest" data-toggle="modal" class="btn btn-primary" v-if="request.status == 'Processing'" @click="openSendConfirmationModal(request.id)">Send</button>
+                                          <button type="button" class="btn btn-primary" data-target="#completeStockRequestConfirmationModal" data-toggle="modal" v-if="request.status == 'Received'"  @click="openSendConfirmationModal(request.id)">Completed</button>
+                                      </div>
+                                      <div class="card-body d-flex  p-0">
+                                        <form @submit.prevent="approveStockRequest(request.id)" class="w-100">
+                                          <template  v-for="rp  in request.requested_products" :key="rp.id">
+                                            <div class="item">
+                                                <div class="itemBox p-2">
+                                                    <span class="img mr-2"><img :src="rp.product.image" alt="icon"></span> <span class="">
+                                                        <h6>{{ rp.stock_request +' ' + rp.product.weight_unit }}</h6>
+                                                        <p>{{ rp.product.product_name }}</p>
+                                                        <span  v-if="request.status != 'Requested'">Supply Rate : {{ rp.supply_rate }} <sup>INR</sup> </span>
+                                                    </span> 
+                                                </div>
+                                            </div>
+                                            <div class="form-row align-items-center w-75 my-2 ml-1" v-if="request.status == 'Requested'">
+                                              <div class="col-auto">
+                                                <div class="input-group mb-2">
+                                                  <div class="input-group-prepend">
+                                                    <div class="input-group-text">INR</div>
+                                                  </div>
+                                                  <input type="number" class="form-control" id="inlineFormInputGroup" placeholder="Supply Rate" v-model="form.approvedStockRequest.supply_rates['product-' + rp.id]" />
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </template>    
+                                          <button type="submit" class="btn btn-primary mb-2 ml-auto px-5 mx-2 float-right" v-if="request.status == 'Requested'">Confirm</button>                                     
+                                        </form>               
+                                      </div>
+                                      <div class="card-footer bg-white d-flex align-items-center justify-content-between">
+                                          <span class="font-weight-semibold">Created At <sub> {{ parseDate(request.created_at) }} </sub></span>
+                                      </div>
+                                  </div>
+                              </div>            
+                             </div>      
+                          </div> 
                         </div>
                         <div id="SendNewStock" class="tab-pane fade">
                           <div class="modal-body StockFRm">
@@ -207,29 +225,6 @@
                                   <select class="selectpicker" aria-label="Default select example" data-live-search="false">
                                     <option value="">Coop - Bhuvan-1</option>
                                     <option value="">Coop - Bhuvan-2</option>
-                                    <option value="">Coop - Bhuvan-3</option>
-                                    <option value="">Coop - Bhuvan-1</option>
-                                    <option value="">Coop - Bhuvan-2</option>
-                                    <option value="">Coop - Bhuvan-3</option>
-                                    <option value="">Coop - Bhuvan-1</option>
-                                    <option value="">Coop - Bhuvan-2</option>
-                                    <option value="">Coop - Bhuvan-3</option>
-                                    <option value="">Coop - Bhuvan-1</option>
-                                    <option value="">Coop - Bhuvan-2</option>
-                                    <option value="">Coop - Bhuvan-3</option>
-                                    <option value="">Coop - Bhuvan-1</option>
-                                    <option value="">Coop - Bhuvan-2</option>
-                                    <option value="">Coop - Bhuvan-3</option>
-                                    <option value="">Coop - Bhuvan-1</option>
-                                    <option value="">Coop - Bhuvan-2</option>
-                                    <option value="">Coop - Bhuvan-3</option>
-                                    <option value="">Coop - Bhuvan-1</option>
-                                    <option value="">Coop - Bhuvan-2</option>
-                                    <option value="">Coop - Bhuvan-3</option>
-                                    <option value="">Coop - Bhuvan-1</option>
-                                    <option value="">Coop - Bhuvan-2</option>
-                                    <option value="">Coop - Bhuvan-3</option>
-                                    
                                   </select>
                                 </li>
                                 <li>
@@ -294,6 +289,97 @@
           </div>
         </div>
       </div>
+
+      <div class="modal CmnModal" id="sendStockConfirmRequest">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <button type="button" class="close" data-dismiss="modal"><img src="/assets/img/cross_btn.png" alt=""></button>
+            
+            <!-- Modal body -->
+            
+            <div class="modal-body">
+              <h6 class="mb-4">Confirm and Modify Stock Detail </h6>
+              <form method="POST" @submit.prevent="sendStockToShop(selectedRequest[0].id)" >
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                      <th>#</th>
+                      <th>Product</th>
+                      <th>Requested</th>
+                      <th>Send</th>
+                  </tr>
+                </thead>
+                <tbody>      
+                  <template v-for="r in selectedRequest" :key="r.id">
+                    <!--  -->
+                    <tr v-for="rp in r.requested_products" :key="rp.id">
+                        <td>{{ rp.id }} </td>
+                        <td>{{ rp.product.product_name }}</td>
+                        <td>{{ rp.stock_request + ' ' + rp.product.weight_unit }} </td>                        
+                        <td>
+                         <div class="input-group mb-2">
+                            <input type="number" class="form-control" id="inlineFormInputGroup" placeholder="Stock Send" v-model="form.sendStock.send_stocks['product-' + rp.id]"/>
+                            <div class="input-group-prepend">
+                              <div class="input-group-text">{{ rp.product.weight_unit }}</div>
+                            </div>                            
+                          </div>                          
+                        </td>
+                    </tr>
+                  </template>                   
+                </tbody>
+              </table>
+              <button type="submit" class="btn btn-primary ml-auto">Send Stock To Shop</button>
+            </form> 
+            </div>   
+                    
+          </div>
+        </div>
+      </div>
+
+      <div class="modal CmnModal" id="completeStockRequestConfirmationModal">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <button type="button" class="close" data-dismiss="modal"><img src="/assets/img/cross_btn.png" alt=""></button>
+            
+            <!-- Modal body -->
+            
+            <div class="modal-body">
+              <h6 class="mb-4">Review Stock Detail </h6>
+              
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                      <th>#</th>
+                      <th>Product</th>
+                      <th>Requested</th>
+                      <th>Send</th>
+                      <th>Received</th>
+                      <th>Wastage</th>
+                  </tr>
+                </thead>
+                <tbody>      
+                  <template v-for="r in selectedRequest" :key="r.id">
+                    <!--  -->
+                    <tr v-for="rp in r.requested_products" :key="rp.id">
+                        <td>{{ rp.id }} </td>
+                        <td>{{ rp.product.product_name }}</td>
+                        <td>{{ rp.stock_request + ' ' + rp.product.weight_unit }} </td>                        
+                        <td>{{ rp.stock_sent + ' ' + rp.product.weight_unit }}</td>
+                        <td>{{ rp.stock_received + ' ' + rp.product.weight_unit }}</td>
+                        <td>{{ rp.stock_wastage + ' ' + rp.product.weight_unit }}</td>
+                        
+                    </tr>
+                  </template>                   
+                </tbody>
+              </table>
+              <button @click="completeStockRequest(selectedRequest[0].id)" class="btn btn-primary ml-auto">I , Yes Reviewed</button>
+            
+            </div>   
+                    
+          </div>
+        </div>
+      </div>
+
       
       <!--  main-panel--> 
       <div class="modal CmnModal" id="Add_Product">
@@ -308,17 +394,17 @@
                 <h3>Add New Product</h3>
                 <div class="ShopFrm">
                   <form method="POST" @submit.prevent="addProductsToShop">
-                  <ul>
-                    <li>
-                      <label>Select Product</label>
-                      <select class="selectpicker" multiple aria-label="Default select example" data-live-search="false" id="style-3" v-model="form.addProduct.products">
-                        <option v-for="product in products" :key="product.id" :value="product.id">{{ product.product_name }}</option>                      
-                      </select>
-                    </li>
-                    <li>
-                      <button class="btn btn-primary add-btn" type="submit" >Add Product</button>
-                    </li>
-                  </ul>
+                    <ul>
+                      <li>
+                        <label>Select Product</label>
+                        <select class="selectpicker" multiple aria-label="Default select example" data-live-search="false" id="style-3" v-model="form.addProduct.products">
+                          <option v-for="product in products" :key="product.id" :value="product.id">{{ product.product_name }}</option>                      
+                        </select>
+                      </li>
+                      <li>
+                        <button class="btn btn-primary add-btn" type="submit" >Add Product</button>
+                      </li>
+                    </ul>
                   </form>
                 </div>
               </div>
@@ -331,11 +417,16 @@
 <script type="text/javascript">
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue'
 import { Head } from '@inertiajs/inertia-vue3';
+import moment from 'moment'
+import Button from '@/Components/Button.vue';
+import _ from 'lodash'
+import { Inertia } from '@inertiajs/inertia'
 
 export default {
     components: {
         BreezeAuthenticatedLayout,
         Head,
+        Button,
     },
     props:['products','shop'],
     data () {
@@ -355,8 +446,15 @@ export default {
                         }),
                         addProduct:this.$inertia.form({
                                   products:[]
-                        })
-                  }
+                        }),
+                        approvedStockRequest:this.$inertia.form({
+                                  supply_rates:{}
+                        }),
+                        sendStock:this.$inertia.form({
+                                  send_stocks:{}
+                        })                        
+                  },
+                  selectedRequest:null,
                  
         }
     },
@@ -370,6 +468,16 @@ export default {
          
     },
     methods: {
+        openSendConfirmationModal(id){         
+          this.selectedRequest = _.filter(this.shop.stock_requests, ['id', id]);
+        },
+        completeStockRequest(id){
+          Inertia.post(this.route('completed.stock',id) , { 
+              onSuccess: (page) => {
+                $("#completeStockRequestConfirmationModal").modal("hide");
+              }
+          })
+        },
         addProductsToShop() {           
             this.form.addProduct.patch(this.route('shop.update',this.shop.id), {
                 onSuccess: (response) => { 
@@ -378,6 +486,24 @@ export default {
                 },
             })
         },
+        approveStockRequest(id) {           
+            this.form.approvedStockRequest.post(this.route('approve.stock.approved',id), {
+                onSuccess: (response) => { 
+                                    this.form.approvedStockRequest.reset('supply_rate');                                    
+                },
+            })
+        },
+        sendStockToShop(id) {           
+            this.form.sendStock.post(this.route('send.stock',id), {
+                onSuccess: (response) => { 
+                                    this.form.sendStock.reset();                                    
+                },
+            })
+        },
+        
+        parseDate:function(date) {
+          return moment(date).format("ddd, MMM Do YYYY, h:mm:ss a");
+        }
     }
 }
 </script>

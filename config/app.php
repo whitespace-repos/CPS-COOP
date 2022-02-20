@@ -243,6 +243,7 @@ return [
         'Product' => App\Models\Product::class,
         'PurchaseHistory' => App\Models\PurchaseHistory::class,
         'Stock' => App\Models\Stock::class,
+        'Sale' => App\Models\Sale::class,
         'StockRequest' => App\Models\StockRequest::class,
         'ProductWholesaleRateRange' => App\Models\ProductWholesaleRateRange::class,
         // 

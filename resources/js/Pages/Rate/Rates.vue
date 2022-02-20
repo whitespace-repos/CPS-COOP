@@ -16,7 +16,7 @@
                         <div class="row">
                           <div class="col-md-8">
                             <div class="form-group">
-                                <label> Select Product {{selectedProduct.id }}</label>
+                                <label> Select Product </label>
                                 <select class="custom-select" name="product_id" v-model="form.rate.product_id" @change="this.$inertia.get('/rate/'+$event.target.value)">
                                   <option v-for="product in products" :key="product.id" :value="product.id">{{ product.product_name }}</option>                  
                                 </select>
