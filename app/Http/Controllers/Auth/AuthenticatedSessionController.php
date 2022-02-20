@@ -42,7 +42,13 @@ class AuthenticatedSessionController extends Controller
         header("Pragma: no-cache");
         header('Content-Type: text/html');
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        if(auth()->user()->hasRole('Admin')){
+            return redirect()->intended(RouteServiceProvider::Rate);
+        }else{
+            return redirect()->intended(RouteServiceProvider::MakeSale);
+        }
+        
+        
     }
 
     /**
@@ -58,12 +64,6 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
-
-        header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-        header("Cache-Control: post-check=0, pre-check=0", false);
-        header("Pragma: no-cache");
-        header('Content-Type: text/html');
-
-        return redirect('/login');
+        return redirect()->route('login');
     }
 }

@@ -15,6 +15,12 @@ use Twilio\Rest\Client;
 class CartController extends Controller
 {
     private $weight;
+    private $cartItems;
+
+    public function __construct()
+    {
+       
+    }
     //
     public function cartList()
     {
@@ -123,7 +129,8 @@ class CartController extends Controller
         return back();
     }
 
-    public function checkout(Request $request){        
+    public function checkout(Request $request){             
+        $this->cartItems = Cart::getContent();      
         $cartItems = Cart::getContent(); 
         $products = Product::with(['shops' => function ($query) {
                         $query->where('shops.id', auth()->user()->shop->id);
@@ -158,12 +165,13 @@ class CartController extends Controller
                     "shop_id" => auth()->user()->shop->id,
                     "cart" => Cart::getContent()->toJson(),
         ]);   
-        //         
+        // 
+        Cart::clear();        
         return redirect()->route('make-sale');
     }
 
     public function printReceipt(){
-        return view('print')->with(["carts" =>  Cart::getContent() ]);
-        Cart::clear();
+        $this->cartItems = Cart::getContent(); 
+        return view('print')->with(["carts" => $this->cartItems ]);        
     }
 }

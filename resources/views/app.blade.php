@@ -23,11 +23,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.css" integrity="sha512-YdYyWQf8AS4WSB0WWdc3FbQ3Ypdm0QCWD2k4hgfqbQbRCJBEgX0iAegkl2S1Evma5ImaVXLBeUkIlP6hQ1eYKQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
         <!-- Styles -->
-
-        @guest <link rel="stylesheet" href="{{ mix('css/app.css') }}"> @endguest
-
-
-    </head>
+  </head>
 
     <body class="font-sans antialiased">
         <!--#header-->
