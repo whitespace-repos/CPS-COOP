@@ -22,7 +22,7 @@ class CreateStockRequestsTable extends Migration
             $table->enum('payment_method',['Pay When Stock Received','Pay After Sales Completed','EMI','Cash','Checks','Debit cards','Credit cards','Mobile payments','UPI','Electronic bank transfers'])->default("Cash")->nullable();
             $table->integer('payment_period')->nullable();
             $table->foreignId('stock_requested_by')->nullable()->constrained('users');
-            $table->enum('status',['Requested','Pending','Rejected','Approved'])->default('Requested')->nullable();
+            $table->enum('status',['Requested','Pending','Rejected','Approved','Sent','Received','Completed'])->default('Requested')->nullable();
             $table->timestamps();
         });
     }
