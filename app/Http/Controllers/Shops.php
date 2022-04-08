@@ -20,7 +20,7 @@ class Shops extends Controller
     public function index()
     {
         //
-        $shops = Shop::with('products','stock_requests')->get();        
+        $shops = Shop::with('products','stock_requests')->get();
         $products = Product::with('shops.stock_requests')->get();
         $product =  $products->first();
         return Inertia::render('Shops/Shop', [ "shops" => $shops , "product" => $product ,"products" => $products ]);
@@ -29,8 +29,8 @@ class Shops extends Controller
 
 
     public function filter_shops_by_product($id){
-        $shops = Shop::with('products.rate','stock_requests')->get();   
-        $products = Product::all();            
+        $shops = Shop::with('products.rate','stock_requests')->get();
+        $products = Product::all();
         $product = Product::where('id',$id)->with('shops.stock_requests')->first();
         return Inertia::render('Shops/Shop', [ "shops" => $shops , "product" => $product ,"products" => $products ]);
        // return view('pages.shops.main', compact('shops'));
@@ -57,18 +57,18 @@ class Shops extends Controller
      */
     public function store(Request $request)
     {
-        //        
+        //
         $request->request->add([ "shop_id" => $this->generateUniqueCode() ]);
         $shop = Shop::create($request->all());
-        // 
+        //
         foreach($request->products as $product){
             $association = new ProductShop();
-            $association->product_id = $product;
+            $association->product_id = $product['id'];
             $association->shop_id = $shop->id;
             $association->save();
         }
-        
-        return redirect()->route('shop.index');        
+
+        return redirect()->route('shop.index');
     }
 
     /**
@@ -82,7 +82,7 @@ class Shops extends Controller
         //
         $shop = Shop::where("id",$id)->with(['products.rate','stock_requests.requested_products.product','employee'])->first();
 
-        $products = Product::with('rate')->get();  
+        $products = Product::with('rate')->get();
         $users = User::role('Employee')->get();
         return Inertia::render('Shops/ViewShop', [ "shop" => $shop ,"products" => $products ,"users" => $users]);
         //return view('pages.shops.show',compact('shop'));
@@ -99,7 +99,7 @@ class Shops extends Controller
         //
         $shop = Shop::find($id);
         $products = Product::all();
-        $shopProducts = $shop->products->pluck('id');        
+        $shopProducts = $shop->products->pluck('id');
         return view('pages.shops.edit',compact('products','shop','shopProducts'));
     }
 
@@ -115,7 +115,7 @@ class Shops extends Controller
         //
         $shop = Shop::find($id);
         $shop->update($request->all());
-        // 
+        //
         $shop->products()->sync($request->products);
         $shop->save();
         return redirect()->route('shop.show',$shop->id);
@@ -133,7 +133,7 @@ class Shops extends Controller
         //
         $shop = Shop::find($id);
         $shop->delete();
-        // 
+        //
         return back();
     }
 
@@ -147,7 +147,7 @@ class Shops extends Controller
         do {
             $code = 'CPS-'.random_int(100000, 999999);
         } while (Shop::where("shop_id", "=", $code)->first());
-  
+
         return $code;
     }
 }

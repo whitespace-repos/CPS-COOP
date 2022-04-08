@@ -1,8 +1,8 @@
 <template>
     <Head title="Dashboard" />
 
-    <BreezeAuthenticatedLayout>          
-      
+    <BreezeAuthenticatedLayout>
+
        <div class="main-panel px-2 pt-5 pb-3">
         <div class="container-fluid">
           <!-- <div class="alert alert-danger alert-dismissible fade show" role="alert"> Error message
@@ -31,9 +31,9 @@
             </div>
           </div>
         </div>
-        
+
         <!-- topBar-->
-        
+
         <div class="mt-4">
           <div class="container-fluid">
             <div class="row no-gutters">
@@ -51,7 +51,7 @@
                   </div>
                   <div class="PrdtPnl">
                     <div class="Hdr">
-                      <h3>Product</h3>
+                      <h3 class="heading">Product</h3>
                       <a data-toggle="modal" href="#Add_Product" class="AddPrdt">+</a> </div>
                       <ul class="Prdt">
                         <li v-for="product in shop.products" :key="product.id">
@@ -65,19 +65,19 @@
                   <div class="PnlHdr">
                     <h3>Today's Sales</h3>
                   </div>
-                  <div class="d-flex flex-wrap"> 
-                    
+                  <div class="d-flex flex-wrap">
+
                     <!-------- item 1 -------->
-                    
+
                     <div class="item" v-for="product in shop.products" :key="product.id">
                       <div class="ItemWrapper">
                         <div class="itemBox px-5 m-2"> <span class="img"><img :src="product.image" alt="icon"></span> <span class="txt">
                           <h3>{{ 0 +' '+ product.weight_unit }}</h3>
                           <p>{{ product.product_name }}</p>
                           </span> </div>
-                        <span class="Price">0<sup>INR</sup></span> 
-                      </div>                  
-                    </div>                    
+                        <span class="Price">0<sup>INR</sup></span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -97,19 +97,19 @@
                 </div>
               </div>
             </div>
-            
+
             <hr />
 
             <div class="row no-gutters">
               <div class="col-lg-3">
                 <div class="card h-100 rounded-0">
-                  <div class="">
+                  <div class="heading">
                     <h5 class="my-3 text-center">Today's Rate</h5>
                     <div class="setRateList text-center  mx-4">
                       <ul>
                         <li>
                           <select class="selectpicker" aria-label="Default select example" data-live-search="false" @change="filterProduct($event.target.value)">
-                            <option v-for="product in shop.products" :key="product.id" :value="product.id">{{ product.product_name }}</option>                      
+                            <option v-for="product in shop.products" :key="product.id" :value="product.id">{{ product.product_name }}</option>
                           </select>
                         </li>
                       </ul>
@@ -120,16 +120,16 @@
                       <div class="Hdr">
                         <h4>Wholesale:</h4>
                         <span class="AddRate"><a data-toggle="modal" href="#Add_Rate" class="AddRate">+</a></span> </div>
-                        <p v-if="productRate.rate != null && productRate.rate != ''">                                               
-                          <span class="badge badge-danger font-weight-normal d-block my-1" v-for="range in parseToJSON(productRate.rate.wholesale_rate)" :key="range.id" style="font-size:11px">{{ range.rate }} <sup>INR </sup> {{ ' : ' + range.from +'-'+range.to+' '+ productRate.weight_unit }}</span>                                              
+                        <p v-if="productRate.rate != null && productRate.rate != ''">
+                          <span class="badge badge-danger font-weight-normal d-block my-1" v-for="range in parseToJSON(productRate.rate.wholesale_rate)" :key="range.id" style="font-size:11px">{{ range.rate }} <sup>INR </sup> {{ ' : ' + range.from +'-'+range.to+' '+ productRate.weight_unit }}</span>
                         </p>
                     </div>
                     <div class="RetailSaleWrapper">
                       <div class="Hdr">
                         <h4>Retail:</h4>
                       </div>
-                      <p v-if="productRate.rate != null && productRate.rate != ''">                                               
-                        <span class="badge badge-danger font-weight-normal d-block">{{ productRate.rate.retail_rate }} <sup>INR </sup> {{ productRate.weight_unit }}</span>                                              
+                      <p v-if="productRate.rate != null && productRate.rate != ''">
+                        <span class="badge badge-danger font-weight-normal d-block">{{ productRate.rate.retail_rate }} <sup>INR </sup> {{ productRate.weight_unit }}</span>
                       </p>
                     </div>
                   </div>
@@ -139,9 +139,9 @@
                 <div class="card border-left-0 rounded-0">
                   <div class="StockPnlHdr">
                     <!-- <label class="StkReqPndng"> <small>01</small> Stock Request Pending</label> -->
-                    
+
                     <!-- Tab Start -->
-                    
+
                     <div class="TabWrapper">
                       <ul class="nav nav-tabs rounded-0">
                         <li class="nav-item"> <a id="StkReq" class="nav-link active p-2" data-toggle="tab" href="#StockRequest">Stock Request</a> </li>
@@ -152,16 +152,16 @@
                         <div id="StockRequest" class="tab-pane active">
                           <div class="container-fluid">
                             <div class="row">
-                              <div class="col-md-12" v-for="request in shop.stock_requests" :key="request.id">                     
+                              <div class="col-md-12" v-for="request in shop.stock_requests" :key="request.id">
                                   <div class="card today_sales mb-4" v-if="request.status != 'Completed'">
-                                      <div class="card-header d-flex justify-content-between">                                          
+                                      <div class="card-header d-flex justify-content-between">
                                           <template v-if="request.status != 'Requested'">
-                                            <h6 class="my-2">Status - {{ request.status }}  <small>Actual Payment :{{ request.actual_payment }} <sup>INR</sup></small></h6>                                           
+                                            <h6 class="my-2">Status - {{ request.status }}  <small>Actual Payment :{{ request.actual_payment }} <sup>INR</sup></small></h6>
                                           </template>
                                           <template v-else>
-                                            <h6 class="my-2">Status - {{ request.status }} </h6>                                           
+                                            <h6 class="my-2">Status - {{ request.status }} </h6>
                                           </template>
-                                          
+
                                           <button type="button" data-target="#sendStockConfirmRequest" data-toggle="modal" class="btn btn-primary" v-if="request.status == 'Processing'" @click="openSendConfirmationModal(request.id)">Send</button>
                                           <button type="button" class="btn btn-primary" data-target="#completeStockRequestConfirmationModal" data-toggle="modal" v-if="request.status == 'Received'"  @click="openSendConfirmationModal(request.id)">Completed</button>
                                       </div>
@@ -176,7 +176,7 @@
                                                           <h6 v-else>{{ rp.stock_request +' ' + rp.product.weight_unit }}</h6>
                                                           <p>{{ rp.product.product_name }}</p>
                                                           <span  v-if="request.status != 'Requested'">Supply Rate : {{ rp.supply_rate }} <sup>INR</sup> </span>
-                                                      </span> 
+                                                      </span>
                                                   </div>
                                                   <div class="form-row align-items-center w-75 my-2 ml-1" v-if="request.status == 'Requested'">
                                                     <div class="col-auto">
@@ -188,27 +188,27 @@
                                                       </div>
                                                     </div>
                                                   </div>
-                                              </div>                                            
-                                            </template>    
-                                            <button type="submit" class="btn btn-primary mb-2 ml-auto px-5 mx-2 float-right" v-if="request.status == 'Requested'">Confirm</button>                                     
+                                              </div>
+                                            </template>
+                                            <button type="submit" class="btn btn-primary mb-2 ml-auto px-5 mx-2 float-right" v-if="request.status == 'Requested'">Confirm</button>
                                           </div>
-                                        </form>               
+                                        </form>
                                       </div>
                                       <div class="card-footer bg-white d-flex align-items-center justify-content-between">
                                           <span class="font-weight-semibold">Created At <sub> {{ parseDate(request.created_at) }} </sub></span>
                                       </div>
                                   </div>
-                              </div>            
-                             </div>      
-                          </div> 
+                              </div>
+                             </div>
+                          </div>
                         </div>
                         <div id="ComStockRequest" class="tab-pane">
                           <div class="container-fluid">
                             <div class="row">
-                              <div class="col-md-12" v-for="request in shop.stock_requests" :key="request.id">                     
+                              <div class="col-md-12" v-for="request in shop.stock_requests" :key="request.id">
                                   <div class="card today_sales mb-4" v-if="request.status == 'Completed'">
-                                      <div class="card-header d-flex justify-content-between">                                          
-                                          <h6 class="my-2">Status - {{ request.status }}  <small>Actual Payment :{{ request.actual_payment }} <sup>INR</sup>, Receive Payment : {{ request.payment_received }} <sup>INR</sup></small></h6>                                           
+                                      <div class="card-header d-flex justify-content-between">
+                                          <h6 class="my-2">Status - {{ request.status }}  <small>Actual Payment :{{ request.actual_payment }} <sup>INR</sup>, Receive Payment : {{ request.payment_received }} <sup>INR</sup></small></h6>
                                           <button type="button" data-target="#sendStockConfirmRequest" data-toggle="modal" class="btn btn-primary" v-if="request.status == 'Processing'" @click="openSendConfirmationModal(request.id)">Send</button>
                                           <button type="button" class="btn btn-primary" data-target="#completeStockRequestConfirmationModal" data-toggle="modal" v-if="request.status == 'Received'"  @click="openSendConfirmationModal(request.id)">Completed</button>
                                       </div>
@@ -222,7 +222,7 @@
                                                         <h6 v-else>{{ rp.stock_request +' ' + rp.product.weight_unit }}</h6>
                                                         <p>{{ rp.product.product_name }}</p>
                                                         <span  v-if="request.status != 'Requested'">Supply Rate : {{ rp.supply_rate }} <sup>INR</sup> </span>
-                                                    </span> 
+                                                    </span>
                                                 </div>
                                             </div>
                                             <div class="form-row align-items-center w-75 my-2 ml-1" v-if="request.status == 'Requested'">
@@ -235,27 +235,27 @@
                                                 </div>
                                               </div>
                                             </div>
-                                          </template>    
-                                          <button type="submit" class="btn btn-primary mb-2 ml-auto px-5 mx-2 float-right" v-if="request.status == 'Requested'">Confirm</button>                                     
-                                        </form>               
+                                          </template>
+                                          <button type="submit" class="btn btn-primary mb-2 ml-auto px-5 mx-2 float-right" v-if="request.status == 'Requested'">Confirm</button>
+                                        </form>
                                       </div>
                                       <div class="card-footer bg-white d-flex align-items-center justify-content-between">
                                           <span class="font-weight-semibold">Created At <sub> {{ parseDate(request.created_at) }} </sub></span>
                                       </div>
                                   </div>
-                              </div>            
-                             </div>      
-                          </div> 
+                              </div>
+                             </div>
+                          </div>
                         </div>
                         <div id="SendNewStock" class="tab-pane fade">
                           <form method="POST" @submit.prevent="directStockRequest">
-                          <button class="btn btn-primary  px-5" type="submit">Confirm</button>  
-                          <label class="ml-5"> Total Price : {{ calculateTotalPrice }} <sup>INR </sup></label>                            
+                          <button class="btn btn-primary  px-5" type="submit">Confirm</button>
+                          <label class="ml-5"> Total Price : {{ calculateTotalPrice }} <sup>INR </sup></label>
                             <hr />
                           <div class="modal-body StockFRm">
-                            
+
                             <div class="setRateList">
-                              
+
                               <ul class="Frm">
                                 <template v-for="product in shop.products" :key="product.id">
                                     <template v-if="product.stock">
@@ -263,7 +263,7 @@
                                         <div class="itemBox flex-column"> <span class="img"><img :src="product.image" alt="icon"></span> <span class="txt">
                                             <h3>{{ product.association.stock +' '+ product.weight_unit }}</h3>
                                             <p>{{ product.product_name }}</p>
-                                            </span> 
+                                            </span>
                                             <div class="d-flex" >
                                               <label>
                                                 <small>Request Quantity</small>
@@ -277,19 +277,19 @@
                                             <p>{{ form.directStockRequest.products['product-'+product.id+'-total-price'] }} <sup>INR</sup></p>
                                         </div>
                                       </li>
-                                    </template>         
+                                    </template>
                                 </template>
-                              </ul>                            
-                            </div>                                                     
-                          </div>     
-                          </form>                      
+                              </ul>
+                            </div>
+                          </div>
+                          </form>
                         </div>
-                        
+
                       </div>
                     </div>
-                    
-                    <!-- Tab End --> 
-                    
+
+                    <!-- Tab End -->
+
                   </div>
                 </div>
               </div>
@@ -302,9 +302,9 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <button type="button" class="close" data-dismiss="modal"><img src="/assets/img/cross_btn.png" alt=""></button>
-            
+
             <!-- Modal body -->
-            
+
             <div class="modal-body">
               <h6 class="mb-4">Confirm and Modify Stock Detail </h6>
               <form method="POST" @submit.prevent="sendStockToShop(selectedRequest.id)" >
@@ -317,29 +317,29 @@
                       <th>Send</th>
                   </tr>
                 </thead>
-                <tbody>      
+                <tbody>
                     <template v-if="isNotEmpty(selectedRequest)">
                     <!--  -->
                     <tr v-for="rp in selectedRequest.requested_products" :key="rp.id">
                         <td>{{ rp.id }} </td>
                         <td>{{ rp.product.product_name }}</td>
-                        <td>{{ rp.stock_request + ' ' + rp.product.weight_unit }} </td>                        
+                        <td>{{ rp.stock_request + ' ' + rp.product.weight_unit }} </td>
                         <td width="180">
                           <div class="input-group mb-2">
                             <input type="number" class="form-control" id="inlineFormInputGroup" placeholder="Stock Send" v-model="form.sendStock.send_stocks['product-' + rp.id]"/>
                             <div class="input-group-prepend">
                               <div class="input-group-text">{{ rp.product.weight_unit }}</div>
-                            </div>                            
-                          </div>                          
+                            </div>
+                          </div>
                         </td>
                     </tr>
-                    </template>       
+                    </template>
                 </tbody>
               </table>
               <button type="submit" class="btn btn-primary ml-auto">Send Stock To Shop</button>
-            </form> 
-            </div>   
-                    
+            </form>
+            </div>
+
           </div>
         </div>
       </div>
@@ -348,13 +348,13 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <button type="button" class="close" data-dismiss="modal"><img src="/assets/img/cross_btn.png" alt=""></button>
-            
+
             <!-- Modal body -->
-            
+
             <div class="modal-body">
               <template v-if="isNotEmpty(selectedRequest)">
                 <h6 class="mb-4">Review Stock Detail  <small>Actual Payment : {{ selectedRequest.actual_payment }} <sup>INR</sup></small></h6>
-                
+
                 <table class="table table-bordered">
                   <thead>
                     <tr>
@@ -366,15 +366,15 @@
                         <th>Wastage</th>
                     </tr>
                   </thead>
-                  <tbody>                    
+                  <tbody>
                     <tr v-for="rp in selectedRequest.requested_products" :key="rp.id">
                         <td>{{ rp.id }} </td>
                         <td>{{ rp.product.product_name }}</td>
-                        <td>{{ rp.stock_request + ' ' + rp.product.weight_unit }} </td>                        
+                        <td>{{ rp.stock_request + ' ' + rp.product.weight_unit }} </td>
                         <td>{{ rp.stock_sent + ' ' + rp.product.weight_unit }}</td>
                         <td>{{ rp.stock_received + ' ' + rp.product.weight_unit }}</td>
-                        <td>{{ rp.stock_wastage + ' ' + rp.product.weight_unit }}</td>                      
-                    </tr>                                  
+                        <td>{{ rp.stock_wastage + ' ' + rp.product.weight_unit }}</td>
+                    </tr>
                   </tbody>
                 </table>
                 <div class="form-group w-25 float-left mr-4">
@@ -383,21 +383,21 @@
                 </div>
                 <button @click="completeStockRequest(selectedRequest.id)" class="btn btn-primary p-3 mt-3">I , Yes Reviewed</button>
               </template>
-            </div>   
-                    
+            </div>
+
           </div>
         </div>
       </div>
 
-      
-      <!--  main-panel--> 
+
+      <!--  main-panel-->
       <div class="modal CmnModal" id="Add_Product">
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <button type="button" class="close" data-dismiss="modal"><img src="/assets/img/cross_btn.png" alt=""></button>
-            
+
             <!-- Modal body -->
-            
+
             <div class="modal-body">
               <div class="SetRate">
                 <h3>Add New Product</h3>
@@ -407,7 +407,7 @@
                       <li>
                         <label>Select Product</label>
                         <select class="selectpicker" multiple aria-label="Default select example" data-live-search="false" id="style-3" v-model="form.addProduct.products">
-                          <option v-for="product in products" :key="product.id" :value="product.id">{{ product.product_name }}</option>                      
+                          <option v-for="product in products" :key="product.id" :value="product.id">{{ product.product_name }}</option>
                         </select>
                       </li>
                       <li>
@@ -452,8 +452,8 @@ export default {
                                           shop_dimentions:'',
                                           stock_capacity_per_day:'',
                                           max_sale_estimate_per_day:'',
-                                          estimated_start_date:'',                                          
-                                          products:[]   
+                                          estimated_start_date:'',
+                                          products:[]
                         }),
                         assignEmployee:this.$inertia.form({ employee : '' }),
                         addProduct:this.$inertia.form({
@@ -469,12 +469,12 @@ export default {
                                   products:{},
                                   actual_payment:0,
                                   shop_id:'',
-                        })                        
+                        })
                   },
                   selectedRequest:null,
                   receiveStockPayment:0,
                   productRate:{},
-                 
+
         }
     },
     mounted (){
@@ -488,14 +488,14 @@ export default {
       this.form.assignEmployee.employee = this.isEmpty(this.shop.employee) ? '' : this.shop.employee.id;
       setTimeout(function(){
         $('select').selectpicker('refresh');
-      },1000);   
-      
+      },1000);
+
       _.forEach(this.shop.products,function(e,i){
           _this.form.directStockRequest.products['product-'+e.id+'-total-price'] = 0;
       })
 
-      // 
-      this.productRate = _.head(this.products);              
+      //
+      this.productRate = _.head(this.products);
     },
     computed:{
        calculateTotalPrice:function(){
@@ -509,48 +509,48 @@ export default {
        }
     },
     methods: {
-        openSendConfirmationModal(id){         
+        openSendConfirmationModal(id){
           this.selectedRequest = _.head(_.filter(this.shop.stock_requests, ['id', id]));
-          
-          var _this = this;  
+
+          var _this = this;
           this.receiveStockPayment = this.selectedRequest.actual_payment;
           _.forEach(this.selectedRequest.requested_products, function(rp) {
             _this.form.sendStock.send_stocks['product-' + rp.id] = rp.stock_request;
-          });        
-        
-        },        
+          });
+
+        },
         completeStockRequest(id){
-          Inertia.post(this.route('completed.stock',id),{"payment_received":this.receiveStockPayment},{ 
+          Inertia.post(this.route('completed.stock',id),{"payment_received":this.receiveStockPayment},{
               onSuccess: (page) => {
                 $("#completeStockRequestConfirmationModal").modal("hide");
               }
           })
         },
-        addProductsToShop() {           
+        addProductsToShop() {
             this.form.addProduct.patch(this.route('shop.update',this.shop.id), {
-                onSuccess: (response) => { 
+                onSuccess: (response) => {
                                     this.form.addProduct.reset();
                                     $("#Add_Product").modal("hide");
                                     $('select').selectpicker('refresh');
                 },
             })
         },
-        approveStockRequest(id) {           
+        approveStockRequest(id) {
             this.form.approvedStockRequest.post(this.route('approve.stock.approved',id), {
-                onSuccess: (response) => { 
-                                    this.form.approvedStockRequest.reset('supply_rate');                                    
+                onSuccess: (response) => {
+                                    this.form.approvedStockRequest.reset('supply_rate');
                 },
             })
         },
-        sendStockToShop(id) {           
+        sendStockToShop(id) {
             this.form.sendStock.post(this.route('send.stock',id), {
-                onSuccess: (response) => { 
-                                    this.form.sendStock.reset(); 
-                                    $("#sendStockConfirmRequest").modal("hide");                                   
+                onSuccess: (response) => {
+                                    this.form.sendStock.reset();
+                                    $("#sendStockConfirmRequest").modal("hide");
                 },
             })
         },
-        directStockRequest(){            
+        directStockRequest(){
             this.form.directStockRequest.actual_payment = this.calculateTotalPrice;
             this.form.directStockRequest.shop_id = this.shop.id;
             this.form.directStockRequest.post(this.route('direct.requested'),{
@@ -558,7 +558,7 @@ export default {
                                      this.form.directStockRequest.products = {};
                 },
             })
-        },        
+        },
         parseDate:function(date) {
           return moment(date).format("ddd, MMM Do YYYY, h:mm:ss a");
         },
@@ -572,20 +572,20 @@ export default {
           let _this = this;
           let weight = _.isNaN(parseFloat(_this.form.directStockRequest.products['product-'+id])) ? 0 : parseFloat(this.form.directStockRequest.products['product-'+id]);
           let supplyRate = _.isNaN(parseFloat(_this.form.directStockRequest.products['product-'+id+'-supply-rate'])) ? 0 : parseFloat(this.form.directStockRequest.products['product-'+id+'-supply-rate']);
-          let total = weight * supplyRate;           
+          let total = weight * supplyRate;
           this.form.directStockRequest.products['product-'+id+'-total-price'] = total;
         },
-        parseToJSON(data){               
-          return JSON.parse(data);                
+        parseToJSON(data){
+          return JSON.parse(data);
         },
-        filterProduct(id){  
+        filterProduct(id){
           let url = this.route('filter.product',id);
           let _this = this;
-          // 
-          $.get(url,function(response){            
+          //
+          $.get(url,function(response){
             _this.productRate = response.productRate;
           })
-        }        
+        }
     }
 }
 </script>

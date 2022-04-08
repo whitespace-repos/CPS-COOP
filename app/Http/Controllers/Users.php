@@ -29,26 +29,26 @@ class Users extends Controller
         // $sid = "AC7f403e2092e0071cd5a638ace7bc555c"; // Your Account SID from www.twilio.com/console
         // $token = "f3b9da505803c9baecd7cf73ee0db227"; // Your Auth Token from www.twilio.com/console
 
-        $sid = 'ACeef7e31176eac5903d6f5320cda0de96';
-        $token = 'ebbd02275c2764ba7c5acd4eab5c84ab';
-        $client = new Client($sid, $token);
-        // print_r($client);
-        // A Twilio number you own with Voice capabilities
-        $twilio_number = "+17547993758";
+        // $sid = 'ACeef7e31176eac5903d6f5320cda0de96';
+        // $token = 'ebbd02275c2764ba7c5acd4eab5c84ab';
+        // $client = new Client($sid, $token);
+        // // print_r($client);
+        // // A Twilio number you own with Voice capabilities
+        // $twilio_number = "+17547993758";
 
-        // Where to make a voice call (your cell phone?)
-        $to_number = "+917018643356";
+        // // Where to make a voice call (your cell phone?)
+        // $to_number = "+917018643356";
 
-        $client = new Client($sid, $token);
+        // $client = new Client($sid, $token);
 
-        $client->account->calls->create(
-            $to_number,
-            $twilio_number,
-            array(
-                "url" => "http://demo.twilio.com/docs/voice.xml"
-            )
-        );
-        dd($message->sid);
+        // $client->account->calls->create(
+        //     $to_number,
+        //     $twilio_number,
+        //     array(
+        //         "url" => "http://demo.twilio.com/docs/voice.xml"
+        //     )
+        // );
+        // dd($message->sid);
 
         //
         $users = User::with('roles','shop')->get();
@@ -87,7 +87,7 @@ class Users extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'phone' => $request->phone,
-            'shop_id' => $request->shop_id
+            'shop_id' => $request->shop_id['id']
         ]);
 
         event(new Registered($user));

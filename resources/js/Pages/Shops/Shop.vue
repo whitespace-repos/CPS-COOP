@@ -1,13 +1,13 @@
 <template>
     <Head title="Dashboard" />
 
-    <BreezeAuthenticatedLayout>          
+    <BreezeAuthenticatedLayout>
       <div class="main-panel">
         <div class="topBar">
           <div class="row">
             <div class="col-lg-6">
               <div class="SelProduct">
-                <h3>Shops</h3>
+                <h3 class="heading">Shops</h3>
                 <label>Select Product</label>
                 <div class="select-style">
                   <select class="custom-select" @change="this.$inertia.get('/filter/product/shops/'+$event.target.value)">
@@ -24,15 +24,15 @@
           </div>
         </div>
         <!-- topBar-->
-        
+
         <div class="ShopList">
           <ul>
             <li v-for="shop in product.shops" :key="shop.id">
               <div class="ShoplistBox">
                 <div class="ShoplistBoxHr">
                   <h2>{{ shop.shop_name }}</h2>
-                  
-                  <Link :href="route('shop.show',shop.id)" class="Btn position-relative" ><small style="right: -3px;top: -15px;" class="rounded-circle badge badge-danger font-weight-normal p-2 position-absolute">{{ shopStockReqeustSize(shop) }}</small> View Shop</Link> 
+
+                  <Link :href="route('shop.show',shop.id)" class="Btn position-relative" ><small style="right: -3px;top: -15px;" class="rounded-circle badge badge-danger font-weight-normal p-2 position-absolute">{{ shopStockReqeustSize(shop) }}</small> View Shop</Link>
                 </div>
                 <div class="ShoplistBoxBody">
                   <ul>
@@ -51,14 +51,14 @@
                   </ul>
                 </div>
               </div>
-              <!-- ShoplistBox--> 
-            </li>           
+              <!-- ShoplistBox-->
+            </li>
           </ul>
         </div>
-        <!-- ShopList--> 
-        
+        <!-- ShopList-->
+
       </div>
-      <!--  main-panel--> 
+      <!--  main-panel-->
     </BreezeAuthenticatedLayout>
 </template>
 
@@ -75,32 +75,32 @@ export default {
     props:['products','shops','product','filterProduct'],
     date(){
       return {
-             filterProduct :3  
+             filterProduct :3
       }
     },
     computed:{
       totalStockRequest(){
           let requestsCount = 0;
-          // 
+          //
 
           let _this  = this;
           _.forEach(this.product.shops, function(s) {
-            _.forEach(s.stock_requests,function(r){                  
-                  requestsCount += (r.status != "Completed") ? 1 : 0;                  
-            });            
+            _.forEach(s.stock_requests,function(r){
+                  requestsCount += (r.status != "Completed") ? 1 : 0;
+            });
           });
-          // 
+          //
           return  requestsCount;
       }
     },
     methods:{
        shopStockReqeustSize(s){
           let requestsCount = 0;
-          _.forEach(s.stock_requests,function(r){                  
-                requestsCount += (r.status != "Completed") ? 1 : 0;                  
+          _.forEach(s.stock_requests,function(r){
+                requestsCount += (r.status != "Completed") ? 1 : 0;
           });
          return  requestsCount;
        }
-    }   
+    }
 }
 </script>

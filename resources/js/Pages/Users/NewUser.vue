@@ -1,46 +1,54 @@
 <template>
     <Head title="Dashboard" />
 
-    <BreezeAuthenticatedLayout>          
+    <BreezeAuthenticatedLayout>
       <div class="main-panel">
-        <div class="StoreDiv">
-          <h3>Add New User</h3>
-          <form method="POST" @submit.prevent="saveUser">
-          <div class="ShopFrm">
-            <ul>
-              <li>
+        <form method="POST" @submit.prevent="saveUser">
+          <div class="card">
+            <div class="cord-body row">
+              <div class="form-group">
                 <label>Full Name</label>
                 <input v-model="form.user.name" placeholder="Type name here" class="form-control" />
-              </li>
-              <li>
+              </div>
+
+              <div class="form-group">
                 <label>Email</label>
                 <input v-model="form.user.email" placeholder="Type email address here" class="form-control" />
-              </li>
-              <li>
+              </div>
+
+              <div class="form-group">
                 <label>Phone</label>
                 <input v-model="form.user.phone" placeholder="Type phone number here" class="form-control" />
-              </li>
-              <li>
+              </div>
+
+              <div class="form-group">
                 <label>Password</label>
-                <input v-model="form.user.password" placeholder="Type password here" class="form-control" />
-              </li>
-              <li>
-                <label>Shop</label>
-                <select class="form-control" v-model="form.user.shop_id">
-                    <template v-for="shop in shops" :key="shop.id">
-                      <option  :value="shop.id">{{ shop.shop_name }}</option>
-                    </template>
-                  </select>
-              </li>
-              <li>
-                <button class="btn btn-primary add-btn" type="submit" >Add Employee</button>                
-              </li>
-            </ul>
+              <input v-model="form.user.password" placeholder="Type password here" class="form-control" />
+              </div>
+
+
+              <div class="form-group">
+                <label>Full Name</label>
+                <v-select
+                      :filter="fuseSearch"
+                      :options="shops"
+                      :get-option-key="(option) => option.id"
+                      :get-option-label="(option) => option.shop_name"
+                      :key="(option) => option.id"
+                      multiple
+                    >
+                    <template #option="{ shop_name, shop_id }">
+                        {{ shop_name }}
+                        <br />
+                        <cite>{{ shop_id }}</cite>
+                      </template>
+                  </v-select>
+              </div>
+            </div>
           </div>
-          </form>
-        </div>
+        </form>
       </div>
-      <!-- main-panel --> 
+      <!-- main-panel -->
     </BreezeAuthenticatedLayout>
 </template>
 
@@ -64,18 +72,18 @@ export default {
                                   .$inertia
                                   .form({
                                           name:'',
-                                          email:'',                                          
+                                          email:'',
                                           phone:'',
-                                          shop_id:'',  
+                                          shop_id:'',
                         })
                   }
-                 
+
         }
     },
     methods: {
-        saveUser() {           
+        saveUser() {
             this.form.user.post(this.route('user.store'), {
-                onSuccess: (response) => { 
+                onSuccess: (response) => {
                                     this.form.user.reset();
                 },
             })

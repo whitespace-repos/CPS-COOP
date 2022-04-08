@@ -58,16 +58,22 @@
                             <form action="#" method="POST" class="container my-4" @submit.prevent="saveCustomerForm">
                                 <ul>
                                     <li>
-                                        <input placeholder="Mobile" id="customer" autocomplete="off" v-model="form.customer.phone" :disabled="Object.keys(carts).length > 0">
+                                        <input placeholder="Mobile" id="customer" autocomplete="off" v-model="v$.form.customer.phone.$model" :disabled="Object.keys(carts).length > 0">
+                                        <template v-for="(error, index) of v$.form.customer.phone.$errors" :key="index">
+                                            <small class="text-danger">{{ error.$message }}</small>
+                                        </template>
                                     </li>
                                     <li :class="{'border-0 text-danger': existingCustomer }" class="pb-0">
                                         <h4 v-if="existingCustomer" class="text-center"> {{ form.customer.name }}</h4>
                                         <div class="input-group" v-else>
-                                            <input name="name"  placeholder="Name" class="form-control" autocomplete="off" v-model="form.customer.name" />
+                                            <input name="name"  placeholder="Name" class="form-control" autocomplete="off" v-model="v$.form.customer.name.$model" />
                                             <div class="input-group-append">
-                                            <button class="btn btn-outline-secondary border-0 btn-sm rounded" type="submit" id="button-addon2">Save</button>
+                                                <button class="btn btn-outline-secondary border-0 btn-sm rounded" type="submit" id="button-addon2">Save</button>
                                             </div>
                                         </div>
+                                        <template v-for="(error, index) of v$.form.customer.name.$errors" :key="index">
+                                            <small class="text-danger">{{ error.$message }}</small>
+                                        </template>
                                     </li>
                                 </ul>
                             </form>
@@ -257,6 +263,8 @@ import BreezeAuthenticatedLayout from '@/Layouts/BillingSystem.vue'
 import { Head , Link} from '@inertiajs/inertia-vue3'
 import _ from 'lodash'
 import moment from 'moment'
+import useVuelidate from '@vuelidate/core'
+import { required, email, minLength , numeric , integer ,helpers} from '@vuelidate/validators'
 
 
 const options = {
@@ -395,6 +403,11 @@ export default {
       },
       methods: {
           saveCustomerForm(event) {
+            if(this.v$.form.customer.$invalid){
+                this.v$.form.customer.$touch();
+                return
+            }
+            //
             this.form.customer.post(this.route('customer.store',), {
                 only: ["existingCustomer","customer","totalCartItem"],
                 onSuccess: (response) => {
@@ -558,8 +571,21 @@ export default {
                         }
                     })
                 });
-          }
-      },
+        }
+    },
+    validations() {
+        return {
+                form:{
+                      customer :{
+                                            name:{required},
+                                            phone:{required}
+                      }
+                }
+        }
+    },
+    setup () {
+        return { v$: useVuelidate() }
+    }
 }
 </script>
 

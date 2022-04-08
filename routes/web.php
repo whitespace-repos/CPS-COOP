@@ -26,6 +26,10 @@ use App\Http\Controllers\Stocks;
 |
 */
 
+Route::get('/test', function () {
+    return Inertia::render('Test');
+});
+
 Route::get('/', function () {
     if(auth()->user()->hasRole('Admin'))
         return redirect()->route('rate.index');

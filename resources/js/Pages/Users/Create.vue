@@ -1,84 +1,142 @@
-<script setup>
-import BreezeButton from '@/Components/Button.vue';
-import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
-import BreezeInput from '@/Components/Input.vue';
-import BreezeLabel from '@/Components/Label.vue';
-import BreezeValidationErrors from '@/Components/ValidationErrors.vue';
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
-
-const form = useForm({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
-    terms: false,
-    phone:'',
-    shop_id:'',
-});
-
-const submit = () => {
-    form.post(route('user.store'), {
-        onFinish: () => form.reset('password', 'password_confirmation'),
-    });
-};
-</script>
-
-<script>
-    export default {
-        props:['shops'],
-        computed (){
-        $('select').selectpicker();
-        },
-        mounted() {
-        $('select').selectpicker();
-        }
-    }
-</script>
-
-
 <template>
     <BreezeAuthenticatedLayout>
         <Head title="Register" />
 
         <div class="main-panel">
-            <div class="StoreDiv">
-                <h3>Add New User</h3>
+            <div class="StoreDiv pt-0">
+                <h3 class="mb-4">Add New User</h3>
                 <BreezeValidationErrors class="mb-4 " />
 
-                <form @submit.prevent="submit" class="">
-                    <div class="ShopFrm">
-                        <ul>
-                        <li>
-                            <label>Full Name</label>
-                            <input v-model="form.name" placeholder="Type name here" class="form-control" />
-                        </li>
-                        <li>
-                            <label>Email</label>
-                            <input v-model="form.email" placeholder="Type email address here" class="form-control" />
-                        </li>
-                        <li>
-                            <label>Phone</label>
-                            <input v-model="form.phone" placeholder="Type phone number here" class="form-control" />
-                        </li>
-                        <li>
-                            <label>Password</label>
-                            <input v-model="form.password" placeholder="Type password here" class="form-control" />
-                        </li>
-                        <li>
-                            <label>Shop</label>
-                            <select class="form-control" v-model="form.shop_id">
-                                <template v-for="shop in shops" :key="shop.id">
-                                <option  :value="shop.id">{{ shop.shop_name }}</option>
+                <form @submit.prevent="submit">
+                    <div class="card">
+                        <div class="card-body row">
+                            <div class="form-group col-md-4" :class="{ 'has-error': v$.form.name.$errors.length }">
+                                <label>Full Name</label>
+                                <input v-model="v$.form.name.$model" placeholder="Type name here" class="form-control" />
+                                <template v-for="(error, index) of v$.form.name.$errors" :key="index">
+                                    <small>{{ error.$message }}</small>
                                 </template>
-                            </select>
-                        </li>
-                        <li>
-                            <button class="btn btn-primary add-btn" type="submit" >Add Employee</button>
-                        </li>
-                        </ul>
+                            </div>
+                            <div class="form-group col-md-4" :class="{ 'has-error': v$.form.email.$errors.length }">
+                                <label>Email</label>
+                                <input v-model="v$.form.email.$model" placeholder="Type email address here" class="form-control" />
+                                <template v-for="(error, index) of v$.form.email.$errors" :key="index">
+                                    <small>{{ error.$message }}</small>
+                                </template>
+                            </div>
+                            <div class="form-group col-md-4" :class="{ 'has-error': v$.form.phone.$errors.length }">
+                                <label>Phone</label>
+                                <input v-model="v$.form.phone.$model" placeholder="Type phone number here" class="form-control" />
+                                <template v-for="(error, index) of v$.form.phone.$errors" :key="index">
+                                    <small>{{ error.$message }}</small>
+                                </template>
+                            </div>
+                            <div class="form-group col-md-4" :class="{ 'has-error': v$.form.password.$errors.length }">
+                                <label>Password</label>
+                                <input v-model="v$.form.password.$model" placeholder="Type password here" class="form-control" />
+                                <template v-for="(error, index) of v$.form.password.$errors" :key="index">
+                                    <small>{{ error.$message }}</small>
+                                </template>
+                            </div>
+                            <div class="form-group col-md-4"  :class="{ 'has-error': v$.form.shop_id.$errors.length }">
+                                <label>Shop</label>
+                                <v-select
+                                    v-model="v$.form.shop_id.$model"
+                                    :filter="fuseSearch"
+                                    :options="shops"
+                                    :get-option-key="(option) => option.id"
+                                    :get-option-label="(option) => option.shop_name"
+                                    >
+                                    <template #option="{ shop_name, shop_id }">
+                                        {{ shop_name }}
+                                        <br />
+                                        <cite>{{ shop_id }}</cite>
+                                    </template>
+                                </v-select>
+
+                                <template v-for="(error, index) of v$.form.shop_id.$errors" :key="index">
+                                    <small>{{ error.$message }}</small>
+                                </template>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <button class="btn btn-primary add-btn" type="submit" :disabled="v$.form.$invalid">Add Employee</button>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
         </div>
     </BreezeAuthenticatedLayout>
 </template>
+
+<script>
+    import BreezeButton from '@/Components/Button.vue';
+    import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
+    import BreezeInput from '@/Components/Input.vue';
+    import BreezeLabel from '@/Components/Label.vue';
+    import BreezeValidationErrors from '@/Components/ValidationErrors.vue';
+    import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
+
+    import useVuelidate from '@vuelidate/core'
+    import { required, email, minLength , numeric , integer ,helpers} from '@vuelidate/validators'
+    import Fuse from 'fuse.js'
+
+    export default {
+        props:['shops'],
+        components: {
+            BreezeAuthenticatedLayout,
+            Head,
+        },
+        data(){
+            return {
+                form : this
+                                  .$inertia
+                                  .form({
+                            name: '',
+                            email: '',
+                            password: '',
+                            password_confirmation: '',
+                            terms: false,
+                            phone:'',
+                            shop_id:'',
+                        })
+            }
+        },
+        methods: {
+            fuseSearch(options, search) {
+            const fuse = new Fuse(options, {
+                keys: ['shop_name', 'shop_id'],
+                shouldSort: true,
+            })
+            return search.length
+                ? fuse.search(search).map(({ item }) => item)
+                : fuse.list
+            },
+            submit(){
+                this.form.post(route('user.store'), {
+                    onFinish: () => this.form.reset('password', 'password_confirmation'),
+                });
+            }
+        },
+        computed (){
+            $('select').selectpicker();
+        },
+        mounted() {
+            $('select').selectpicker();
+        },
+        validations() {
+            return {
+                    form:{
+                            name: { required},
+                            email: { email},
+                            password: { required},
+                            phone:{ required ,numeric },
+                            shop_id:{ required}
+                        }
+            }
+        },
+        setup () {
+            return { v$: useVuelidate() }
+        }
+    }
+</script>

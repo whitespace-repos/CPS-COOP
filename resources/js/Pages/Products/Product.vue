@@ -7,7 +7,7 @@
           <div class="row">
             <div class="col-lg-12 ">
               <div class="ShopDtlsHdr">
-                <h3>Products</h3>
+                <h3 class="heading">Products</h3>
               </div>
             </div>
           </div>
@@ -23,14 +23,20 @@
                 <div class="card-body px-0">
                   <form action="" method="POST" @submit.prevent="saveWeightUnit">
                     <div class="d-flex">
-                      <div class="form-group m-2">
-                          <input v-model="form.weightUnit.value" class="form-control" placeholder="Value"/>
+                      <div class="form-group m-2" :class="{ 'has-error': v$.form.weightUnit.value.$errors.length }">
+                          <input v-model="v$.form.weightUnit.value.$model" class="form-control" placeholder="Value"/>
+                          <template v-for="(error, index) of v$.form.weightUnit.value.$errors" :key="index">
+                            <small>{{ error.$message }}</small>
+                          </template>
                       </div>
-                      <div class="form-group m-2">
-                          <input v-model="form.weightUnit.key"  class="form-control" placeholder="Key" />
+                      <div class="form-group m-2" :class="{ 'has-error': v$.form.weightUnit.key.$errors.length }">
+                          <input v-model="v$.form.weightUnit.key.$model"  class="form-control" placeholder="Key" />
+                          <template v-for="(error, index) of v$.form.weightUnit.key.$errors" :key="index">
+                            <small>{{ error.$message }}</small>
+                          </template>
                       </div>
                     </div>
-                    <button type="submit" class="btn btn-primary  px-5 m-2">Add</button>
+                    <button type="submit" class="btn btn-primary  px-5 m-2"  :disabled="v$.form.weightUnit.$invalid">Add</button>
                   </form>
                   <div class="proHistory pb-0">
                     <div class="px-2">
@@ -65,9 +71,12 @@
                   <form action="" class="small" method="POST" @submit.prevent="saveProduct">
                     <div class="row">
                       <div class="col">
-                        <div class="form-group">
+                        <div class="form-group" :class="{ 'has-error': v$.form.product.product_name.$errors.length }">
                           <label>Product name</label>
-                          <input v-model="form.product.product_name" placeholder="Type product name here" class="form-control">
+                          <input v-model="v$.form.product.product_name.$model" placeholder="Type product name here" class="form-control">
+                          <template v-for="(error, index) of v$.form.product.product_name.$errors" :key="index">
+                            <small>{{ error.$message }}</small>
+                          </template>
                         </div>
                       </div>
                       <div class="col">
@@ -107,9 +116,12 @@
 
                     <div class="row">
                       <div class="col-md-5">
-                        <div class="form-group">
+                        <div class="form-group" :class="{ 'has-error': v$.form.product.product_image.$errors.length }">
                           <label>Product Image</label>
-                          <input type="file"  class="form-control p-1"  @input="form.product.product_image = $event.target.files[0]"  />
+                          <input type="file"  class="form-control p-1" @input="form.product.product_image = $event.target.files[0]"  />
+                          <template v-for="(error, index) of v$.form.product.product_image.$errors" :key="index">
+                            <small>{{ error.$message }}</small>
+                          </template>
                         </div>
                       </div>
                       <div class="col">
@@ -131,13 +143,16 @@
                     </div>
                     <div class="row">
                       <div class="col-md-4" v-if="!form.product.stock">
-                          <div class="form-group">
+                          <div class="form-group" :class="{ 'has-error': v$.form.product.parent_product_id.$errors.length }">
                             <label>Select Parent Product : </label>
-                            <select class="custom-select" v-model="form.product.parent_product_id">
+                            <select class="custom-select" v-model="v$.form.product.parent_product_id.$model">
                               <template v-for="product in products" :key="product.id">
                                 <option  :value="product.id" v-if="product.stock">{{ product.product_name }}</option>
                               </template>
                             </select>
+                            <template v-for="(error, index) of v$.form.product.parent_product_id.$errors" :key="index">
+                              <small>{{ error.$message }}</small>
+                            </template>
                           </div>
                       </div>
 
@@ -319,6 +334,8 @@
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue'
 import { Head } from '@inertiajs/inertia-vue3';
 import { Inertia } from '@inertiajs/inertia';
+import useVuelidate from '@vuelidate/core'
+import { required, email, minLength , numeric , integer ,helpers ,requiredIf} from '@vuelidate/validators'
 
 export default {
     components: {
@@ -371,6 +388,28 @@ export default {
           selectedProduct:{}
       }
     },
+    validations() {
+      return {
+              form:{
+                      weightUnit:{
+                                setting_group_id:1,
+                                value:{required},
+                                key:{required},
+                      },
+                      product : {
+                                    product_name:{required},
+                                    product_image:{required},
+                                    parent_product_id:{
+                                      required: requiredIf(!this.form.product.stock)
+                                    }
+
+                }
+          }
+      }
+    },
+    setup () {
+      return { v$: useVuelidate() }
+    },
     methods: {
         saveWeightUnit() {
             this.form.weightUnit.post(this.route('settings.store'), {
@@ -381,6 +420,12 @@ export default {
             })
         },
         saveProduct(){
+          if(this.v$.form.product.$invalid){
+            this.v$.form.product.$touch();
+            return
+          }
+          //
+
           this.form.product.post(this.route('product.store'), {
                 onSuccess: (response) => {
                                     this.form.product.reset('product_name','weight_unit','wholesale_weight','stock','weight_range_flag','product_image');
@@ -388,6 +433,7 @@ export default {
                                     this.form.product.weightUnits[2].to = 50000;
                                     this.form.product.conversion_rate = 0;
                                     $("[type=file]").val("");
+                                    this.v$.form.product.$reset();
                 },
           })
         },

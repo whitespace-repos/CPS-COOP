@@ -23,7 +23,7 @@ class Shops extends Migration
             $table->string('shop_dimentions')->nullable();
             $table->integer('stock_capacity_per_day')->nullable();
             $table->double('max_sale_estimate_per_day', 8, 2)->nullable();
-            $table->string('estimated_start_date')->nullable();
+            $table->date('estimated_start_date')->nullable();
             $table->enum('status' ,['Active','Inactive'])->default('Active');
             $table->timestamps();
         });
