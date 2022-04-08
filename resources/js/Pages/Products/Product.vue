@@ -289,7 +289,7 @@
 
                       <li class="mb-5">
                         <label>Product Image :</label>
-                        <img :src="selectedProduct.image" />
+                        <img :src="selectedProduct.image" class="img-fluid" />
                         <!-- <input type="file"  class="form-control p-3"  @input="form.editProduct.product_image = $event.target.files[0]"  /> -->
                       </li>
 
@@ -415,7 +415,7 @@ export default {
             this.form.weightUnit.post(this.route('settings.store'), {
                 onSuccess: (response) => {
                                     this.form.weightUnit.reset('value','key');
-                                    console.log(response);
+                                    this.v$.form.weightUnit.$reset();
                 },
             })
         },

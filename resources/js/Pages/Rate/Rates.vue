@@ -182,6 +182,8 @@ export default {
             this.form.rate.post(this.route('rate.store'), {
                 onSuccess: (response) => {
                                     this.form.rate.reset();
+                                    // reset the validation
+                                    this.v$.form.rate.$reset();
                 },
             });
         },

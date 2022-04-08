@@ -13,7 +13,7 @@
                             <div class="card-body d-flex  p-0">
                                 <div class="item" v-for="rp  in request.requested_products" :key="rp.id">
                                     <div class="itemBox pb-4 pt-4">
-                                        <span class="img mr-2 my-2"><img :src="rp.product.image" alt="icon"></span> <span class="">
+                                        <span class="img mr-2 my-2"><img :src="rp.product.image" alt="icon"  class="img-fluid"></span> <span class="">
                                             <h6>{{ rp.stock_request +' ' + rp.product.weight_unit }}</h6>
                                             <p>{{ rp.product.product_name }}</p>
                                             <span  v-if="request.status != 'Requested'">Supply Rate : {{ rp.supply_rate }} <sup>INR</sup> </span>
@@ -50,7 +50,7 @@
         <div class="modal CmnModal" id="receiveStockConfirmModal">
             <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <button type="button" class="close" data-dismiss="modal"><img src="/assets/img/cross_btn.png" alt=""></button>
+                <button type="button" class="close" data-dismiss="modal"><img src="/assets/img/cross_btn.png" alt=""  class="img-fluid"></button>
 
                 <!-- Modal body -->
 

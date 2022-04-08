@@ -22481,7 +22481,7 @@ __webpack_require__.r(__webpack_exports__);
         onSuccess: function onSuccess(response) {
           _this2.form.weightUnit.reset('value', 'key');
 
-          console.log(response);
+          _this2.v$.form.weightUnit.$reset();
         }
       });
     },
@@ -22650,7 +22650,10 @@ var rateValidation = _vuelidate_validators__WEBPACK_IMPORTED_MODULE_3__.helpers.
 
       this.form.rate.post(this.route('rate.store'), {
         onSuccess: function onSuccess(response) {
-          _this.form.rate.reset();
+          _this.form.rate.reset(); // reset the validation
+
+
+          _this.v$.form.rate.$reset();
         }
       });
     }
@@ -22841,8 +22844,6 @@ var options = {
 
             _this.purchaseHistory = response.data.purchase_history;
           }
-
-          console.log(response.data.purchase_history);
         });
       },
       onChange: function onChange() {
@@ -22888,6 +22889,7 @@ var options = {
           _this3.existingCustomer = response.props.existingCustomer; //
 
           if (_this3.existingCustomer) lodash__WEBPACK_IMPORTED_MODULE_2___default().merge(_this3.form.customer, response.props.customer);
+          window.history.pushState('data', 'Add to Cart', '/make-sale');
         }
       }); // this
       //           .axios
@@ -22904,11 +22906,11 @@ var options = {
     sendStockRequest: function sendStockRequest(event) {
       var _this4 = this;
 
-      console.log(this.form.stockRequest);
       this.form.stockRequest.post(this.route('stock.request.submit'), {
         onSuccess: function onSuccess(response) {
           $("#myModal").modal("hide");
           _this4.form.stockRequest.products = [];
+          window.history.pushState('data', 'Add to Cart', '/make-sale');
         }
       });
     },
@@ -26167,7 +26169,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       ))], 512
       /* NEED_PATCH */
       ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.form.editProduct.weight_unit]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", _hoisted_115, [_hoisted_116, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
-        src: $data.selectedProduct.image
+        src: $data.selectedProduct.image,
+        "class": "img-fluid"
       }, null, 8
       /* PROPS */
       , _hoisted_117), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <input type=\"file\"  class=\"form-control p-3\"  @input=\"form.editProduct.product_image = $event.target.files[0]\"  /> ")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [_hoisted_118, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_119, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
@@ -27262,7 +27265,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           key: product.id
         }, [product.stock ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
           src: product.image,
-          alt: "icon"
+          alt: "icon",
+          "class": "img-fluid"
         }, null, 8
         /* PROPS */
         , _hoisted_12)]), _hoisted_13, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.association.stock + ' ' + product.weight_unit), 1
@@ -27284,7 +27288,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           key: sale.id
         }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_19, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
           src: sale.product.image,
-          alt: "icon"
+          alt: "icon",
+          "class": "img-fluid"
         }, null, 8
         /* PROPS */
         , _hoisted_20)]), _hoisted_21, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_22, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(sale.total_sales) + " ", 1
@@ -27420,7 +27425,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           key: product.product_name
         }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_52, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("em", _hoisted_53, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
           src: product.image,
-          alt: "icon"
+          alt: "icon",
+          "class": "img-fluid"
         }, null, 8
         /* PROPS */
         , _hoisted_54)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("em", _hoisted_55, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h4", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.product_name), 1
@@ -27527,7 +27533,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           key: product.id
         }, [product.stock ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("li", _hoisted_100, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_101, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_102, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
           src: product.image,
-          alt: "icon"
+          alt: "icon",
+          "class": "img-fluid"
         }, null, 8
         /* PROPS */
         , _hoisted_103)]), _hoisted_104, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_105, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.association.stock + '' + product.weight_unit), 1
@@ -28159,7 +28166,8 @@ var _hoisted_19 = {
 
 var _hoisted_20 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
   src: "/assets/img/PhIcon.png",
-  alt: ""
+  alt: "",
+  "class": "img-fluid"
 }, null, -1
 /* HOISTED */
 );
@@ -28172,7 +28180,8 @@ var _hoisted_22 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
   "class": "ImgDiv"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
   src: "/assets/img/ShopAdrsIcon1.png",
-  alt: ""
+  alt: "",
+  "class": "img-fluid"
 })], -1
 /* HOISTED */
 );
@@ -28187,7 +28196,8 @@ var _hoisted_25 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
   "class": "ImgDiv"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
   src: "/assets/img/ShopAdrsIcon2.png",
-  alt: ""
+  alt: "",
+  "class": "img-fluid"
 })], -1
 /* HOISTED */
 );
@@ -28202,7 +28212,8 @@ var _hoisted_28 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
   "class": "ImgDiv"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
   src: "/assets/img/ShopAdrsIcon3.png",
-  alt: ""
+  alt: "",
+  "class": "img-fluid"
 })], -1
 /* HOISTED */
 );
@@ -28217,7 +28228,8 @@ var _hoisted_31 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
   "class": "ImgDiv"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
   src: "/assets/img/ShopAdrsIcon4.png",
-  alt: ""
+  alt: "",
+  "class": "img-fluid"
 })], -1
 /* HOISTED */
 );
@@ -28232,7 +28244,8 @@ var _hoisted_34 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
   "class": "ImgDiv"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
   src: "/assets/img/ShopAdrsIcon5.png",
-  alt: ""
+  alt: "",
+  "class": "img-fluid"
 })], -1
 /* HOISTED */
 );
@@ -28247,7 +28260,8 @@ var _hoisted_37 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
   "class": "ImgDiv"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
   src: "/assets/img/ShopAdrsIcon6.png",
-  alt: ""
+  alt: "",
+  "class": "img-fluid"
 })], -1
 /* HOISTED */
 );
@@ -28949,7 +28963,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           key: product.id
         }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_43, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
           src: product.image,
-          alt: ""
+          alt: "",
+          "class": "img-fluid"
         }, null, 8
         /* PROPS */
         , _hoisted_44)]), _hoisted_45, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.product_name), 1
@@ -28963,7 +28978,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           key: product.id
         }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_50, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_51, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_52, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
           src: product.image,
-          alt: "icon"
+          alt: "icon",
+          "class": "img-fluid"
         }, null, 8
         /* PROPS */
         , _hoisted_53)]), _hoisted_54, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_55, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(0 + ' ' + product.weight_unit), 1
@@ -28978,7 +28994,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           key: product.id
         }, [product.stock ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_61, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_62, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
           src: product.image,
-          alt: "icon"
+          alt: "icon",
+          "class": "img-fluid"
         }, null, 8
         /* PROPS */
         , _hoisted_63)]), _hoisted_64, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_65, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.association.stock + ' ' + product.weight_unit), 1
@@ -29067,7 +29084,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             "class": "item w-25 border-right"
           }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_103, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_104, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
             src: rp.product.image,
-            alt: "icon"
+            alt: "icon",
+            "class": "img-fluid"
           }, null, 8
           /* PROPS */
           , _hoisted_105)]), _hoisted_106, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_107, [request.type == 'Direct' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("h6", _hoisted_108, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(rp.stock_sent + ' ' + rp.product.weight_unit), 1
@@ -29185,7 +29203,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           key: product.id
         }, [product.stock ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("li", _hoisted_160, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_161, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_162, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
           src: product.image,
-          alt: "icon"
+          alt: "icon",
+          "class": "img-fluid"
         }, null, 8
         /* PROPS */
         , _hoisted_163)]), _hoisted_164, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_165, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.association.stock + ' ' + product.weight_unit), 1
@@ -29496,7 +29515,8 @@ var _hoisted_35 = /*#__PURE__*/_withScopeId(function () {
     "data-dismiss": "modal"
   }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
     src: "/assets/img/cross_btn.png",
-    alt: ""
+    alt: "",
+    "class": "img-fluid"
   })], -1
   /* HOISTED */
   );
@@ -29583,7 +29603,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             key: rp.id
           }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
             src: rp.product.image,
-            alt: "icon"
+            alt: "icon",
+            "class": "img-fluid"
           }, null, 8
           /* PROPS */
           , _hoisted_16)]), _hoisted_17, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_18, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(rp.stock_request + ' ' + rp.product.weight_unit), 1

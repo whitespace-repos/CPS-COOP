@@ -39,14 +39,14 @@
             <div class="row no-gutters">
               <div class="col-lg-3">
                 <div class="card  h-100 rounded-0  ">
-                  <div class="ShopAdrs pb-0"> <span class="PhNo  px-5"> <img src="/assets/img/PhIcon.png" alt=""/> {{ shop.phone }} </span>
+                  <div class="ShopAdrs pb-0"> <span class="PhNo  px-5"> <img src="/assets/img/PhIcon.png" alt="" class="img-fluid"/> {{ shop.phone }} </span>
                     <ul class="adrs">
-                      <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon1.png" alt=""/></span> <span><span>Address:</span> {{ shop.address }}</span></li>
-                      <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon2.png" alt=""/></span> <span><span>Distance:</span> {{ shop.distance_from_cps }}</span></li>
-                      <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon3.png" alt=""/></span> <span><span>Dimensive:</span> {{ shop.shop_dimentions }}</span></li>
-                      <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon4.png" alt=""/></span> <span><span>Max Sale Estimation:</span> {{ shop.max_sale_estimate_per_day }}</span></li>
-                      <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon5.png" alt=""/></span> <span><span>Max stock capacity:</span> {{ shop.stock_capacity_per_day }}</span></li>
-                      <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon6.png" alt=""/></span> <span><span>Estimated Start Date:</span> {{ shop.estimated_start_date }}</span></li>
+                      <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon1.png" alt="" class="img-fluid"/></span> <span><span>Address:</span> {{ shop.address }}</span></li>
+                      <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon2.png" alt="" class="img-fluid"/></span> <span><span>Distance:</span> {{ shop.distance_from_cps }}</span></li>
+                      <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon3.png" alt="" class="img-fluid"/></span> <span><span>Dimensive:</span> {{ shop.shop_dimentions }}</span></li>
+                      <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon4.png" alt="" class="img-fluid"/></span> <span><span>Max Sale Estimation:</span> {{ shop.max_sale_estimate_per_day }}</span></li>
+                      <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon5.png" alt="" class="img-fluid"/></span> <span><span>Max stock capacity:</span> {{ shop.stock_capacity_per_day }}</span></li>
+                      <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon6.png" alt="" class="img-fluid"/></span> <span><span>Estimated Start Date:</span> {{ shop.estimated_start_date }}</span></li>
                     </ul>
                   </div>
                   <div class="PrdtPnl">
@@ -55,7 +55,7 @@
                       <a data-toggle="modal" href="#Add_Product" class="AddPrdt">+</a> </div>
                       <ul class="Prdt">
                         <li v-for="product in shop.products" :key="product.id">
-                              <span class="ImgDiv"><img :src="product.image" alt=""/></span> <span>{{ product.product_name }}</span></li>
+                              <span class="ImgDiv"><img :src="product.image" alt="" class="img-fluid"/></span> <span>{{ product.product_name }}</span></li>
                       </ul>
                   </div>
                 </div>
@@ -71,7 +71,7 @@
 
                     <div class="item" v-for="product in shop.products" :key="product.id">
                       <div class="ItemWrapper">
-                        <div class="itemBox px-5 m-2"> <span class="img"><img :src="product.image" alt="icon"></span> <span class="txt">
+                        <div class="itemBox px-5 m-2"> <span class="img"><img :src="product.image" alt="icon" class="img-fluid"></span> <span class="txt">
                           <h3>{{ 0 +' '+ product.weight_unit }}</h3>
                           <p>{{ product.product_name }}</p>
                           </span> </div>
@@ -88,7 +88,7 @@
                   </div>
                   <ul class="m-2">
                     <li v-for="product in shop.products" :key="product.id">
-                      <div class="itemBox mb-2" v-if="product.stock"> <span class="img"><img :src="product.image" alt="icon"></span> <span class="txt">
+                      <div class="itemBox mb-2" v-if="product.stock"> <span class="img"><img :src="product.image" alt="icon" class="img-fluid"></span> <span class="txt">
                         <h3>{{ product.association.stock +' '+ product.weight_unit }}</h3>
                         <p>{{ product.product_name }} </p>
                         </span> </div>
@@ -171,7 +171,7 @@
                                             <template  v-for="rp  in request.requested_products" :key="rp.id">
                                               <div class="item  w-25 border-right">
                                                   <div class="itemBox p-2">
-                                                      <span class="img mr-2"><img :src="rp.product.image" alt="icon"></span> <span class="">
+                                                      <span class="img mr-2"><img :src="rp.product.image" alt="icon"  class="img-fluid"></span> <span class="">
                                                           <h6 v-if="request.type == 'Direct'">{{ rp.stock_sent +' ' + rp.product.weight_unit }}</h6>
                                                           <h6 v-else>{{ rp.stock_request +' ' + rp.product.weight_unit }}</h6>
                                                           <p>{{ rp.product.product_name }}</p>
@@ -260,7 +260,7 @@
                                 <template v-for="product in shop.products" :key="product.id">
                                     <template v-if="product.stock">
                                       <li>
-                                        <div class="itemBox flex-column"> <span class="img"><img :src="product.image" alt="icon"></span> <span class="txt">
+                                        <div class="itemBox flex-column"> <span class="img"><img :src="product.image" alt="icon" class="img-fluid"></span> <span class="txt">
                                             <h3>{{ product.association.stock +' '+ product.weight_unit }}</h3>
                                             <p>{{ product.product_name }}</p>
                                             </span>

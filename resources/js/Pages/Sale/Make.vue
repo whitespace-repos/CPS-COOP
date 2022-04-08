@@ -13,7 +13,7 @@
                 </div>
                 <div class="card-body d-flex justify-content-center">
                     <div class="item mr-3" v-for="product in productCurrentStock" :key="product.id">
-                    <div class="itemBox px-4" v-if="product.stock"> <span class="img mr-2"><img :src="product.image" alt="icon"></span> <span class="">
+                    <div class="itemBox px-4" v-if="product.stock"> <span class="img mr-2"><img :src="product.image" alt="icon" class="img-fluid"></span> <span class="">
                       <h3>{{ product.association.stock +' ' + product.weight_unit }}</h3>
                       <p>{{ product.product_name }}</p>
                       </span> </div>
@@ -30,7 +30,7 @@
                   <template v-if="sales.length > 0">
                     <div class="item" v-for="sale  in sales" :key="sale.id">
                         <div class="itemBox pb-4 pt-4">
-                            <span class="img mr-2 my-2"><img :src="sale.product.image" alt="icon"></span> <span class="">
+                            <span class="img mr-2 my-2"><img :src="sale.product.image" alt="icon" class="img-fluid"></span> <span class="">
                                 <h6>{{ sale.total_sales }} <sup>INR</sup> </h6>
                                 <p>{{ sale.product.product_name }}</p>
                             </span>
@@ -125,7 +125,7 @@
                             <ul>
                                 <li v-for="product in shop.products" :key="product.product_name">
                                     <span class="product_info">
-                                        <em class="img"><img :src="product.image" alt="icon"></em>
+                                        <em class="img"><img :src="product.image" alt="icon" class="img-fluid"></em>
                                         <em class="txt">
                                             <h4>{{ product.product_name}}</h4>
                                         </em>
@@ -228,7 +228,7 @@
                 <ul>
                     <template v-for="product in shop.products" :key="product.id">
                         <li v-if="product.stock">
-                            <div class="itemBox"> <span class="img"><img :src="product.image" alt="icon"></span> <span class="txt">
+                            <div class="itemBox"> <span class="img"><img :src="product.image" alt="icon" class="img-fluid"></span> <span class="txt">
                                 <h3>{{ product.association.stock +''+ product.weight_unit }}</h3>
                                 <p>{{ product.product_name }}</p>
                                 </span>
@@ -374,9 +374,6 @@ export default {
                             _.merge(_this.form.customer,response.data.customer);
                             _this.purchaseHistory = response.data.purchase_history;
                         }
-
-                        console.log(response.data.purchase_history);
-
                     }
                 )
           },
@@ -418,6 +415,8 @@ export default {
                                     //
                                     if(this.existingCustomer)
                                         _.merge(this.form.customer,response.props.customer);
+
+                                    window.history.pushState('data', 'Add to Cart', '/make-sale');
                 },
             })
               // this
@@ -435,11 +434,11 @@ export default {
               // });
           },
           sendStockRequest(event) {
-              console.log(this.form.stockRequest);
                this.form.stockRequest.post(this.route('stock.request.submit'), {
                         onSuccess: (response) => {
                              $("#myModal").modal("hide");
                              this.form.stockRequest.products = [];
+                             window.history.pushState('data', 'Add to Cart', '/make-sale');
                         }
                });
           },
