@@ -17,7 +17,7 @@ class Shops extends Migration
        Schema::create('shops', function (Blueprint $table) {
             $table->id();
             $table->string('shop_name');
-            $table->text('shop_id',191)->unique();
+            $table->varchar('shop_id',191)->unique();
             $table->text('address')->nullable();
             $table->string('distance_from_cps')->nullable();
             $table->string('shop_dimentions')->nullable();
