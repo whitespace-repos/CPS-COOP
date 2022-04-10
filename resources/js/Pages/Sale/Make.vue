@@ -7,7 +7,7 @@
             <div class="col" >
               <div class="card current_stock">
                 <div class="card-header CS_header justify-content-start">
-                  <h5 class="align-self-center mb-0 mr-auto">Current Stock </h5>
+                  <h5 class="align-self-center mb-0 mr-auto heading">Current Stock </h5>
                   <a href="#" class="Btn mx-2" data-toggle="modal" data-target="#myModal">Stock Request</a>
                   <inertia-link :href="route('stock.view.request')" class="Btn">View All</inertia-link>
                 </div>
@@ -24,7 +24,7 @@
             <div class="col">
               <div class="card today_sales">
                 <div class="card-header CS_header">
-                  <h5 class="my-2">Today's Sales</h5>
+                  <h5 class="my-2 heading">Today's Sales</h5>
                 </div>
                 <div class="card-body d-flex justify-content-center p-0" :class="{'p-4':(sales.length == 0)}" >
                   <template v-if="sales.length > 0">
@@ -50,8 +50,8 @@
         <div class="row">
             <div class="col-lg-3">
                 <div class="customer_info card">
-                    <div class="CI_header card-header p-0 px-2">
-                        <h3>Customer Info</h3>
+                    <div class=" card-header p-0 px-2">
+                        <h3 class="heading">Customer Info</h3>
                     </div>
                     <div class="CI_body card-body p-0" style="height: 242px;overflow: auto;">
                         <div class="info_input">
@@ -117,7 +117,7 @@
 
             <div class="col-lg-6 ">
                 <div class="customer_info" v-if="existingCustomer">
-                    <div class="CI_header">
+                    <div class="heading">
                         <h3>Billing System</h3>
                     </div>
                     <div class="CI_body">
@@ -174,8 +174,8 @@
 
             <div class="col-lg-3 displayNoneIpad">
                 <div class="Purchase_History" v-if="purchaseHistory.length > 0 ">
-                    <div class="PH_header">
-                        <h3>Purchase History</h3>
+                    <div class="m-0 heading">
+                        <h3 class="text-white">Purchase History</h3>
                     </div>
                     <div class="PH_body px-1">
                         <div class="table-responsive">

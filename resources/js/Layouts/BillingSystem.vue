@@ -1,16 +1,14 @@
 <template>
     <header id="header" class="fixed-top" >
         <div class="custom-container">
-            <div class="logo"> 
+            <div class="logo">
                 <Link :href="route('dashboard')">
                     <img src="/assets/img/logo.png" alt="logo">
                 </Link>
                 <button class="menuBtn"><img src="/assets/img/list.png" alt=""></button>
             </div>
-            <Link :href="route('make-sale')" class="ml-4 font-weight-bold text-danger">
-                HOME
-            </Link>
-            <h4 class="m-auto text-danger font-weight-bolder"> {{ "COOP-"+$page.props.shop.shop_name }} </h4>
+
+            <h4 class="m-auto text-danger heading"> {{ 'COOP - ' + $page.props.shop.shop_name }} </h4>
             <div class="header-top-language d-flex">
                 <button class="btn dropdown-toggle header-action-btn" type="button" id="languageButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <label>{{ $page.props.auth.user.name }}</label>
@@ -24,7 +22,7 @@
     <!-- Page Content -->
     <main id="main" style="height: calc(100vh - 90px);padding-top: 90px;">
         <slot />
-    </main>       
+    </main>
 </template>
 
 <script>

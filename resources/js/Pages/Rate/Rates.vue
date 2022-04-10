@@ -50,36 +50,51 @@
                     </div>
                   </div>
             </div>
-            <div class="col-lg-12">
+            <div class="col-lg-9">
               <div class="card">
                 <div class="card-header bg-white heading m-0">
                   Today's Rate chart
                 </div>
                 <div class="cord-body">
                   <div class="table-responsive">
-                    <table cellpadding="0" cellspacing="0" border="0" class="table mb-0 table-striped  table-hover">
+                    <table cellpadding="0" cellspacing="0" border="0" class="table mb-0 table-striped table-sm table-hover">
                       <thead>
                         <tr>
                           <th>Product</th>
+                          <th>Date</th>
                           <th>Wholesale Rate</th>
                           <th>Retail Rate</th>
+                          <th>Status</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="rate in rates" :key="rate.id">
-                          <td>{{ rate.product.product_name }}</td>
+                        <tr v-for="r in rates" :key="r.id">
+                          <td>{{ r.product.product_name }}</td>
+                          <td>{{ r.date }}</td>
                           <td>
-                            <span class="badge badge-danger font-weight-normal mr-2" v-for="range in rate.product.weight_ranges" :key="range.id">
-                                {{range.from +"-"+ range.to +" "+ rate.product.weight_unit }} : {{  range.wholesale_rate }} <sup>INR </sup>
-                            </span>
+                            <template v-if="r.wholesale_rate != null && r.wholesale_rate != ''">
+                              <template  v-for="(range,index) in parseToJSON(r.wholesale_rate)" :key="range.id">
+                                <span class="badge badge-danger font-weight-normal mr-2" v-if="index==0">
+                                    {{range.from +"-"+ range.to +" "+ r.product.weight_unit }} : {{  range.rate }} <sup>INR </sup>
+                                </span>
+                              </template>
+                            </template>
                            </td>
-                          <td> <span class="badge badge-danger font-weight-normal "> {{  rate.retail_rate }} <sup>INR </sup> {{ " / "+ rate.product.weight_unit }} </span> </td>
+                          <td> <span class="badge badge-danger font-weight-normal "> {{  r.retail_rate }} <sup>INR </sup> {{ " / "+ r.product.weight_unit }} </span> </td>
+                          <td> <span class="badge badge-danger font-weight-normal ">{{ r.status }} </span> </td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                 </div>
               </div>
+            </div>
+            <div class="col-lg-3">
+            <v-calendar is-expanded
+                          title-position="left"
+                          show-weeknumbers="right"
+                          @dayclick="getRateDetail"
+                />
             </div>
           </div>
         </div>
@@ -94,6 +109,7 @@ import useVuelidate from '@vuelidate/core'
 import { required, email, minLength , numeric , integer ,helpers} from '@vuelidate/validators'
 const rateValidation = helpers.regex(/^[1-9][0-9]*$/);
 import _ from 'lodash'
+
 
 export default {
     setup () {
@@ -154,9 +170,7 @@ export default {
                           }),
                 },
                 _token:'',
-
-
-
+                date: new Date()
         }
     },
     validations() {
@@ -187,6 +201,19 @@ export default {
                 },
             });
         },
+        getRateDetail:function(d){
+          console.log({date:d.id});
+
+          this.$inertia.get(this.route('get.rate'), {date:d.id}, {
+                only: ["rates"],
+                onSuccess: (response) => {
+                    window.history.pushState('data', 'Get Rate For Particular Date', '/rate');
+                },
+            })
+        },
+        parseToJSON(data){
+               return JSON.parse(data);
+        }
     },
     mounted(){
       this.form.rate.product_id = this.selectedProduct.id;

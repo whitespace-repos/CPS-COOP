@@ -2,7 +2,11 @@
     <Head title="Dashboard" />
     <BreezeAuthenticatedLayout>
         <section>
-            <div class="BodyTop">
+            <div class="container">
+                <Link :href="route('make-sale')" class="heading text-danger">
+                    Return Back
+                </Link>
+                <hr />
                 <div class="row">
                     <div class="col-md-12" v-for="request in shop.stock_requests" :key="request.id">
                         <div class="card today_sales mb-4">
@@ -104,12 +108,14 @@ import BreezeAuthenticatedLayout from '@/Layouts/BillingSystem.vue'
 import { Head } from '@inertiajs/inertia-vue3'
 import _ from 'lodash';
 import moment from 'moment'
+import { Link } from '@inertiajs/inertia-vue3';
 
 
 export default {
     components: {
         BreezeAuthenticatedLayout,
-        Head
+        Head,
+        Link
     },
     props:['products','shop','carts'],
     data () {
