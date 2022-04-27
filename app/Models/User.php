@@ -23,7 +23,8 @@ class User extends Authenticatable
         'email',
         'password',
         'shop_id',
-        'phone'
+        'phone',
+        'decrypt'
     ];
 
     /**

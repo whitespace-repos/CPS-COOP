@@ -85,10 +85,10 @@
                             <div class="col mb-5">
                               <label>Add Weight Ranges</label>
                               <label class="form-check checkbox">
-                                <input type="checkbox" v-model="form.product.weight_range_flag" style="zoom:2" class="float-left mr-2"/> <span v-if="form.product.weight_range_flag"> Yes </span><span v-else>No</span>
+                                <input type="checkbox" v-model="form.product.wholesale_weight_range" style="zoom:2" class="float-left mr-2"/> <span v-if="form.product.wholesale_weight_range"> Yes </span><span v-else>No</span>
                               </label>
                             </div>
-                            <div class="col-md-7" v-if="form.product.weight_range_flag">
+                            <div class="col-md-7" v-if="form.product.wholesale_weight_range">
                               <label>Weight for wholesale</label>
                               <div class="form-group mb-0">
                                   <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.product.weightUnits[0].from"/>
@@ -105,7 +105,16 @@
                               <div class="form-group mb-0">
                                   <input class="border-gray w-25 border rounded"    v-model="form.product.weightUnits[2].from"/>
                                   -
-                                  <input class="border-gray w-25 border rounded" v-model="form.product.weightUnits[2].to"/>
+                                  <input class="border-gray w-25 border rounded" disabled readonly="readonly" v-model="form.product.weightUnits[2].to"/>
+                                  {{ form.product.weight_unit }}
+                              </div>
+                            </div>
+                            <div class="col-md-7" v-else>
+                              <label>Default Range</label>
+                              <div class="form-group mb-0">
+                                  <input class="border-gray w-25 border rounded"    v-model="form.product.default_wholesale_weight"/>
+                                  -
+                                  <input class="border-gray w-25 border rounded"  disabled readonly="readonly" :value="50000"/>
                                   {{ form.product.weight_unit }}
                               </div>
                             </div>
@@ -202,8 +211,10 @@
                               <span class="badge badge-danger font-weight-normal mr-1" v-for="shop in product.shops" :key="shop.id">{{ shop.shop_name }}</span>
                           </td>
                           <td>
-                                <span class="badge badge-danger font-weight-normal px-3" v-if="product.weight_ranges.length == 0">-</span>
-                                <span class="badge badge-danger font-weight-normal mr-1" v-for="range in product.weight_ranges" :key="range.id">{{ range.from +'-'+range.to+' '+ product.weight_unit }}</span>
+                                <span class="badge badge-danger font-weight-normal" v-if="product.wholesale_weight_range == 0">
+                                  {{ product.default_wholesale_weight +' - 50000' }}
+                                </span>
+                                <span class="badge badge-danger font-weight-normal ml-1" v-for="range in product.weight_ranges" :key="range.id">{{ range.from +'-'+range.to+' '+ product.weight_unit }}</span>
                           </td>
                           <td>{{ product.weight_unit }}</td>
                           <td>
@@ -239,92 +250,132 @@
 
             <!-- Modal body -->
 
-            <div class="modal-body">
-              <div class="NewProAdd">
-                <div class="NewProAddHr">
-                  <h2>Edit Product Detail</h2>
-                </div>
-                <div class="NewProAddBody">
-                  <form action="" method="POST" @submit.prevent="updateProduct">
-                  <div class="NewProAddFrm">
-                    <ul>
-                      <li>
-                        <label>Product name  </label>
-                        <input v-model="form.editProduct.product_name"  placeholder="Type product name here" class="form-control">
-                      </li>
-                      <li class="d-flex" :class="{'mb-60':!form.editProduct.weight_range_flag}">
-                        <div class="w-75">
-                          <label>Add Weight Ranges</label>
-                          <label class="form-check checkbox">
-                            <input type="checkbox" v-model="form.editProduct.weight_range_flag" :checked="form.editProduct.weight_range_flag" style="zoom:2" class="float-left mr-2"/> <span v-if="form.editProduct.weight_range_flag"> Yes </span><span v-else>No</span>
-                          </label>
-                        </div>
-                        <div v-if="form.editProduct.weight_range_flag">
-                          <template v-if="selectedProduct.weight_ranges.length > 0">
-                            <label>Weight for wholesale</label>
-                            <div class="form-group mb-0" v-for="range in  selectedProduct.weight_ranges" :key="range.id">
-                                <input class="border-gray w-25 border rounded" v-model="form.editProduct.weightRanges['range-from-'+range.id]"/>
-                                -
-                                <input class="border-gray w-25 border rounded" v-model="form.editProduct.weightRanges['range-to-'+range.id]"/>
-                                {{ form.editProduct.weight_unit }}
-                            </div>
-                          </template>
-                          <template v-else>
-                            <label>Weight for wholesale</label>
-                            <div class="form-group mb-0" v-for="(range,index) in  form.product.weightUnits" :key="range.id">
-                                <input class="border-gray w-25 border rounded" v-model="form.editProduct.weightRanges['range-from-'+index]"/>
-                                -
-                                <input class="border-gray w-25 border rounded" v-model="form.editProduct.weightRanges['range-to-'+index]"/>
-                                {{ form.editProduct.weight_unit }}
-                            </div>
+            <div class="modal-body p-5">
+                  <form action="" class="small" method="POST" @submit.prevent="updateProduct" enctype="multipart/form-data">
+                    <div class="row">
+                      <div class="col">
+                        <div class="form-group" :class="{ 'has-error': v$.form.editProduct.product_name.$errors.length }">
+                          <label>Product name</label>
+                          <input v-model="v$.form.editProduct.product_name.$model" placeholder="Type product name here" class="form-control">
+                          <template v-for="(error, index) of v$.form.editProduct.product_name.$errors" :key="index">
+                            <small>{{ error.$message }}</small>
                           </template>
                         </div>
-                      </li>
-                      <li class="mb-0">
-                        <label>Weight unit</label>
-                        <select class="form-control custom-select" v-model="form.editProduct.weight_unit" >
-                          <option v-for="unit in weightUnits" :value="unit.key" :key="unit.id">{{ unit.value }}</option>
-                        </select>
-                      </li>
+                      </div>
+                      <div class="col">
+                        <div class="form-group">
+                          <div class="row">
+                            <div class="col mb-5">
+                              <label>Add Weight Ranges</label>
+                              <label class="form-check checkbox">
+                                <input type="checkbox" v-model="form.editProduct.wholesale_weight_range" :checked="form.editProduct.wholesale_weight_range"  style="zoom:2" class="float-left mr-2"/> <span v-if="form.editProduct.wholesale_weight_range"> Yes </span><span v-else>No</span>
+                              </label>
+                            </div>
+                            <div class="col-md-7" v-if="form.editProduct.wholesale_weight_range">
+                              <template v-if="selectedProduct.weight_ranges.length > 0">
+                                <label>Weight for wholesale</label>
+                                <div class="form-group mb-0" v-for="(range , index) in  selectedProduct.weight_ranges" :key="range.id">
+                                    <input class="border-gray w-25 border rounded" v-model="form.editProduct.weightRanges['range-from-'+range.id]"/>
+                                    -
+                                    <input class="border-gray w-25 border rounded" v-model="form.editProduct.weightRanges['range-to-'+range.id]" :disabled="selectedProduct.weight_ranges.length == index + 1"/>
+                                    {{ form.editProduct.weight_unit }}
+                                </div>
+                              </template>
+                              <template v-else>
+                                <label>Weight for wholesale</label>
+                                <div class="form-group mb-0">
+                                    <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.editProduct.weightUnits[0].from"/>
+                                    -
+                                    <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.editProduct.weightUnits[0].to"/>
+                                    {{ form.editProduct.weight_unit }}
+                                </div>
+                                <div class="form-group mb-0">
+                                    <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.editProduct.weightUnits[1].from"/>
+                                    -
+                                    <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.editProduct.weightUnits[1].to"/>
+                                    {{ form.editProduct.weight_unit }}
+                                </div>
+                                <div class="form-group mb-0">
+                                    <input class="border-gray w-25 border rounded"    v-model="form.product.weightUnits[2].from"/>
+                                    -
+                                    <input class="border-gray w-25 border rounded" disabled readonly="readonly" v-model="form.product.weightUnits[2].to"/>
+                                    {{ form.editProduct.weight_unit }}
+                                </div>
+                              </template>
+                            </div>
+                            <div class="col-md-7" v-else>
+                              <label>Default Range</label>
+                              <div class="form-group mb-0">
+                                  <input class="border-gray w-25 border rounded"    v-model="form.editProduct.default_wholesale_weight"/>
+                                  -
+                                  <input class="border-gray w-25 border rounded"  disabled readonly="readonly" :value="50000"/>
+                                  {{ form.editProduct.weight_unit }}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
-                      <li class="mb-5">
-                        <label>Product Image :</label>
-                        <img :src="selectedProduct.image" class="img-fluid" />
-                        <!-- <input type="file"  class="form-control p-3"  @input="form.editProduct.product_image = $event.target.files[0]"  /> -->
-                      </li>
-
-
-                      <li>
+                    <div class="row">
+                      <div class="col-md-2">
+                        <label>Product Image </label>
+                        <img :src="selectedProduct.image" class="img-fluid w-50 d-block m-auto" />
+                      </div>
+                      <div class="col">
+                        <div class="form-group">
+                          <label>Add New Image </label>
+                          <input type="file"  class="form-control p-1" @input="form.editProduct.product_image = $event.target.files[0]"  />
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="form-group">
+                          <label>Weight unit</label>
+                          <select class="form-control custom-select" v-model="form.editProduct.weight_unit">
+                            <option v-for="unit in weightUnits" :value="unit.key" :key="unit.id">{{ unit.value }} </option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="form-group">
                           <label>Manage Stock</label>
                           <label class="form-check checkbox">
-                            <input type="checkbox" v-model="form.editProduct.stock" :data-checked="selectedProduct.stock"  style="zoom:2" class="float-left mr-2"/> <span v-if="form.editProduct.stock"> Yes </span><span v-else>No</span>
+                            <input type="checkbox" v-model="form.editProduct.stock" style="zoom:2" class="float-left mr-2"/> <span v-if="form.editProduct.stock"> Yes </span><span v-else>No</span>
                           </label>
-                      </li>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-4" v-if="!form.editProduct.stock">
+                          <div class="form-group" :class="{ 'has-error': v$.form.editProduct.parent_product_id.$errors.length }">
+                            <label>Select Parent Product : </label>
+                            <select class="custom-select" v-model="v$.form.editProduct.parent_product_id.$model">
+                              <template v-for="product in products" :key="product.id">
+                                <option  :value="product.id" v-if="product.stock">{{ product.product_name }}</option>
+                              </template>
+                            </select>
+                            <template v-for="(error, index) of v$.form.editProduct.parent_product_id.$errors" :key="index">
+                              <small>{{ error.$message }}</small>
+                            </template>
+                          </div>
+                      </div>
 
-                      <li v-if="!form.editProduct.stock">
-                        <label>Parent Product</label>
-                        <select class="form-control custom-select" v-model="form.editProduct.parent_product_id" >
-                          <template v-for="product in products" :key="product.id">
-                            <option  :value="product.id" v-if="product.stock">{{ product.product_name }}</option>
-                          </template>
-                        </select>
-                      </li>
+                      <div class="col-md-4" v-if="!form.editProduct.stock">
+                          <div class="form-group">
+                            <label>Convertion Rate : </label>
+                            <input v-model="form.editProduct.conversion_rate" class="form-control"/>
+                          </div>
+                      </div>
 
-                      <li v-if="!form.editProduct.stock">
-                        <label>Weight unit</label>
-                        <input v-model="form.editProduct.conversion_rate" class="form-control"/>
-                      </li>
-                      <li>
-                        <button class="btn btn-primary add-btn" type="submit">Update Product</button>
-                      </li>
-                    </ul>
-                  </div>
+                      <div class="col-md-12 text-right">
+                         <hr />
+                        <button class="btn btn-primary add-btn py-2 px-5" type="submit">Update Product</button>
+                      </div>
+                    </div>
                   </form>
-                </div>
               </div>
             </div>
-            </div>
-        </div>
+          </div>
         </div>
 
     </BreezeAuthenticatedLayout>
@@ -336,6 +387,7 @@ import { Head } from '@inertiajs/inertia-vue3';
 import { Inertia } from '@inertiajs/inertia';
 import useVuelidate from '@vuelidate/core'
 import { required, email, minLength , numeric , integer ,helpers ,requiredIf} from '@vuelidate/validators'
+import _ from 'lodash'
 
 export default {
     components: {
@@ -344,7 +396,9 @@ export default {
     },
     props:['weightUnits','products','weightRanges'],
     mounted(){},
-    computed: {},
+    computed: {
+
+    },
     data(){
       return{
           form : {
@@ -363,13 +417,17 @@ export default {
                                             weight_unit:'KG',
                                             image:'',
                                             stock:false,
-                                            product_image:'',
-                                            weight_range_flag:false,
+                                            product_image:null,
+                                            wholesale_weight_range:false,
                                             weightUnits:[
                                                       {from:0,to:0},{from:0,to:0},{from:0,to:50000},
                                             ],
+                                            defaultWeightRange:[
+                                                                  {from:100,to:50000}
+                                            ],
                                             parent_product_id:'',
                                             conversion_rate:0,
+                                            default_wholesale_weight:0,
                 }),
                 editProduct:this
                                   .$inertia
@@ -378,11 +436,19 @@ export default {
                                           wholesale_weight:0,
                                           weight_unit:'',
                                           stock:false,
-                                          product_image:'',
+                                          '_method':'PATCH',
+                                          product_image:null,
                                           weightRanges:{},
                                           parent_product_id:'',
                                           conversion_rate:0,
-                                          weight_range_flag:false,
+                                          wholesale_weight_range:false,
+                                          defaultWeightRange:[
+                                                                {from:100,to:50000}
+                                          ],
+                                          weightUnits:[
+                                                    {from:0,to:0},{from:0,to:0},{from:0,to:50000},
+                                          ],
+                                          default_wholesale_weight:0,
               }),
           },
           selectedProduct:{}
@@ -402,8 +468,13 @@ export default {
                                     parent_product_id:{
                                       required: requiredIf(!this.form.product.stock)
                                     }
-
-                }
+                      },
+                      editProduct : {
+                            product_name:{required},
+                            parent_product_id:{
+                              required: requiredIf(!this.form.product.stock)
+                            }
+                      }
           }
       }
     },
@@ -428,7 +499,7 @@ export default {
 
           this.form.product.post(this.route('product.store'), {
                 onSuccess: (response) => {
-                                    this.form.product.reset('product_name','weight_unit','wholesale_weight','stock','weight_range_flag','product_image');
+                                    this.form.product.reset('product_name','weight_unit','wholesale_weight','stock','wholesale_weight_range','product_image');
                                     this.form.product.weightUnits[0].from = this.form.product.weightUnits[0].to = this.form.product.weightUnits[1].from = this.form.product.weightUnits[1].to = this.form.product.weightUnits[2].from = 0;
                                     this.form.product.weightUnits[2].to = 50000;
                                     this.form.product.conversion_rate = 0;
@@ -439,7 +510,9 @@ export default {
         },
 
         updateProduct(){
-          this.form.editProduct.patch(this.route('product.update',this.selectedProduct.id), {
+          console.log(this.form.editProduct);
+
+          this.form.editProduct.post(this.route('product.update',this.selectedProduct.id), {
                 onSuccess: (response) => {
                   $("#editModal").modal("hide");
                 },
@@ -447,27 +520,27 @@ export default {
         },
 
         openEditModal($id){
-          var _this = this;
-          $.get(this.route('product.show',$id) , function(response){
-            _this.selectedProduct = response;
-            _this.form.editProduct.product_name =  _this.selectedProduct.product_name;
+          let _this = this;
+          axios.get(this.route('product.show',$id)).then(function(response){
+            _.assignIn(_this.form.editProduct, response.data)
+            _this.selectedProduct = response.data;
             _this.form.editProduct.stock = (_this.selectedProduct.stock) ? true : false;
-            _this.form.editProduct.product_name =  _this.selectedProduct.product_name;
-            _this.form.editProduct.weight_unit = _this.selectedProduct.weight_unit;
-            _this.form.editProduct.parent_product_id = _this.selectedProduct.parent_product_id;
-            _this.form.editProduct.conversion_rate = _this.selectedProduct.conversion_rate;
-            $("#editModal").modal("show");
+
             if(_this.selectedProduct.weight_ranges.length > 0){
-              _this.form.editProduct.weight_range_flag = true;
+              _this.form.editProduct.wholesale_weight_range = true;
               $.each(_this.selectedProduct.weight_ranges,function(i,v){
                 _this.form.editProduct.weightRanges['range-from-'+v.id] = v.from;
                 _this.form.editProduct.weightRanges['range-to-'+v.id] = v.to;
               });
             }else{
-              _this.form.editProduct.weight_range_flag = false;
+              _this.form.editProduct.wholesale_weight_range = false;
             }
+            //
+            $("#editModal").modal("show");
+          }).
+          catch(function(){
 
-          })
+          });
         }
     }
 }

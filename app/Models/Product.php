@@ -10,7 +10,19 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['product_name','status','weight_unit','fields','wholesale_weight','image','stock','conversion_rate','parent_product_id'];
+    protected $fillable = [
+                            'product_name',
+                            'status',
+                            'weight_unit',
+                            'fields',
+                            'wholesale_weight',
+                            'image',
+                            'stock',
+                            'conversion_rate',
+                            'parent_product_id',
+                            'wholesale_weight_range',
+                            'default_wholesale_weight'
+                        ];
 
      /**
      * The shops that belong to the product.
@@ -21,7 +33,7 @@ class Product extends Model
     }
 
     /**
-     * 
+     *
      */
     public function rate(){
         return $this->hasOne(Rate::class)->where( 'date', Carbon::today())->where('status','Active');

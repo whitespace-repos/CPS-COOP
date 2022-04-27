@@ -217,7 +217,7 @@
                                           <template  v-for="rp  in request.requested_products" :key="rp.id">
                                             <div class="item">
                                                 <div class="itemBox p-2">
-                                                    <span class="img mr-2"><img :src="rp.product.image" alt="icon"></span> <span class="">
+                                                    <span class="img mr-2"><img :src="rp.product.image" alt="icon" class="img-fluid"></span> <span class="">
                                                         <h6 v-if="request.type == 'Direct'">{{ rp.stock_sent +' ' + rp.product.weight_unit }}</h6>
                                                         <h6 v-else>{{ rp.stock_request +' ' + rp.product.weight_unit }}</h6>
                                                         <p>{{ rp.product.product_name }}</p>

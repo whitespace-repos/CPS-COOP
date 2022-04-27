@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Twilio\Rest\Client;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Crypt;
 
 use Shop;
 use Inertia;
@@ -78,16 +80,16 @@ class Users extends Controller
         //
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => ['required', Rules\Password::defaults()],
+            'email' => 'required|string|email|max:255|unique:users'
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'decrypt' => $request->password,
             'password' => Hash::make($request->password),
             'phone' => $request->phone,
-            'shop_id' => $request->shop_id['id']
+            'shop_id' => $request->shop_id['id'],
         ]);
 
         event(new Registered($user));
@@ -119,7 +121,10 @@ class Users extends Controller
         //
         $shops = Shop::all();
         $user = User::find($id);
-        return view('pages.users.edit',compact('user','shops'));
+        $decrypted = decrypt($user->password);
+        return Inertia::render('Users/Modify', [ "shops" => $shops , 'user' => $user ]);
+
+        return back();
     }
 
     /**

@@ -10,7 +10,7 @@ use Setting;
 use ProductWholesaleRateRange;
 
 class Products extends Controller
-{    
+{
     /**
      * Display a listing of the resource.
      *
@@ -19,7 +19,7 @@ class Products extends Controller
     public function index()
     {
         //
-        $products = Product::with(['shops','weightRanges'])->get();        
+        $products = Product::with(['shops','weightRanges'])->get();
         //return view('pages.products.main',compact('products'));
         $weightUnits  = Setting::where('setting_group_id',1)->get();
         return Inertia::render('Products/Product', [ 'products' => $products , 'weightUnits' => $weightUnits ]);
@@ -33,7 +33,7 @@ class Products extends Controller
     public function create()
     {
         //
-        $weightUnits = SettingGroup::where('group','Weight Unit')->first();        
+        $weightUnits = SettingGroup::where('group','Weight Unit')->first();
         return view('pages.products.create',compact('weightUnits'));
     }
 
@@ -45,7 +45,7 @@ class Products extends Controller
      */
     public function store(Request $request)
     {
-        //   
+        //
         if($request->file("product_image")){
             // add new file
             $name = time().'_'.$request->file('product_image')->getClientOriginalName();
@@ -54,12 +54,15 @@ class Products extends Controller
         }
         $product = Product::create($request->all());
 
-        if($request->weight_range_flag){
+        if($product->wholesale_weight_range){
             foreach($request->weightUnits as $range){
                 ProductWholesaleRateRange::create([ "product_id" => $product->id , "from" => $range['from'] , "to" => $range['to'] ]);
             }
+        }else{
+            $product->default_wholesale_weight = $request->default_wholesale_weight;
+            $product->save();
         }
-        // 
+        //
         return redirect()->route('product.index');
     }
 
@@ -98,10 +101,10 @@ class Products extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {      
+    {
         $product = Product::find($id);
         if($request->file("product_image")){
-            // remove existing file 
+            // remove existing file
             if(!empty($product->image))
                 unlink(public_path($product->image));
             // add new file
@@ -109,33 +112,29 @@ class Products extends Controller
             $filePath = $request->file('product_image')->storeAs('products', $name, 'public');
             $request->request->add(["image" => '/storage/'.$filePath ]);
         }
-        //        
+        //
         $product->update($request->all());
+
         //  if weightRamge is not null and range flag flase
-        
-        if($product->weightRanges->count() > 1 && !$request->weight_range_flag){
+        if($product->weightRanges->count() > 1 && !$request->wholesale_weight_range){
             $product->weightRanges()->delete();
         }
-
-        //  if weightRamge is  null and range flag true
-        if($request->weight_range_flag && $product->weightRanges->count()){
+        //  if weightRamge is  exist and range flag true
+        if($request->wholesale_weight_range && $product->weightRanges->count()){
             foreach($product->weightRanges as $key => $range){
                 $range->from = $request->weightRanges['range-from-'.$range->id];
-                $range->to =  $request->weightRanges['range-to-'.$range->id]; 
+                $range->to =  $request->weightRanges['range-to-'.$range->id];
                 $range->save();
             }
         }
-        // new entry.. 
-        if($request->weight_range_flag && $product->weightRanges->count() == 0){            
-            for ($x = 0; $x <= 2; $x++) {                
-                $range = new ProductWholesaleRateRange;
-                $range->product_id = $product->id;
-                $range->from = $request->weightRanges['range-from-'.$x];
-                $range->to =  $request->weightRanges['range-to-'.$x]; 
-                $range->save();
+        // new entry..
+        if($request->wholesale_weight_range && $product->weightRanges->count() == 0){
+            foreach($request->weightUnits as $range){
+                ProductWholesaleRateRange::create([ "product_id" => $product->id , "from" => $range['from'] , "to" => $range['to'] ]);
             }
         }
-        // 
+
+        //
         return redirect()->route('product.index');
     }
 
@@ -153,13 +152,13 @@ class Products extends Controller
          $product->save();
         // $shops = $product->shops()->detach();
         // $product->delete();
-        // 
+        //
         return back();
     }
 
-    
+
     public function filterProduct($id){
-        $product = Product::with('rate')->find($id);     
-        return response()->json(['productRate' => $product]);           
+        $product = Product::with('rate')->find($id);
+        return response()->json(['productRate' => $product]);
     }
 }

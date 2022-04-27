@@ -30,7 +30,7 @@
                   <td><span class="badge badge-danger"> {{ (isEmpty(user)) ? '' : user.roles[0].name  }}</span></td>
                   <td><span class="badge badge-warning" :class="{'px-4':isEmpty(user.shop)}"> {{ isEmpty(user.shop) ? '-' : user.shop.shop_name }}</span></td>
                   <td><span class="badge badge-secondary font-weight-normal" :class="{'px-4':isEmpty(user.phone)}"> {{ isEmpty(user.phone) ? '-' : user.phone }}</span></td>
-                  <td><inertia-link href="#">Edit</inertia-link></td>
+                  <td><inertia-link :href="route('user.edit',user.id)">Edit</inertia-link></td>
                 </tr>
               </template>
             </tbody>
