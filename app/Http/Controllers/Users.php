@@ -54,6 +54,10 @@ class Users extends Controller
 
         //
         $users = User::with('roles','shop')->get();
+        $shops = Shop::all();
+        if($shops->count() == 0){
+            return Inertia::render('Dependecy', ["message" => "You need to create atleast one shop for accessing <b> Users </b>."]);
+        }
         return Inertia::render('Users/Users', [ "users" => $users ]);
     }
 
@@ -120,11 +124,8 @@ class Users extends Controller
     {
         //
         $shops = Shop::all();
-        $user = User::find($id);
-        $decrypted = decrypt($user->password);
+        $user = User::with('shop')->find($id);
         return Inertia::render('Users/Modify', [ "shops" => $shops , 'user' => $user ]);
-
-        return back();
     }
 
     /**
@@ -138,7 +139,14 @@ class Users extends Controller
     {
         //
         $user = User::find($id);
-        $user->update($request->all());
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'decrypt' => $request->password,
+            'password' => Hash::make($request->password),
+            'phone' => $request->phone,
+            'shop_id' => $request->shop_id['id'],
+        ]);
         return redirect()->route('user.index');
     }
 

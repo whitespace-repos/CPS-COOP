@@ -23,6 +23,9 @@ class Shops extends Controller
         $shops = Shop::with('products','stock_requests')->get();
         $products = Product::with('shops.stock_requests')->get();
         $product =  $products->first();
+        if($products->count() == 0){
+            return Inertia::render('Dependecy', ["message" => "You need to create atleast one product for accessing <b> Shops </b>."]);
+        }
         return Inertia::render('Shops/Shop', [ "shops" => $shops , "product" => $product ,"products" => $products ]);
        // return view('pages.shops.main', compact('shops'));
     }

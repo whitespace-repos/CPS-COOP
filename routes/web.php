@@ -31,11 +31,8 @@ Route::get('/test', function () {
 });
 
 Route::get('/', function () {
-    if(auth()->user()->hasRole('Admin'))
-        return redirect()->route('rate.index');
-    else
-        return redirect()->route('make-sale');
-})->middleware(['auth'])->name('dashboard');
+    return ;
+})->middleware(['auth','guest'])->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
     /* --- Resource Route --- */

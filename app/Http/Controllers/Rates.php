@@ -25,6 +25,9 @@ class Rates extends Controller
                         ->get();
         $products = Product::all();
         $product = empty($products) ? [] : Product::with('shops','weightRanges')->first();
+        if($products->count() == 0){
+            return Inertia::render('Dependecy', ["message" => "You need to create atleast one product for accessing <b> Rate </b> feature"]);
+        }
         return Inertia::render('Rate/Rates', ["products" => $products ,"selectedProduct" => $product , "rates" => $rates ]);
     }
 

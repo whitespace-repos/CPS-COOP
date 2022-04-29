@@ -134,11 +134,14 @@
                         </div>
                       </div>
                       <div class="col">
-                        <div class="form-group">
+                        <div class="form-group" :class="{ 'has-error': v$.form.product.weight_unit.$errors.length }">
                           <label>Weight unit</label>
-                          <select class="form-control custom-select" v-model="form.product.weight_unit">
+                          <select class="form-control custom-select" v-model="v$.form.product.weight_unit.$model">
                             <option v-for="unit in weightUnits" :value="unit.key" :key="unit.id">{{ unit.value }} </option>
                           </select>
+                          <template v-for="(error, index) of v$.form.product.weight_unit.$errors" :key="index">
+                            <small>{{ error.$message }}</small>
+                          </template>
                         </div>
                       </div>
                       <div class="col">
@@ -414,7 +417,7 @@ export default {
                                   .form({
                                             product_name:'',
                                             wholesale_weight:0,
-                                            weight_unit:'KG',
+                                            weight_unit:'',
                                             image:'',
                                             stock:false,
                                             product_image:null,
@@ -465,6 +468,7 @@ export default {
                       product : {
                                     product_name:{required},
                                     product_image:{required},
+                                    weight_unit:{required},
                                     parent_product_id:{
                                       required: requiredIf(!this.form.product.stock)
                                     }

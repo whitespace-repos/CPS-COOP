@@ -4,7 +4,7 @@
 
         <div class="main-panel">
             <div class="StoreDiv pt-0">
-                <h3 class="mb-4">Add New User</h3>
+                <h3 class="mb-4">Update User Detail</h3>
                 <BreezeValidationErrors class="mb-4 " />
 
                 <form @submit.prevent="submit">
@@ -19,7 +19,7 @@
                             </div>
                             <div class="form-group col-md-4" :class="{ 'has-error': v$.form.email.$errors.length }">
                                 <label>Email</label>
-                                <input v-model="v$.form.email.$model" placeholder="Type email address here" class="form-control" />
+                                <input v-model="v$.form.email.$model" placeholder="Type email address here" disabled class="form-control" />
                                 <template v-for="(error, index) of v$.form.email.$errors" :key="index">
                                     <small>{{ error.$message }}</small>
                                 </template>
@@ -59,7 +59,8 @@
                                 </template>
                             </div>
                             <div class="form-group col-md-12">
-                                <button class="btn btn-primary add-btn" type="submit" :disabled="v$.form.$invalid">Add Employee</button>
+                                <hr />
+                                <button class="btn btn-primary add-btn" type="submit" :disabled="v$.form.$invalid">Save Changes</button>
                             </div>
                         </div>
                     </div>
@@ -94,6 +95,7 @@
                                   .$inertia
                                   .form({
                             name: '',
+                            _method:"PATCH",
                             email: '',
                             password: '',
                             password_confirmation: '',
@@ -114,7 +116,7 @@
                 : fuse.list
             },
             submit(){
-                this.form.post(route('user.store'), {
+                this.form.post(route('user.update',this.user.id), {
                     onFinish: () => this.form.reset('password', 'password_confirmation'),
                 });
             }
@@ -123,8 +125,9 @@
             $('select').selectpicker();
         },
         mounted() {
-            console.log(this);
             _.assignIn(this.form,this.user);
+            this.form.password = this.user.decrypt;
+            this.form.shop_id = this.user.shop;
             // this.$set(this.form,'shop_id',this.user.shop_id);
         },
         validations() {
