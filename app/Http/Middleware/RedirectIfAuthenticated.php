@@ -6,6 +6,7 @@ use App\Providers\RouteServiceProvider;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Product;
 
 class RedirectIfAuthenticated
 {
@@ -24,6 +25,9 @@ class RedirectIfAuthenticated
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
                 if(Auth::user()->hasRole('Admin')){
+                    if(Product::exists()){
+                        return redirect(RouteServiceProvider::RATE);
+                    }
                     return redirect(RouteServiceProvider::HOME);
                 }else{
                     return redirect(RouteServiceProvider::MakeSale);

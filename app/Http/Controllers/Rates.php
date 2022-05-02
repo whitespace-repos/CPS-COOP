@@ -70,17 +70,27 @@ class Rates extends Controller
         // Save Whole weight Range Rate
         $wholesaleRangeRates = collect();
 
-        foreach($product->weightRanges as $key => $range){
-            $range->wholesale_rate = (empty($request->range["range-".$range->id])) ? 0 : $request->range["range-".$range->id];
-            $range->save();
+        if($product->wholesale_weight_range){
+            foreach($product->weightRanges as $key => $range){
+                $range->wholesale_rate = (empty($request->range["range-".$range->id])) ? 0 : $request->range["range-".$range->id];
+                $range->save();
+                $wholesaleRangeRates->push([
+                                    "from" => $range->from,
+                                    "to" => $range->to,
+                                    "product_id" => $range->product_id,
+                                    "id" => $range->id,
+                                    "rate" => (empty($request->range["range-".$range->id])) ? 0 : $request->range["range-".$range->id],
+                ]);
+            }
+        }else{
             $wholesaleRangeRates->push([
-                                "from" => $range->from,
-                                "to" => $range->to,
-                                "product_id" => $range->product_id,
-                                "id" => $range->id,
-                                "rate" => (empty($request->range["range-".$range->id])) ? 0 : $request->range["range-".$range->id],
+                            "from" => $product->default_wholesale_weight,
+                            "to" => 50000,
+                            "product_id" => $product->id,
+                            "rate" => (empty($request->default_wholesale_weight)) ? 0 : $request->default_wholesale_weight,
             ]);
         }
+
 
         $rate->wholesale_rate =  $wholesaleRangeRates->toJson();
         $rate->save();

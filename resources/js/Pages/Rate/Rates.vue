@@ -33,16 +33,27 @@
                           </div>
                         </div>
                         <div class="row">
-                          <div class="col" v-for="(range , index ) in selectedProduct.weight_ranges" :key="range.id" >
-                            <div class="form-group" v-if = "range.from != 0 || range.to != 0 " :class="{'has-error':v$.form.rate.range['range-'+range.id].$error}">
-                                <label>Range {{index + 1 }} : <label class="badge badge-danger font-weight-normal"> {{ range.from + '-' + range.to + ' ' + selectedProduct.weight_unit }} </label> </label>
-                                <input class="form-control" :name="range.id" v-model="v$.form.rate.range['range-'+range.id].$model"/>
-                                <small v-if="v$.form.rate.range['range-'+range.id].$error">{{ 'Please Enter a Valid Rate' }} </small>
+                          <template v-if="selectedProduct.weight_ranges.length > 0 ">
+                            <div class="col" v-for="(range , index ) in selectedProduct.weight_ranges" :key="range.id" >
+                              <div class="form-group" v-if = "range.from != 0 || range.to != 0 " :class="{'has-error':v$.form.rate.range['range-'+range.id].$error}">
+                                  <label>Range {{index + 1 }} : <label class="badge badge-danger font-weight-normal"> {{ range.from + '-' + range.to + ' ' + selectedProduct.weight_unit }} </label> </label>
+                                  <input class="form-control" :name="range.id" v-model="v$.form.rate.range['range-'+range.id].$model"/>
+                                  <small v-if="v$.form.rate.range['range-'+range.id].$error">{{ 'Please Enter a Valid Rate' }} </small>
+                              </div>
                             </div>
-                          </div>
-                          <div class="col-md-4">
-                            <div class="form-group py-1">
-                                <button class="btn btn-danger btn-block my-4" type="submit" :disabled="v$.form.rate.$invalid">Save Rate</button>
+                          </template>
+                          <template v-else>
+                            <div class="col-md-4">
+                              <div class="form-group" :class="{'has-error':v$.form.rate.default_wholesale_weight.$error}">
+                                  <label>Default Wholesale Rate : <label class="badge badge-danger font-weight-normal"> {{ selectedProduct.default_wholesale_weight + '- 50000' + ' ' + selectedProduct.weight_unit }} </label> </label>
+                                  <input class="form-control"  v-model="v$.form.rate.default_wholesale_weight.$model"/>
+                                  <small v-if="v$.form.rate.default_wholesale_weight.$error">{{ 'Please Enter a Valid Rate' }} </small>
+                              </div>
+                            </div>
+                          </template>
+                          <div class="col-md-3  align-self-end">
+                            <div class="form-group">
+                                <button class="btn btn-danger btn-block" type="submit" :disabled="v$.form.rate.$invalid">Save Rate</button>
                             </div>
                           </div>
                         </div>
@@ -68,21 +79,28 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="r in rates" :key="r.id">
-                          <td>{{ r.product.product_name }}</td>
-                          <td>{{ r.date }}</td>
-                          <td>
-                            <template v-if="r.wholesale_rate != null && r.wholesale_rate != ''">
-                              <template  v-for="(range,index) in parseToJSON(r.wholesale_rate)" :key="range.id">
-                                <span class="badge badge-danger font-weight-normal mr-2" v-if="index==0">
-                                    {{range.from +"-"+ range.to +" "+ r.product.weight_unit }} : {{  range.rate }} <sup>INR </sup>
-                                </span>
+                        <template v-if="rates.length > 0 ">
+                          <tr v-for="r in rates" :key="r.id">
+                            <td>{{ r.product.product_name }}</td>
+                            <td>{{ r.date }}</td>
+                            <td>
+                              <template v-if="r.wholesale_rate != null && r.wholesale_rate != ''">
+                                <template  v-for="(range,index) in parseToJSON(r.wholesale_rate)" :key="range.id">
+                                  <span class="badge badge-danger font-weight-normal mr-2" v-if="index==0">
+                                      {{range.from +"-"+ range.to +" "+ r.product.weight_unit }} : {{  range.rate }} <sup>INR </sup>
+                                  </span>
+                                </template>
                               </template>
-                            </template>
-                           </td>
-                          <td> <span class="badge badge-danger font-weight-normal "> {{  r.retail_rate }} <sup>INR </sup> {{ " / "+ r.product.weight_unit }} </span> </td>
-                          <td> <span class="badge badge-danger font-weight-normal ">{{ r.status }} </span> </td>
-                        </tr>
+                            </td>
+                            <td> <span class="badge badge-danger font-weight-normal "> {{  r.retail_rate }} <sup>INR </sup> {{ " / "+ r.product.weight_unit }} </span> </td>
+                            <td> <span class="badge badge-danger font-weight-normal ">{{ r.status }} </span> </td>
+                          </tr>
+                        </template>
+                        <template v-else>
+                          <tr>
+                            <td colspan="5" class="p-3 text-center"> No Record Found.</td>
+                          </tr>
+                        </template>
                       </tbody>
                     </table>
                   </div>
@@ -106,7 +124,7 @@
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue'
 import { Head } from '@inertiajs/inertia-vue3';
 import useVuelidate from '@vuelidate/core'
-import { required, email, minLength , numeric , integer ,helpers} from '@vuelidate/validators'
+import { required, email, minLength , numeric , integer ,helpers , requiredIf} from '@vuelidate/validators'
 const rateValidation = helpers.regex(/^[1-9][0-9]*$/);
 import _ from 'lodash'
 
@@ -125,21 +143,38 @@ export default {
             const date = `${current.getDate()}-${current.getMonth()+1}-${current.getFullYear()}`;
             return date;
         },
+        defaultWholesaleWeightValidation(){
+            let validation= {};
+            //
+            if(this.selectedProduct.wholesale_weight_range == 0){
+              return {
+                        rateValidation:helpers.withMessage('Please Enter a Valid Rate',rateValidation),
+                        required: requiredIf(this.selectedProduct.wholesale_weight_range == 0)
+                    };
+            }
+
+            return validation;
+        },
         weightRangeValidation(){
             let validation= {};
             //
-            this.selectedProduct.weight_ranges.filter(function(obj,index){
-                let key = "range-"+obj.id;
-                let ObjString = '{"range-'+obj.id+'" : null}';
-                let Objest = JSON.parse(ObjString);
-                //
-                _.set(Objest, key,{
-                  rateValidation:helpers.withMessage('Please Enter a Valid Rate',rateValidation),
-                  required
-                });
-                //
-                _.assign(validation, Objest);
-            })
+            if(this.selectedProduct.wholesale_weight_range == 1){
+              this.selectedProduct.weight_ranges.filter(function(obj,index){
+                  let key = "range-"+obj.id;
+                  let ObjString = '{"range-'+obj.id+'" : null}';
+                  let Objest = JSON.parse(ObjString);
+                  //
+                  _.set(Objest, key,{
+                    rateValidation:helpers.withMessage('Please Enter a Valid Rate',rateValidation),
+                    required
+                  });
+                  //
+                  _.assign(validation, Objest);
+              })
+            }
+
+            console.log(validation);
+
             return validation;
         }
 
@@ -156,7 +191,8 @@ export default {
                                             product_id:null,
                                             range:{},
                                             retail_rate:0,
-                                            wholesale_rate:0
+                                            wholesale_rate:0,
+                                            default_wholesale_weight:0
                           }),
                         selectedRate:this
                                   .$inertia
@@ -181,7 +217,8 @@ export default {
                                     rateValidation:helpers.withMessage('Please Enter a Valid Rate',rateValidation),
                                     required
                                 },
-                                range:this.weightRangeValidation
+                                range:this.weightRangeValidation,
+                                default_wholesale_weight:this.defaultWholesaleWeightValidation
                       }
                 }
       }
@@ -204,7 +241,7 @@ export default {
         getRateDetail:function(d){
           console.log({date:d.id});
 
-          this.$inertia.get(this.route('get.rate'), {date:d.id}, {
+          this.$inertia.get(this.route('get.rate'),{ date:d.id}, {
                 only: ["rates"],
                 onSuccess: (response) => {
                     window.history.pushState('data', 'Get Rate For Particular Date', '/rate');
