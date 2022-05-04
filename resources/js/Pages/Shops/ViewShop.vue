@@ -12,7 +12,7 @@
             <div class="col-lg-7 col-md-12 ">
               <div class="ShopDtlsHdr align-self-center justify-content-between mt-3">
                 <h6>{{ 'COOP - ' + shop.shop_name }}</h6>
-                <h6 class="dueAmount">Due Amount  -  0 <sup>INR</sup></h6>
+                <h6 class="dueAmount">Due Amount  -  {{ due_amount }} <sup>INR</sup></h6>
                 <h6 class="dueAmount">Activate Expense</h6>
                 <label class="switch mt-0">
                   <input type="checkbox" checked>
@@ -439,7 +439,7 @@ export default {
         Button,
         Input,
     },
-    props:['products','shop','users'],
+    props:['products','shop','users','due_amount'],
     data () {
         return {
                   form:{

@@ -339,8 +339,6 @@ export default {
       var _this = this;
       //
       this.currentStock = this.shop.products;
-
-      console.log(this.currentStock);
       //
       if(Object.keys(this.carts).length > 0 ){
           this.existingCustomer = true;
@@ -444,10 +442,27 @@ export default {
           },
           addToCart(event){
               //
-
-
               var $form = $(event.target),
                   $el = $form.find('[name=weight]');
+            //
+            let _this = this;
+            let InsufficientStock = false;
+
+            this.currentStock.filter(function(o) {
+                    if(o.id == _this.form.cart.product){
+                        if(o.association.stock < $el.val()){
+                            InsufficientStock = true;
+                        }
+                    }
+            })
+
+            //
+            if(InsufficientStock){
+                $.jGrowl("Insufficient Stock ! Please request for stock", {
+                    theme: 'jGrowl-bg text-white'
+                });
+                return false;
+            }
               //
               this.form.cart.customer = this.form.customer.phone;
               this.form.cart.product = $el.data('productId');
@@ -459,7 +474,7 @@ export default {
                     only: ["carts"],
                     onSuccess: (response) => {
                                     window.history.pushState('data', 'Add to Cart', '/make-sale');
-                                    let _this = this;
+
                                     this.currentStock.filter(function(o) {
                                             if(o.id == _this.form.cart.product){
                                                 o.association.stock = o.association.stock - _this.form.cart.weight;
@@ -479,8 +494,7 @@ export default {
             //           };
 
             //   $.post(url,data,function(response){
-            //       vue.carts = response;
-            //       // console.log(response);
+            //       vue.carts = response;;
             //       if(_.size(vue.carts))
             //           vue.cartFlag = true;
             //       else
@@ -493,8 +507,6 @@ export default {
           removeCart(event,item){
               var  $form = $(event.target),
                     $el = $form.find("[name='id']");
-
-                console.log(item);
               this.form.removeCart.id = $el.val();
               this.form.removeCart.post(this.route('cart.remove') ,{
                     only: ["carts"],
@@ -502,7 +514,6 @@ export default {
                                     window.history.pushState('data', 'Remove from Cart', '/make-sale');
                                     //
                                     this.currentStock.filter(function(o) {
-                                        console.log(o);
                                         if(o.id == item.attributes.product.id){
                                             o.association.stock = o.association.stock + item.attributes.weight;
                                         }
@@ -517,7 +528,6 @@ export default {
             //   $form = $(event.target);
             //   $.post($form.attr("action"),$form.serialize(),function(response){
             //       vue.carts = response;
-            //       // console.log(response);
             //       if(_.size(vue.carts))
             //           vue.cartFlag = true;
             //       else

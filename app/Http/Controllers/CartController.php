@@ -187,7 +187,10 @@ class CartController extends Controller
     }
 
     public function printReceipt(Request $request){
-        return view('print')->with(["carts" => collect(json_decode($request->carts)) ]);
+        return view('print')->with([
+                                        "carts" => collect(json_decode($request->carts)),
+                                        "request" => $request
+                                    ]);
     }
 
     public function cartTest(){

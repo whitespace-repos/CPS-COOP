@@ -76,8 +76,6 @@ export default {
       },
     mounted(){
       var _this = this;
-      console.log(_this);
-
     },
 
     computed:{
@@ -96,7 +94,7 @@ export default {
         },
         print(){
             let carts = JSON.stringify(this.carts);
-            let url = this.route('print-receipt')+"?carts="+carts;
+            let url = this.route('print-receipt')+"?carts="+carts+"&receiveAmount="+this.receiveAmount;
 
             let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=0,height=0,left=-1000,top=-1000`;
             var w = window.open(url, 'test', params);

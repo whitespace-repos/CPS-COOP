@@ -84,10 +84,11 @@ class Shops extends Controller
     {
         //
         $shop = Shop::where("id",$id)->with(['products.rate','stock_requests.requested_products.product','employee'])->first();
+        $due_amount  = $shop->stock_requests()->whereNotIn('status',['Rejected','Completed'])->sum('actual_payment');
 
         $products = Product::with('rate')->get();
         $users = User::role('Employee')->get();
-        return Inertia::render('Shops/ViewShop', [ "shop" => $shop ,"products" => $products ,"users" => $users]);
+        return Inertia::render('Shops/ViewShop', [ "shop" => $shop ,"products" => $products ,"users" => $users , "due_amount" => $due_amount]);
         //return view('pages.shops.show',compact('shop'));
     }
 

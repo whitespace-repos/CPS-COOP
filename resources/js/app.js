@@ -12,9 +12,6 @@ import 'vue-select/dist/vue-select.css';
 import 'v-calendar/dist/style.css';
 
 
-
-
-
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => require(`./Pages/${name}.vue`),

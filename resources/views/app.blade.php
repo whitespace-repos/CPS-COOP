@@ -9,7 +9,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}" />
 
          <!-- Fonts -->
-         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
+         <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
 
         <!-- Bootstrap CSS File -->
         <link href="{{ asset('assets/lib/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
@@ -51,5 +51,6 @@
                 <!-- Scripts -->
                 @routes
         <script src="{{ asset('js/app.js') }}" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.4.8/jquery.jgrowl.min.js"></script>
     </body>
 </html>

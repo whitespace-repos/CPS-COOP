@@ -22,8 +22,12 @@ class Customers extends Controller
     }
 
     public function store(Request $request){
-        //         
-        $customer = Customer::create($request->all());
+        //
+        $customer = Customer::where('phone',$request->phone)->first();
+        //
+        if(empty($customer))
+            $customer = Customer::create($request->all());
+
         return Inertia::render('Sale/Make', [
                                                 "existingCustomer" => true,
                                                 "customer" => $customer,
@@ -37,5 +41,5 @@ class Customers extends Controller
         // ]);
     }
 
-    
+
 }
