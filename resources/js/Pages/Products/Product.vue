@@ -81,44 +81,38 @@
                       </div>
                       <div class="col">
                         <div class="form-group">
-                          <div class="row">
-                            <div class="col mb-5">
-                              <label>Add Weight Ranges</label>
-                              <label class="form-check checkbox">
-                                <input type="checkbox" v-model="form.product.wholesale_weight_range" style="zoom:2" class="float-left mr-2"/> <span v-if="form.product.wholesale_weight_range"> Yes </span><span v-else>No</span>
-                              </label>
-                            </div>
-                            <div class="col-md-7" v-if="form.product.wholesale_weight_range">
-                              <label>Weight for wholesale</label>
-                              <div class="form-group mb-0">
-                                  <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.product.weightUnits[0].from"/>
-                                  -
-                                  <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.product.weightUnits[0].to"/>
-                                  {{ form.product.weight_unit }}
+                            <div class="row">
+                              <div class="col mb-5">
+                                  <label>Add Weight Ranges</label>
+                                  <label class="form-check checkbox">
+                                  <input type="checkbox" v-model="form.product.wholesale_weight_range" style="zoom:2" class="float-left mr-2"/> <span v-if="form.product.wholesale_weight_range"> Yes </span><span v-else>No</span>
+                                  </label>
                               </div>
-                              <div class="form-group mb-0">
-                                  <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.product.weightUnits[1].from"/>
-                                  -
-                                  <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.product.weightUnits[1].to"/>
-                                  {{ form.product.weight_unit }}
-                              </div>
-                              <div class="form-group mb-0">
-                                  <input class="border-gray w-25 border rounded"    v-model="form.product.weightUnits[2].from"/>
-                                  -
-                                  <input class="border-gray w-25 border rounded" disabled readonly="readonly" v-model="form.product.weightUnits[2].to"/>
-                                  {{ form.product.weight_unit }}
-                              </div>
-                            </div>
-                            <div class="col-md-7" v-else>
-                              <label>Default Range</label>
-                              <div class="form-group mb-0">
-                                  <input class="border-gray w-25 border rounded"    v-model="form.product.default_wholesale_weight"/>
-                                  -
-                                  <input class="border-gray w-25 border rounded"  disabled readonly="readonly" :value="50000"/>
-                                  {{ form.product.weight_unit }}
+                              <div class="col-md-7" v-if="form.product.wholesale_weight_range">
+                                <label>Add Weight Ranges</label>
+                                <div class="d-flex mb-2">
+                                  <div>
+                                    <div class="form-group d-flex mb-0" v-for="(r,i) in form.product.weightRanges" :key="i">
+                                        <input class="border-gray border rounded border-bottom-0 w-50" v-model="form.product.weightRanges[i].from"/>
+                                        -
+                                        <template v-if="i == form.product.weightRanges.length - 1">
+                                          <input type="hidden" class="border-gray border rounded border-bottom-0 mr-1 w-50" v-model="form.product.weightRanges[i].to"/>
+                                          <input class="border-gray border rounded border-bottom-0 mr-1 w-50" value="MAX" disabled/>
+                                        </template>
+                                        <template v-else>
+                                          <input class="border-gray border rounded border-bottom-0  mr-1 w-50" v-model="form.product.weightRanges[i].to"/>
+                                        </template>
+
+                                        {{ form.product.weight_unit }}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <a href="javascript:void(0)" class="btn btn-link btn-sm small ml-2 pt-0 align-self-start" @click="addRange(form.product.weightRanges)" v-if="(form.product.weightRanges.length < 3)"> Add </a>
+                                    <a href="javascript:void(0)" class="btn btn-link btn-sm small ml-2 pt-0 align-self-start" @click="form.product.weightRanges = []" v-if="(form.product.weightRanges.length > 0)"> Reset</a>
+                                  </div>
+                                </div>
                               </div>
                             </div>
-                          </div>
                         </div>
                       </div>
                     </div>
@@ -215,7 +209,7 @@
                           </td>
                           <td>
                                 <span class="badge badge-danger font-weight-normal" v-if="product.wholesale_weight_range == 0">
-                                  {{ product.default_wholesale_weight +' - 50000' }}
+                                  {{ "-" }}
                                 </span>
                                 <span class="badge badge-danger font-weight-normal ml-1" v-for="range in product.weight_ranges" :key="range.id">{{ range.from +'-'+range.to+' '+ product.weight_unit }}</span>
                           </td>
@@ -275,46 +269,29 @@
                               </label>
                             </div>
                             <div class="col-md-7" v-if="form.editProduct.wholesale_weight_range">
-                              <template v-if="selectedProduct.weight_ranges.length > 0">
-                                <label>Weight for wholesale</label>
-                                <div class="form-group mb-0" v-for="(range , index) in  selectedProduct.weight_ranges" :key="range.id">
-                                    <input class="border-gray w-25 border rounded" v-model="form.editProduct.weightRanges['range-from-'+range.id]"/>
-                                    -
-                                    <input class="border-gray w-25 border rounded" v-model="form.editProduct.weightRanges['range-to-'+range.id]" :disabled="selectedProduct.weight_ranges.length == index + 1"/>
-                                    {{ form.editProduct.weight_unit }}
+                                <label>Add Weight Ranges</label>
+                                <div class="d-flex mb-2">
+                                  <div>
+                                    <div class="form-group d-flex mb-0" v-for="(r,i) in form.editProduct.weightRanges" :key="i">
+                                        <input class="border-gray border rounded border-bottom-0 w-50" v-model="form.editProduct.weightRanges[i].from"/>
+                                        -
+                                        <template v-if="i == form.editProduct.weightRanges.length - 1">
+                                          <input type="hidden" class="border-gray border rounded border-bottom-0 mr-1 w-50" v-model="form.editProduct.weightRanges[i].to"/>
+                                          <input class="border-gray border rounded border-bottom-0 mr-1 w-50" value="MAX" disabled/>
+                                        </template>
+                                        <template v-else>
+                                          <input class="border-gray border rounded border-bottom-0  mr-1 w-50" v-model="form.editProduct.weightRanges[i].to"/>
+                                        </template>
+
+                                        {{ form.editProduct.weight_unit }}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <a href="javascript:void(0)" class="btn btn-link btn-sm small ml-2 pt-0 align-self-start" @click="addRange(form.editProduct.weightRanges)" v-if="(form.editProduct.weightRanges.length < 3)"> Add </a>
+                                    <a href="javascript:void(0)" class="btn btn-link btn-sm small ml-2 pt-0 align-self-start" @click="form.editProduct.weightRanges = []" v-if="(form.editProduct.weightRanges.length > 0)"> Reset</a>
+                                  </div>
                                 </div>
-                              </template>
-                              <template v-else>
-                                <label>Weight for wholesale</label>
-                                <div class="form-group mb-0">
-                                    <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.editProduct.weightUnits[0].from"/>
-                                    -
-                                    <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.editProduct.weightUnits[0].to"/>
-                                    {{ form.editProduct.weight_unit }}
-                                </div>
-                                <div class="form-group mb-0">
-                                    <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.editProduct.weightUnits[1].from"/>
-                                    -
-                                    <input class="border-gray w-25 border rounded border-bottom-0" v-model="form.editProduct.weightUnits[1].to"/>
-                                    {{ form.editProduct.weight_unit }}
-                                </div>
-                                <div class="form-group mb-0">
-                                    <input class="border-gray w-25 border rounded"    v-model="form.product.weightUnits[2].from"/>
-                                    -
-                                    <input class="border-gray w-25 border rounded" disabled readonly="readonly" v-model="form.product.weightUnits[2].to"/>
-                                    {{ form.editProduct.weight_unit }}
-                                </div>
-                              </template>
-                            </div>
-                            <div class="col-md-7" v-else>
-                              <label>Default Range</label>
-                              <div class="form-group mb-0">
-                                  <input class="border-gray w-25 border rounded"    v-model="form.editProduct.default_wholesale_weight"/>
-                                  -
-                                  <input class="border-gray w-25 border rounded"  disabled readonly="readonly" :value="50000"/>
-                                  {{ form.editProduct.weight_unit }}
                               </div>
-                            </div>
                           </div>
                         </div>
                       </div>
@@ -422,6 +399,7 @@ export default {
                                             stock:false,
                                             product_image:null,
                                             wholesale_weight_range:false,
+                                            weightRanges:[],
                                             weightUnits:[
                                                       {from:0,to:0},{from:0,to:0},{from:0,to:50000},
                                             ],
@@ -441,10 +419,10 @@ export default {
                                           stock:false,
                                           '_method':'PATCH',
                                           product_image:null,
-                                          weightRanges:{},
                                           parent_product_id:'',
                                           conversion_rate:0,
                                           wholesale_weight_range:false,
+                                          weightRanges:[],
                                           defaultWeightRange:[
                                                                 {from:100,to:50000}
                                           ],
@@ -486,6 +464,31 @@ export default {
       return { v$: useVuelidate() }
     },
     methods: {
+        addRange(range){
+            let countRange = range.length;
+            switch(countRange) {
+            case 0:
+              // code block
+              range.push({from:10,to:50000});
+              break;
+            case 1:
+              // code block
+              var from = parseInt(range[0].from);
+              var to = range[0].to = from + 100;
+              //
+              range.push({from:(to + 1),to:50000});
+              break;
+            case 2:
+              // code block
+              var from = parseInt(range[1].from);
+              var to = range[1].to = from + 100;
+              //
+              range.push({from:(to + 1),to:50000});
+              break;
+            default:
+              // code block
+          }
+        },
         saveWeightUnit() {
             this.form.weightUnit.post(this.route('settings.store'), {
                 onSuccess: (response) => {
@@ -528,13 +531,12 @@ export default {
           axios.get(this.route('product.show',$id)).then(function(response){
             _.assignIn(_this.form.editProduct, response.data)
             _this.selectedProduct = response.data;
+            _this.form.editProduct.weightRanges = [];
             _this.form.editProduct.stock = (_this.selectedProduct.stock) ? true : false;
-
             if(_this.selectedProduct.weight_ranges.length > 0){
               _this.form.editProduct.wholesale_weight_range = true;
               $.each(_this.selectedProduct.weight_ranges,function(i,v){
-                _this.form.editProduct.weightRanges['range-from-'+v.id] = v.from;
-                _this.form.editProduct.weightRanges['range-to-'+v.id] = v.to;
+                _this.form.editProduct.weightRanges.push(v);
               });
             }else{
               _this.form.editProduct.wholesale_weight_range = false;

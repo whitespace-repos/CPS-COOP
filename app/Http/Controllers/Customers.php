@@ -13,7 +13,11 @@ class Customers extends Controller
 
     public function customerExistance(Request $request){
         $customer = Customer::with('purchase_history.product')->where('phone',$request->phone)->first();
-        $history =  empty($customer) ? null : $customer->purchase_history;
+        $history =  empty($customer) ? null : $customer->purchase_history()->get()
+                                                ->groupBy(function($event) {
+                                                    return $event->date;
+                                                });
+
         return response()->json([
                                     "existingCustomer" => empty($customer) ? false : true,
                                     "customer" => $customer,

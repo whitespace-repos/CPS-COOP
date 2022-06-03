@@ -7,6 +7,7 @@ use App\Models\Product;
 use SettingGroup;
 use Inertia;
 use Setting;
+use Customer;
 use ProductWholesaleRateRange;
 
 class Products extends Controller
@@ -53,14 +54,11 @@ class Products extends Controller
             $request->request->add(["image" => '/storage/'.$filePath ]);
         }
         $product = Product::create($request->all());
-
+        //
         if($product->wholesale_weight_range){
-            foreach($request->weightUnits as $range){
+            foreach($request->weightRanges as $range){
                 ProductWholesaleRateRange::create([ "product_id" => $product->id , "from" => $range['from'] , "to" => $range['to'] ]);
             }
-        }else{
-            $product->default_wholesale_weight = $request->default_wholesale_weight;
-            $product->save();
         }
         //
         return redirect()->route('product.index');
@@ -114,26 +112,15 @@ class Products extends Controller
         }
         //
         $product->update($request->all());
+        //  delete old range
+        $product->weightRanges()->delete();
 
-        //  if weightRamge is not null and range flag flase
-        if($product->weightRanges->count() > 1 && !$request->wholesale_weight_range){
-            $product->weightRanges()->delete();
-        }
-        //  if weightRamge is  exist and range flag true
-        if($request->wholesale_weight_range && $product->weightRanges->count()){
-            foreach($product->weightRanges as $key => $range){
-                $range->from = $request->weightRanges['range-from-'.$range->id];
-                $range->to =  $request->weightRanges['range-to-'.$range->id];
-                $range->save();
-            }
-        }
         // new entry..
-        if($request->wholesale_weight_range && $product->weightRanges->count() == 0){
-            foreach($request->weightUnits as $range){
+        if($product->wholesale_weight_range){
+            foreach($request->weightRanges as $range){
                 ProductWholesaleRateRange::create([ "product_id" => $product->id , "from" => $range['from'] , "to" => $range['to'] ]);
             }
         }
-
         //
         return redirect()->route('product.index');
     }

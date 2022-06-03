@@ -53,7 +53,7 @@ class Stocks extends Controller
     public function show($id)
     {
         //
-        
+
     }
 
     /**
@@ -91,38 +91,39 @@ class Stocks extends Controller
     }
 
     /**
-     * 
+     *
      */
-    public function requested(Request $request){        
-        $shop = auth()->user()->shop;        
-        $stockRequest = StockRequest::create([
-                                                "shop_id" => $shop->id,                                       
+    public function requested(Request $request){
+        $shop = auth()->user()->shop()->with('products.weightRanges','products.rate','purchase_history')->first();
+        if(!empty($request->products)){
+            $stockRequest = StockRequest::create([
+                                                "shop_id" => $shop->id,
                                                 "stock_requested_by" => auth()->id(),
                                                 "status" => "Requested"
                                         ]);
-        /* ***** */
-
-        foreach ($shop->products as $key => $product) {           
-            if(!empty($request->products['product-'.$product->id])){
-                StockRequestedProduct::create([
-                    "stock_request_id" => $stockRequest->id,
-                    "product_id" => $product->id,
-                    "stock_request" => $request->products['product-'.$product->id],
-                    "current_stock" => $product->association->stock,
-                    "status" => "Requested"
-                ]);
-            }            
+            /* ***** */
+            foreach ($shop->products as $key => $product) {
+                if(!empty($request->products['product-'.$product->id])){
+                    StockRequestedProduct::create([
+                        "stock_request_id" => $stockRequest->id,
+                        "product_id" => $product->id,
+                        "stock_request" => $request->products['product-'.$product->id],
+                        "current_stock" => $product->association->stock,
+                        "status" => "Requested"
+                    ]);
+                }
+            }
         }
-        // 
+        //
         return back();
     }
 
-    public function approved(Request $request,$id){        
+    public function approved(Request $request,$id){
         $stockRequest = StockRequest::find($id);
-        $stockRequest->status = 'Approved';        
+        $stockRequest->status = 'Approved';
         $stockRequest->save();
         $actual_payment = 0;
-        // 
+        //
         foreach ($stockRequest->requested_products as $key => $rp) {
             # code...
             $rp->status = 'Approved';
@@ -130,11 +131,11 @@ class Stocks extends Controller
             $rp->total = ($stockRequest->type == 'Direct') ? $rp->supply_rate * $rp->stock_sent : $rp->supply_rate * $rp->stock_request;
             $actual_payment += $rp->total;
             $rp->save();
-        }  
-        
+        }
+
         $stockRequest->actual_payment = $actual_payment;
         $stockRequest->save();
-        // 
+        //
         return back();
     }
 
@@ -144,7 +145,7 @@ class Stocks extends Controller
         $stockRequest->payment_period  =  $request->payment_period;
         $stockRequest->status = 'Processing';
         $stockRequest->save();
-        // 
+        //
         $stockRequest->requested_products()->update([ 'status' => 'Processing' ]);
         return back();
     }
@@ -153,7 +154,7 @@ class Stocks extends Controller
         $stockRequest = StockRequest::find($id);
         $stockRequest->status = 'Sent';
         $stockRequest->save();
-        // 
+        //
         foreach($stockRequest->requested_products as $rp){
             $rp->status = 'Sent';
             $rp->stock_sent = (empty($request->send_stocks['product-'.$rp->id])) ? $rp->stock_request : $request->send_stocks['product-'.$rp->id];
@@ -167,7 +168,7 @@ class Stocks extends Controller
         $stockRequest->status = 'Completed';
         $stockRequest->payment_received = $request->payment_received;
         $stockRequest->save();
-        // 
+        //
         $stockRequest->requested_products()->update([ 'status' => 'Completed' ]);
         return back();
     }
@@ -178,22 +179,22 @@ class Stocks extends Controller
             $stockRequest = StockRequest::find($id);
             $stockRequest->status = 'Received';
             $stockRequest->save();
-            // 
-            foreach($stockRequest->requested_products as $product){ 
-                // 
+            //
+            foreach($stockRequest->requested_products as $product){
+                //
                 if(!empty($request->receive_stocks['product-'.$product->id])){
                     $product->stock_received = $request->receive_stocks['product-'.$product->id];
                     $product->stock_wastage = (float) $product->stock_sent - (float) $request->receive_stocks['product-'.$product->id];
                     $product->save();
                 }
-                // 
+                //
                 $p = $shop->products()->find($product->product_id);
                 $assoc = $p->association;
                 $assoc->stock += $product->stock_received;
                 $assoc->save();
-            }                
+            }
             $stockRequest->requested_products()->update([ 'status' => 'Received' ]);
-        }       
+        }
        return back();
     }
 
@@ -203,15 +204,15 @@ class Stocks extends Controller
     }
 
     public function viewRequests(){
-        $shop = auth()->user()->shop()->with('stock_requests.requested_products.product','products')->first();  
+        $shop = auth()->user()->shop()->with('stock_requests.requested_products.product','products')->first();
         return Inertia::render('Stocks/Requests', [ 'shop' => $shop ]);
     }
 
-    public function directRequested(Request $request){ 
-        $shop = Shop::find($request->shop_id); 
-        //    
+    public function directRequested(Request $request){
+        $shop = Shop::find($request->shop_id);
+        //
         $stockRequest = StockRequest::create([
-                                                "shop_id" => $shop->id,                                       
+                                                "shop_id" => $shop->id,
                                                 "stock_requested_by" => auth()->id(),
                                                 "status" => "Sent",
                                                 "type" => "Direct",
@@ -219,7 +220,7 @@ class Stocks extends Controller
                                         ]);
         /* ***** */
 
-        foreach ($shop->products as $key => $product) {           
+        foreach ($shop->products as $key => $product) {
             if(!empty($request->products['product-'.$product->id])){
                 StockRequestedProduct::create([
                     "stock_request_id" => $stockRequest->id,
@@ -230,9 +231,9 @@ class Stocks extends Controller
                     "status" => "Sent",
                     "total" => $request->products['product-'.$product->id.'-total-price']
                 ]);
-            }            
+            }
         }
-        // 
+        //
         return back();
     }
 }

@@ -8,8 +8,8 @@
               <div class="card current_stock">
                 <div class="card-header CS_header justify-content-start">
                   <h5 class="align-self-center mb-0 mr-auto heading">Current Stock </h5>
-                  <a href="#" class="Btn mx-2" data-toggle="modal" data-target="#myModal">Stock Request</a>
-                  <inertia-link :href="route('stock.view.request')" class="Btn">View All</inertia-link>
+                  <!-- <a href="#" class="Btn mx-2" data-toggle="modal" data-target="#myModal"></a> -->
+                  <inertia-link :href="route('stock.view.request')" class="Btn">Stock Request</inertia-link>
                 </div>
                 <div class="card-body d-flex justify-content-center">
                     <div class="item mr-3" v-for="product in productCurrentStock" :key="product.id">
@@ -94,7 +94,7 @@
                                     <tr v-for="cart in carts" :key="cart.id">
                                         <td>{{ cart.name }}</td>
                                         <td>{{ cart.attributes.rate }} <sup>INR</sup> </td>
-                                        <td>{{ cart.attributes.weight }} <sup>kg</sup></td>
+                                        <td>{{ cart.attributes.weight }} <sup>{{ cart.attributes.product.weight_unit }}</sup></td>
                                         <td>{{ Number(cart.price).toFixed(2) }}</td>
                                         <td>
                                             <form  method="POST" class="mr-2 small" @submit.prevent="removeCart($event,cart)">
@@ -173,32 +173,44 @@
             </div>
 
             <div class="col-lg-3 displayNoneIpad">
-                <div class="Purchase_History" v-if="purchaseHistory.length > 0 ">
-                    <div class="m-0 heading">
-                        <h3 class="text-white">Purchase History</h3>
-                    </div>
-                    <div class="PH_body px-1">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-sm table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Pro</th>
-                                        <th>qty</th>
-                                        <th>totl</th>
-                                        <th>Recv</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="text-white">
-                                     <tr v-for="history in purchaseHistory" :key="history.id" >
-                                        <td>{{ parseDate(history.date,'YY/MM/D') }}</td>
-                                        <td>{{ history.product.product_name }} </td>
-                                        <td>{{ history.quantity +' '+ history.product.weight_unit }}</td>
-                                        <td>{{ history.total }} <sup>INR </sup></td>
-                                        <td>{{ history.receive }} <sup>INR </sup></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                <div class="Purchase_History" v-if="Object.keys(purchaseHistory).length > 0 ">
+                    <h6 class="p-2 text-white"> Purchase History </h6>
+                    <div class="accordion" id="accordionExample">
+                        <div class="card" v-for="(data,index) in purchaseHistory" :key="index">
+                            <div class="card-header p-0" id="headingOne">
+                                <ul class="d-flex small justify-content-around align-items-center">
+                                    <li>
+                                        <button class="btn btn-link btn-block text-left p-1 collapsed border-0" type="button" data-toggle="collapse" :data-target="'#collapse'+index" aria-expanded="true" :aria-controls="'collapse'+index">
+                                            {{ parseDate(index,'YY/MM/D') }}
+                                        </button>
+                                    </li>
+                                    <li> Total : {{ _.sumBy(data, 'total') }} INR</li>
+                                    <li> Received  : {{ _.sumBy(data, 'receive') }}  INR</li>
+                                </ul>
+                            </div>
+
+                            <div :id="'collapse'+index" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                <div class="card-body p-1" style="overflow-y: auto; max-height:8em;">
+                                    <table class="table table-striped table-sm table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="border-0 p-0">Pro</th>
+                                                <th class="border-0 p-0">qty</th>
+                                                <th class="border-0 p-0">totl</th>
+                                                <th class="border-0 p-0">Recv</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="history in data" :key="history.id" >
+                                                <td class="border-0 p-0">{{ "-" }}</td>
+                                                <td class="border-0 p-0">{{ history.quantity }}</td>
+                                                <td class="border-0 p-0">{{ history.total }} <sup>INR </sup></td>
+                                                <td class="border-0 p-0">{{ history.receive }} <sup>INR </sup></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -207,49 +219,6 @@
                     <img src="/assets/img/blank_img2.png" alt="icon">
                     <h6>No History Available</h6>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- The Modal -->
-    <div class="modal" id="myModal">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-             <form method="POST" @submit.prevent="sendStockRequest">
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h4 class="modal-title">Request Stock</h4>
-                <button type="button" class="close" data-dismiss="modal"><img src="/assets/img/cross_btn.png" alt=""></button>
-            </div>
-
-            <!-- Modal body -->
-            <div class="modal-body d-flex">
-                <div class="poupDiv">
-                <ul>
-                    <template v-for="product in shop.products" :key="product.id">
-                        <li v-if="product.stock">
-                            <div class="itemBox"> <span class="img"><img :src="product.image" alt="icon" class="img-fluid"></span> <span class="txt">
-                                <h3>{{ product.association.stock +''+ product.weight_unit }}</h3>
-                                <p>{{ product.product_name }}</p>
-                                </span>
-                            </div>
-                            <div class="input-group" >
-                                <input type="text" class="form-control" placeholder="0" v-model="form.stockRequest.products['product-'+product.id]" />
-                                <div class="input-group-append">
-                                <smll class="input-group-text">{{ product.weight_unit }}</smll>
-                                </div>
-                            </div>
-                        </li>
-                    </template>
-                </ul>
-                </div>
-            </div>
-
-            <!-- Modal footer -->
-            <div class="modal-footer">
-                <button type="submit" class="btn">Stock Request</button>
-            </div>
-             </form>
             </div>
         </div>
     </div>
@@ -302,6 +271,7 @@ export default {
                   paymentMethod:'EMI',
                   currentStock:[],
                   billingWeightInput:{},
+                  _,
                   form:{
                       customer :this
                                   .$inertia
@@ -431,15 +401,6 @@ export default {
               //     _.assignIn(vue.form.customer,response.customer);
               // });
           },
-          sendStockRequest(event) {
-               this.form.stockRequest.post(this.route('stock.request.submit'), {
-                        onSuccess: (response) => {
-                             $("#myModal").modal("hide");
-                             this.form.stockRequest.products = [];
-                             window.history.pushState('data', 'Add to Cart', '/make-sale');
-                        }
-               });
-          },
           addToCart(event){
               //
               var $form = $(event.target),
@@ -447,8 +408,14 @@ export default {
             //
             let _this = this;
             let InsufficientStock = false;
-
+            this.form.cart.customer = this.form.customer.phone;
+            this.form.cart.product = $el.data('productId');
+            this.form.cart.weight = $el.val();
+            //
             this.currentStock.filter(function(o) {
+                    console.log("o.id"+ o.id);
+                    console.log("_this.form.cart.product"+ _this.form.cart.product);
+
                     if(o.id == _this.form.cart.product){
                         if(o.association.stock < $el.val()){
                             InsufficientStock = true;
@@ -463,14 +430,13 @@ export default {
                 });
                 return false;
             }
-              //
-              this.form.cart.customer = this.form.customer.phone;
-              this.form.cart.product = $el.data('productId');
-              this.form.cart.weight = $el.val();
-              this.form.cart.amount = $el.data('amount');
-              this.form.cart.rate = $el.data('rate');
-              this.form.cart.type = $("[name=product_"+this.form.cart.product+"_radio]:checked").val();
-              this.form.cart.post(this.route('cart.store'), {
+            //
+
+            this.form.cart.amount = $el.data('amount');
+            this.form.cart.rate = $el.data('rate');
+            this.form.cart.type = $("[name=product_"+this.form.cart.product+"_radio]:checked").val();
+
+                this.form.cart.post(this.route('cart.store'), {
                     only: ["carts"],
                     onSuccess: (response) => {
                                     window.history.pushState('data', 'Add to Cart', '/make-sale');
@@ -552,7 +518,7 @@ export default {
                 }
                 //
                 if(weight > 0){
-                    $el.closest('form').find(".price").html(parseFloat(totalCost));
+                    $el.closest('form').find(".price").html(parseFloat(totalCost)+"<sup>INR</sup>");
                     $el.attr('data-amount',totalCost).attr('data-rate',rate);
                 }else{
                     $el.closest('form').find(".price").html(parseFloat(weight));

@@ -33,7 +33,6 @@
                           </div>
                         </div>
                         <div class="row">
-                          <template v-if="selectedProduct.weight_ranges.length > 0 ">
                             <div class="col" v-for="(range , index ) in selectedProduct.weight_ranges" :key="range.id" >
                               <div class="form-group" v-if = "range.from != 0 || range.to != 0 " :class="{'has-error':v$.form.rate.range['range-'+range.id].$error}">
                                   <label>Range {{index + 1 }} : <label class="badge badge-danger font-weight-normal"> {{ range.from + '-' + range.to + ' ' + selectedProduct.weight_unit }} </label> </label>
@@ -41,16 +40,6 @@
                                   <small v-if="v$.form.rate.range['range-'+range.id].$error">{{ 'Please Enter a Valid Rate' }} </small>
                               </div>
                             </div>
-                          </template>
-                          <template v-else>
-                            <div class="col-md-4">
-                              <div class="form-group" :class="{'has-error':v$.form.rate.default_wholesale_weight.$error}">
-                                  <label>Default Wholesale Rate : <label class="badge badge-danger font-weight-normal"> {{ selectedProduct.default_wholesale_weight + '- 50000' + ' ' + selectedProduct.weight_unit }} </label> </label>
-                                  <input class="form-control"  v-model="v$.form.rate.default_wholesale_weight.$model"/>
-                                  <small v-if="v$.form.rate.default_wholesale_weight.$error">{{ 'Please Enter a Valid Rate' }} </small>
-                              </div>
-                            </div>
-                          </template>
                           <div class="col-md-3  align-self-end">
                             <div class="form-group">
                                 <button class="btn btn-danger btn-block" type="submit" :disabled="v$.form.rate.$invalid">Save Rate</button>
@@ -217,8 +206,7 @@ export default {
                                     rateValidation:helpers.withMessage('Please Enter a Valid Rate',rateValidation),
                                     required
                                 },
-                                range:this.weightRangeValidation,
-                                default_wholesale_weight:this.defaultWholesaleWeightValidation
+                                range:this.weightRangeValidation
                       }
                 }
       }

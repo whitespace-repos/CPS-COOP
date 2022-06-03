@@ -4516,11 +4516,7 @@ a {
 	overflow: auto;
 	height:17rem;
 }
-.Purchase_History .table-fixed tbody {
-	height: 270px;
-	overflow-y: auto;
-	width: 100%;
-}
+
 .table-fixed thead, .table-fixed tbody, .table-fixed tr, .table-fixed td, .table-fixed th {
 	display: block;
 }
@@ -4538,27 +4534,7 @@ a {
 	clear: both;
 	display: block;
 }
-.Purchase_History .table thead th {
-	vertical-align: top;
-	border-top: 0;
-	border-bottom: 1px solid #a75f62;
-	font-weight: 400;
-	color: #fff;
-	font-size: 13px;
-	padding: 0.75rem;
-	padding-top: 0;
-	padding-left: 0;
-}
-.Purchase_History .table thead th:last-child {
-	padding-right: 0;
-	padding-left: 0;
-}
-.Purchase_History .table td {
-	padding: 0.75rem;
-}
-.Purchase_History .table td:first-child {
-	padding-left: 0;
-}
+
 .Stock_list {
 	height: 300px;
 	overflow-y: auto;
@@ -4980,11 +4956,6 @@ border-radius:16px;
 
 }
 
-.Purchase_History .table-fixed tbody {
-    height: 44vh;
-    overflow-y: auto;
-    width: 100%;
-}
 
 .Stock_list {
     height: 49vh;
@@ -5294,13 +5265,7 @@ border-radius:16px;
 .info_table table td .btn {
 	top: 1px;
 }
-.Purchase_History .table thead th {
-	font-size: 12px;
-}
-.Purchase_History .table td {
-	padding: 0.25rem;
-	font-size: 12px;
-}
+
 .Stock_list ul li {
 	padding: 20px 0 25px 0;
 }
