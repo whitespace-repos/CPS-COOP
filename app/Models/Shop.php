@@ -16,12 +16,13 @@ class Shop extends Model
                                 'address',
                                 'distance_from_cps',
                                 'shop_dimentions',
-                                'stock_capacity_per_day',            
+                                'stock_capacity_per_day',
                                 'max_sale_estimate_per_day',
-                                'estimated_start_date',   
-                                'status' , 
-                                'phone' 
+                                'estimated_start_date',
+                                'status' ,
+                                'phone'
                 ];
+
 
     /**
      * The products that belong to the shop.
@@ -31,7 +32,7 @@ class Shop extends Model
         return $this->belongsToMany(Product::class)->as('association')->withPivot('stock');
     }
 
- 
+
 
     /**
      * Get all of the stock_requests for the shop.
@@ -51,9 +52,10 @@ class Shop extends Model
     public function  today_sales()
     {
         return $this
-                    ->hasMany(Sale::class)                    
+                    ->hasMany(Sale::class)
                     ->where('date',\Carbon\Carbon::today());
     }
+
 
     public function employee(){
         return $this->hasOne(User::class);

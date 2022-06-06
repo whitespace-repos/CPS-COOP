@@ -139,11 +139,11 @@
                                             <input type="radio"  :class="['tbName' , 'product_' +product.id+ '_retail_radio' ]" :name="'product_'+product.id+'_radio'" value="retail" data-btn="submit1" />
                                             <span class="checkmark"></span>
                                         </label>
-                                        <label class="radioPart">
+                                        <label class="radioPart" v-if="product.wholesale_weight_range">
                                             Wholesale:
                                             <!-- JSON.parse(product.rate.wholesale_rate) -->
                                             <p v-if="product.rate != null && product.rate != ''">
-                                               <span class="font-weight-normal d-block" v-for="range in parseToJSON(product.rate.wholesale_rate)" :key="range.id" style="font-size:11px">{{ range.rate }} <sup>INR </sup> {{ ' : ' + range.from +'-'+range.to+' '+ product.weight_unit }}</span>
+                                               <span class="font-weight-normal d-block" v-for="range in parseToJSON(product.rate.wholesale_rate)" :key="range.id" style="font-size:11px">{{ range.rate }} <sup>INR </sup> {{ ' : ' + range.from +' - ' }} {{ (range.to == 50000) ? 'MAX' : range.to  }}  {{ product.weight_unit }}</span>
                                             </p>
                                             <input type="radio" :name="'product_'+product.id+'_radio'"  :class="['tbName' , 'product_' +product.id+ '_wholesale_radio' ]" value="wholesale" data-btn="submit1">
                                             <span class="checkmark"></span>
@@ -152,7 +152,7 @@
                                     <span class="product_btn">
                                         <form action="#" method="POST" class="font-weight-bold" @submit.prevent="addToCart">
                                             <div class="input-group">
-                                                <input  class="form-control" placeholder="0"  name="weight" v-model="billingWeightInput['product-'+product.id]" @input="calateprice" :data-wholesale-range="(product.rate != null && product.rate != '') ? product.rate.wholesale_rate : []"  :data-retail-rate="(product.rate == null ) ? 0 : product.rate.retail_rate" :data-product="product.product_name" :data-product-id="product.id" :data-wholesale-weight="product.wholesale_weight" autocomplete="off" data-amount="0" data-rate="0"/>
+                                                <input  class="form-control" placeholder="0"  name="weight" v-model="billingWeightInput['product-'+product.id]" @input="calateprice($event,product.wholesale_weight_range)" :data-wholesale-range="(product.rate != null && product.rate != '') ? product.rate.wholesale_rate : []"  :data-retail-rate="(product.rate == null ) ? 0 : product.rate.retail_rate" :data-product="product.product_name" :data-product-id="product.id" :data-wholesale-weight="product.wholesale_weight" autocomplete="off" data-amount="0" data-rate="0"/>
                                                 <div class="input-group-append">
                                                     <small class="input-group-text">{{product.weight_unit}}</small>
                                                     <p class="price">0 <sup>INR</sup></p>
@@ -501,10 +501,10 @@ export default {
 
             //   });
           },
-          calateprice(event){
-            let $el = $(event.target) ,
+          calateprice(event , wholesale_weight_range){
+                let $el = $(event.target) ,
                 weight = $el.val(),
-                wholesale = _.find($el.data('wholesaleRange'), function(r) { return  (r.from <= weight && weight <= r.to) ; }),
+                wholesale = (wholesale_weight_range) ? _.find($el.data('wholesaleRange'), function(r) { return  (r.from <= weight && weight <= r.to) ; }) : null,
                 retail = $el.data('retailRate'),
                 rate = (_.isNaN(wholesale) || _.isNil(wholesale)) ? parseFloat(retail) : parseFloat(wholesale.rate),
                 product = $el.data('product'),

@@ -35,6 +35,7 @@
                                             <span class="font-weight-bold">
                                                 <h6 class="mb-0">{{ rp.stock_request +' ' + rp.product.weight_unit }}</h6>
                                                 <small class="d-block">{{ rp.product.product_name }}</small>
+                                                <label class="small d-block mb-0 mt-1"> Supply Rate </label>
                                                 <span  v-if="request.status != 'Requested'" class="small">{{ rp.supply_rate }} <sup>INR</sup> / {{ rp.product.weight_unit }} </span>
                                             </span>
                                         </div>
@@ -74,6 +75,7 @@
                                             <span class="font-weight-bold">
                                                 <h6 class="mb-0">{{ rp.stock_request +' ' + rp.product.weight_unit }}</h6>
                                                 <small class="d-block">{{ rp.product.product_name }}</small>
+                                                <label class="small d-block mb-0 mt-1"> Supply Rate </label>
                                                 <span  v-if="request.status != 'Requested'" class="small">{{ rp.supply_rate }} <sup>INR</sup> / {{ rp.product.weight_unit }} </span>
                                             </span>
                                         </div>

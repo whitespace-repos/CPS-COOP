@@ -211,7 +211,7 @@
                                 <span class="badge badge-danger font-weight-normal" v-if="product.wholesale_weight_range == 0">
                                   {{ "-" }}
                                 </span>
-                                <span class="badge badge-danger font-weight-normal ml-1" v-for="range in product.weight_ranges" :key="range.id">{{ range.from +'-'+range.to+' '+ product.weight_unit }}</span>
+                                <span class="badge badge-danger font-weight-normal ml-1" v-for="range in product.weight_ranges" :key="range.id">{{ range.from +' - ' }} {{ (range.to == 50000) ? 'MAX' : range.to  }} {{ product.weight_unit }}</span>
                           </td>
                           <td>{{ product.weight_unit }}</td>
                           <td>

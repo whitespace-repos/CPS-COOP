@@ -5,6 +5,8 @@
 
        <div class="main-panel px-2 pt-5 pb-3">
         <div class="container-fluid">
+
+
           <!-- <div class="alert alert-danger alert-dismissible fade show" role="alert"> Error message
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
           </div> -->
@@ -68,16 +70,20 @@
                   <div class="d-flex flex-wrap">
 
                     <!-------- item 1 -------->
-
-                    <div class="item" v-for="product in shop.products" :key="product.id">
-                      <div class="ItemWrapper">
-                        <div class="itemBox px-5 m-2"> <span class="img"><img :src="product.image" alt="icon" class="img-fluid"></span> <span class="txt">
-                          <h3>{{ 0 +' '+ product.weight_unit }}</h3>
-                          <p>{{ product.product_name }}</p>
-                          </span> </div>
-                        <span class="Price">0<sup>INR</sup></span>
+                    <template v-if="sales.length > 0">
+                      <div class="item m-2" v-for="sale  in sales" :key="sale.id">
+                          <div class="itemBox py-0 justify-content-center">
+                              <span class="img mr-2"><img :src="sale.product.image" alt="icon" class=" mr-2 img-fluid"></span> <span class="">
+                                  <h6 class="mb-0">{{ sale.total_quantity }} <sup>{{ sale.product.weight_unit }}</sup> </h6>
+                                  <p>{{ sale.product.product_name }}</p>
+                              </span>
+                          </div>
+                          <h6 class="text-center mt-1">{{ sale.total_sales }} <sup>INR</sup> </h6>
                       </div>
-                    </div>
+                    </template>
+                    <template v-else>
+                          <h6 class="p-4 mb-0">No Sale Found For Today</h6>
+                    </template>
                   </div>
                 </div>
               </div>
@@ -100,7 +106,7 @@
 
             <hr />
 
-            <div class="row no-gutters">
+            <div class="row no-gutters mb-5">
               <div class="col-lg-3">
                 <div class="card h-100 rounded-0">
                   <div class="heading">
@@ -121,7 +127,7 @@
                         <h4>Wholesale:</h4>
                         <span class="AddRate"><a data-toggle="modal" href="#Add_Rate" class="AddRate">+</a></span> </div>
                         <p v-if="productRate.rate != null && productRate.rate != ''">
-                          <span class="badge badge-danger font-weight-normal d-block my-1" v-for="range in parseToJSON(productRate.rate.wholesale_rate)" :key="range.id" style="font-size:11px">{{ range.rate }} <sup>INR </sup> {{ ' : ' + range.from +'-'+range.to+' '+ productRate.weight_unit }}</span>
+                          <span class="badge badge-danger font-weight-normal d-block my-1" v-for="range in parseToJSON(productRate.rate.wholesale_rate)" :key="range.id" style="font-size:11px">{{ range.rate }} <sup>INR </sup> {{ ' : ' + range.from +' - ' }} {{ (range.to == 50000) ? 'MAX' : range.to  }} {{ productRate.weight_unit }}</span>
                         </p>
                     </div>
                     <div class="RetailSaleWrapper">
@@ -148,13 +154,13 @@
                         <li class="nav-item"> <a id="SndStk" class="nav-link p-2" data-toggle="tab" href="#SendNewStock">Send New Stock</a> </li>
                         <li class="nav-item"> <a id="comStkReq" class="nav-link p-2" data-toggle="tab" href="#ComStockRequest">Completed Requests</a> </li>
                       </ul>
-                      <div class="tab-content px-1 py-3">
+                      <div class="tab-content px-1 py-3" style="max-height: 300px; height:300px; overflow-y: auto;">
                         <div id="StockRequest" class="tab-pane active">
                           <div class="container-fluid">
                             <div class="row">
                               <div class="col-md-12" v-for="request in shop.stock_requests" :key="request.id">
                                   <div class="card today_sales mb-4" v-if="request.status != 'Completed'">
-                                      <div class="card-header d-flex justify-content-between">
+                                      <div class="card-header d-flex justify-content-between py-0">
                                           <template v-if="request.status != 'Requested'">
                                             <h6 class="my-2">Status - {{ request.status }}  <small>Actual Payment :{{ request.actual_payment }} <sup>INR</sup></small></h6>
                                           </template>
@@ -165,17 +171,19 @@
                                           <button type="button" data-target="#sendStockConfirmRequest" data-toggle="modal" class="btn btn-primary" v-if="request.status == 'Processing'" @click="openSendConfirmationModal(request.id)">Send</button>
                                           <button type="button" class="btn btn-primary" data-target="#completeStockRequestConfirmationModal" data-toggle="modal" v-if="request.status == 'Received'"  @click="openSendConfirmationModal(request.id)">Completed</button>
                                       </div>
-                                      <div class="card-body d-flex  p-0">
+                                      <div class="card-body d-flex px-0 py-1">
                                         <form @submit.prevent="approveStockRequest(request.id)" class="w-100">
                                           <div class="d-flex">
                                             <template  v-for="rp  in request.requested_products" :key="rp.id">
-                                              <div class="item  w-25 border-right">
-                                                  <div class="itemBox p-2">
-                                                      <span class="img mr-2"><img :src="rp.product.image" alt="icon"  class="img-fluid"></span> <span class="">
-                                                          <h6 v-if="request.type == 'Direct'">{{ rp.stock_sent +' ' + rp.product.weight_unit }}</h6>
-                                                          <h6 v-else>{{ rp.stock_request +' ' + rp.product.weight_unit }}</h6>
+                                              <div class="item">
+                                                  <div class="itemBox py-0 small">
+                                                      <span class="img mr-2"><img :src="rp.product.image" alt="icon"  class="img-fluid"></span> <span class="ml-2">
+                                                          <h6 v-if="request.type == 'Direct'" class="mb-0">{{ rp.stock_sent +' ' + rp.product.weight_unit }}</h6>
+                                                          <h6 v-else class="mb-0">{{ rp.stock_request +' ' + rp.product.weight_unit }}</h6>
                                                           <p>{{ rp.product.product_name }}</p>
-                                                          <span  v-if="request.status != 'Requested'">Supply Rate : {{ rp.supply_rate }} <sup>INR</sup> </span>
+                                                          <span  v-if="request.status != 'Requested'">Supply Rate <br />
+                                                                                                        {{ rp.supply_rate }} <sup>INR</sup> / {{  rp.product.weight_unit }}
+                                                          </span>
                                                       </span>
                                                   </div>
                                                   <div class="form-row align-items-center w-75 my-2 ml-1" v-if="request.status == 'Requested'">
@@ -194,7 +202,7 @@
                                           </div>
                                         </form>
                                       </div>
-                                      <div class="card-footer bg-white d-flex align-items-center justify-content-between">
+                                      <div class="card-footer bg-white d-flex align-items-center justify-content-between py-1">
                                           <span class="font-weight-semibold">Created At <sub> {{ parseDate(request.created_at) }} </sub></span>
                                       </div>
                                   </div>
@@ -207,21 +215,21 @@
                             <div class="row">
                               <div class="col-md-12" v-for="request in shop.stock_requests" :key="request.id">
                                   <div class="card today_sales mb-4" v-if="request.status == 'Completed'">
-                                      <div class="card-header d-flex justify-content-between">
+                                      <div class="card-header d-flex justify-content-between py-0">
                                           <h6 class="my-2">Status - {{ request.status }}  <small>Actual Payment :{{ request.actual_payment }} <sup>INR</sup>, Receive Payment : {{ request.payment_received }} <sup>INR</sup></small></h6>
                                           <button type="button" data-target="#sendStockConfirmRequest" data-toggle="modal" class="btn btn-primary" v-if="request.status == 'Processing'" @click="openSendConfirmationModal(request.id)">Send</button>
                                           <button type="button" class="btn btn-primary" data-target="#completeStockRequestConfirmationModal" data-toggle="modal" v-if="request.status == 'Received'"  @click="openSendConfirmationModal(request.id)">Completed</button>
                                       </div>
-                                      <div class="card-body d-flex  p-0">
+                                      <div class="card-body d-flex px-0 py-1">
                                         <form @submit.prevent="approveStockRequest(request.id)" class="w-100 d-flex">
                                           <template  v-for="rp  in request.requested_products" :key="rp.id">
                                             <div class="item">
-                                                <div class="itemBox p-2">
-                                                    <span class="img mr-2"><img :src="rp.product.image" alt="icon" class="img-fluid"></span> <span class="">
-                                                        <h6 v-if="request.type == 'Direct'">{{ rp.stock_sent +' ' + rp.product.weight_unit }}</h6>
-                                                        <h6 v-else>{{ rp.stock_request +' ' + rp.product.weight_unit }}</h6>
+                                                <div class="itemBox py-0 small">
+                                                    <span class="img mr-2"><img :src="rp.product.image" alt="icon" class="img-fluid"></span> <span class="ml-2">
+                                                        <h6 v-if="request.type == 'Direct'" class="mb-0">{{ rp.stock_sent +' ' + rp.product.weight_unit }}</h6>
+                                                        <h6 v-else class="mb-0">{{ rp.stock_request +' ' + rp.product.weight_unit }}</h6>
                                                         <p>{{ rp.product.product_name }}</p>
-                                                        <span  v-if="request.status != 'Requested'">Supply Rate : {{ rp.supply_rate }} <sup>INR</sup> </span>
+                                                        <span  v-if="request.status != 'Requested'">Supply Rate <br /> {{ rp.supply_rate }} <sup>INR</sup> / {{ rp.product.weight_unit  }} </span>
                                                     </span>
                                                 </div>
                                             </div>
@@ -239,7 +247,7 @@
                                           <button type="submit" class="btn btn-primary mb-2 ml-auto px-5 mx-2 float-right" v-if="request.status == 'Requested'">Confirm</button>
                                         </form>
                                       </div>
-                                      <div class="card-footer bg-white d-flex align-items-center justify-content-between">
+                                      <div class="card-footer bg-white d-flex align-items-center justify-content-between py-1">
                                           <span class="font-weight-semibold">Created At <sub> {{ parseDate(request.created_at) }} </sub></span>
                                       </div>
                                   </div>
@@ -247,7 +255,7 @@
                              </div>
                           </div>
                         </div>
-                        <div id="SendNewStock" class="tab-pane fade">
+                        <div id="SendNewStock" class="tab-pane fade" >
                           <form method="POST" @submit.prevent="directStockRequest">
                           <button class="btn btn-primary  px-5" type="submit">Confirm</button>
                           <label class="ml-5"> Total Price : {{ calculateTotalPrice }} <sup>INR </sup></label>
@@ -260,18 +268,25 @@
                                 <template v-for="product in shop.products" :key="product.id">
                                     <template v-if="product.stock">
                                       <li>
-                                        <div class="itemBox flex-column"> <span class="img"><img :src="product.image" alt="icon" class="img-fluid"></span> <span class="txt">
-                                            <h3>{{ product.association.stock +' '+ product.weight_unit }}</h3>
-                                            <p>{{ product.product_name }}</p>
-                                            </span>
+                                        <div class="itemBox flex-column">
+                                            <div class="d-flex">
+                                              <span class="img"><img :src="product.image" alt="icon" class="img-fluid"></span>
+                                              <span class="txt">
+                                                <h3>{{ product.association.stock +' '+ product.weight_unit }}</h3>
+                                                <p>{{ product.product_name }}</p>
+                                              </span>
+                                            </div>
                                             <div class="d-flex" >
                                               <label>
                                                 <small>Request Quantity</small>
                                                 <input type="text" class="form-control" @input="calculateSupplyRate($event,product.id)" placeholder="0" v-model="form.directStockRequest.products['product-'+product.id]" />
                                               </label>
-                                              <label>
+                                              <label class="ml-2">
                                                 <small>Supply Rate </small>
-                                                <input type="text" class="form-control" @input="calculateSupplyRate($event,product.id)" placeholder="0" v-model="form.directStockRequest.products['product-'+product.id+'-supply-rate']" />
+                                                <div class="d-flex align-items-center small">
+                                                  <input type="text" class="form-control" maxlength="4" @input="calculateSupplyRate($event,product.id)" placeholder="0" v-model="form.directStockRequest.products['product-'+product.id+'-supply-rate']" />
+                                                  <small class="ml-3 w-75">{{ form.directStockRequest.products['product-'+product.id+'-supply-rate'] }} <sup>INR</sup>/ {{ product.weight_unit }} </small>
+                                                </div>
                                               </label>
                                             </div>
                                             <p>{{ form.directStockRequest.products['product-'+product.id+'-total-price'] }} <sup>INR</sup></p>
@@ -439,7 +454,7 @@ export default {
         Button,
         Input,
     },
-    props:['products','shop','users','due_amount'],
+    props:['products','shop','users','due_amount','sales'],
     data () {
         return {
                   form:{

@@ -58,6 +58,7 @@ class Rates extends Controller
                         ->where('status','Active')
                         ->where('product_id',$product->id)
                         ->first();
+
         if(!empty($productTodayRate)){
             $productTodayRate->status = 'Inactive';
             $productTodayRate->save();
@@ -82,15 +83,7 @@ class Rates extends Controller
                                     "rate" => (empty($request->range["range-".$range->id])) ? 0 : $request->range["range-".$range->id],
                 ]);
             }
-        }else{
-            $wholesaleRangeRates->push([
-                            "from" => $product->default_wholesale_weight,
-                            "to" => 50000,
-                            "product_id" => $product->id,
-                            "rate" => (empty($request->default_wholesale_weight)) ? 0 : $request->default_wholesale_weight,
-            ]);
         }
-
 
         $rate->wholesale_rate =  $wholesaleRangeRates->toJson();
         $rate->save();

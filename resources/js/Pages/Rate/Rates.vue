@@ -73,7 +73,7 @@
                             <td>{{ r.product.product_name }}</td>
                             <td>{{ r.date }}</td>
                             <td>
-                              <template v-if="r.wholesale_rate != null && r.wholesale_rate != ''">
+                              <template v-if="r.wholesale_rate != null && r.wholesale_rate != '[]'">
                                 <template  v-for="(range,index) in parseToJSON(r.wholesale_rate)" :key="range.id">
                                   <span class="badge badge-danger font-weight-normal mr-2" v-if="index==0">
                                       {{range.from +"-"+ range.to +" "+ r.product.weight_unit }} : {{  range.rate }} <sup>INR </sup>
