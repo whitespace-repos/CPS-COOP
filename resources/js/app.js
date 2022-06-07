@@ -24,7 +24,12 @@ createInertiaApp({
             .component("v-select", vSelect)
             .component('Calendar', Calendar)
             .component('DatePicker', DatePicker)
-            .mixin({ methods: { route } })
+            .mixin({
+                methods: {
+                            route,
+                            toDecimal : str => Number(str).toFixed(2)
+                }
+            })
             .mount(el);
     },
 });

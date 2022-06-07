@@ -21,11 +21,11 @@
                     </li>
                 </ul>
                 <div class="tab-content" id="pills-tabContent">
-                    <div class="tab-pane fade active" id="pending" role="tabpanel" aria-labelledby="pills-pending-tab">
+                    <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pills-pending-tab">
                         <div class="col-md-12" v-for="request in shop.stock_requests.filter((item) => {  return item.status != 'Completed' })" :key="request.id">
                             <div class="card today_sales mb-4">
                                 <div class="card-header d-flex justify-content-between py-1">
-                                    <h6 class="my-2">Status - {{ request.status }}    <sub> on {{ parseDate(request.updated_at) }} </sub> <small v-if="request.status != 'Requested'" class="ml-4">Actual Payment : {{ request.actual_payment }} <sup>INR</sup></small> <small v-if="request.status == 'Completed'" class="ml-3"> Receive Payment : {{ request.payment_received }} <sup>INR</sup> </small></h6>
+                                    <h6 class="my-2">Status - {{ request.status }}    <sub> on {{ parseDate(request.updated_at) }} </sub> <small v-if="request.status != 'Requested'" class="ml-4">Actual Payment : {{ toDecimal(request.actual_payment) }} <sup>INR</sup></small> <small v-if="request.status == 'Completed'" class="ml-3"> Receive Payment : {{ toDecimal(request.payment_received) }} <sup>INR</sup> </small></h6>
                                     <button class="btn btn-primary" data-toggle="modal" data-target="#receiveStockConfirmModal" @click="openReceiveConfirmationModal(request.id)" v-if="request.status == 'Sent'">Receive Stock </button>
                                 </div>
                                 <div class="card-body d-flex  p-0">
@@ -33,10 +33,10 @@
                                         <div class="itemBox">
                                             <span class="img w-25 h-25 mr-4"><img :src="rp.product.image" alt="icon"  class="img-fluid"></span>
                                             <span class="font-weight-bold">
-                                                <h6 class="mb-0">{{ rp.stock_request +' ' + rp.product.weight_unit }}</h6>
+                                                <h6 class="mb-0">{{ toDecimal(rp.stock_request) +' ' + rp.product.weight_unit }}</h6>
                                                 <small class="d-block">{{ rp.product.product_name }}</small>
                                                 <label class="small d-block mb-0 mt-1"> Supply Rate </label>
-                                                <span  v-if="request.status != 'Requested'" class="small">{{ rp.supply_rate }} <sup>INR</sup> / {{ rp.product.weight_unit }} </span>
+                                                <span  v-if="request.status != 'Requested'" class="small">{{ toDecimal(rp.supply_rate) }} <sup>INR</sup> / {{ rp.product.weight_unit }} </span>
                                             </span>
                                         </div>
                                     </div>
@@ -60,12 +60,17 @@
                                 </div>
                             </div>
                         </div>
+                        <div v-if="shop.stock_requests.filter((item) => {  return item.status != 'Completed' }).length == 0">
+                            <div class="alert alert-warning" role="alert">
+                                    No Record Found !
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="pills-completed-tab">
                         <div class="col-md-12" v-for="request in shop.stock_requests.filter((item) => {  return item.status == 'Completed' })" :key="request.id">
                             <div class="card today_sales mb-4">
                                 <div class="card-header d-flex justify-content-between py-1">
-                                    <h6 class="my-2">Status - {{ request.status }}    <sub> on {{ parseDate(request.updated_at) }} </sub> <small v-if="request.status != 'Requested'" class="ml-4">Actual Payment : {{ request.actual_payment }} <sup>INR</sup></small> <small v-if="request.status == 'Completed'" class="ml-3"> Receive Payment : {{ request.payment_received }} <sup>INR</sup> </small></h6>
+                                    <h6 class="my-2">Status - {{ request.status }}    <sub> on {{ parseDate(request.updated_at) }} </sub> <small v-if="request.status != 'Requested'" class="ml-4">Actual Payment : {{ toDecimal(request.actual_payment) }} <sup>INR</sup></small> <small v-if="request.status == 'Completed'" class="ml-3"> Receive Payment : {{ toDecimal(request.payment_received) }} <sup>INR</sup> </small></h6>
                                     <button class="btn btn-primary" data-toggle="modal" data-target="#receiveStockConfirmModal" @click="openReceiveConfirmationModal(request.id)" v-if="request.status == 'Sent'">Receive Stock </button>
                                 </div>
                                 <div class="card-body d-flex  p-0">
@@ -73,10 +78,10 @@
                                         <div class="itemBox">
                                             <span class="img w-25 h-25 mr-4"><img :src="rp.product.image" alt="icon"  class="img-fluid"></span>
                                             <span class="font-weight-bold">
-                                                <h6 class="mb-0">{{ rp.stock_request +' ' + rp.product.weight_unit }}</h6>
+                                                <h6 class="mb-0">{{ toDecimal(rp.stock_request) +' ' + rp.product.weight_unit }}</h6>
                                                 <small class="d-block">{{ rp.product.product_name }}</small>
                                                 <label class="small d-block mb-0 mt-1"> Supply Rate </label>
-                                                <span  v-if="request.status != 'Requested'" class="small">{{ rp.supply_rate }} <sup>INR</sup> / {{ rp.product.weight_unit }} </span>
+                                                <span  v-if="request.status != 'Requested'" class="small">{{ toDecimal(rp.supply_rate) }} <sup>INR</sup> / {{ rp.product.weight_unit }} </span>
                                             </span>
                                         </div>
                                     </div>
@@ -135,8 +140,8 @@
                         <tr v-for="rp in selectedRequest.requested_products" :key="rp.id">
                             <td>{{ rp.id }} </td>
                             <td>{{ rp.product.product_name }}</td>
-                            <td>{{ rp.stock_request + ' ' + rp.product.weight_unit }} </td>
-                            <td>{{ rp.stock_sent + ' ' + rp.product.weight_unit}}</td>
+                            <td>{{ toDecimal(rp.stock_request) + ' ' + rp.product.weight_unit }} </td>
+                            <td>{{ toDecimal(rp.stock_sent) + ' ' + rp.product.weight_unit}}</td>
                             <td width="160">
                                 <div class="input-group mb-2">
                                     <input type="number" class="form-control" id="inlineFormInputGroup" placeholder="Stock Receive" v-model="form.receiveStock.receive_stocks['product-' + rp.id]"/>
@@ -176,7 +181,7 @@
                                     <template v-for="product in shop.products" :key="product.id">
                                         <li v-if="product.stock">
                                             <div class="itemBox"> <span class="img"><img :src="product.image" alt="icon" class="img-fluid"></span> <span class="txt">
-                                                <h3>{{ product.association.stock +''+ product.weight_unit }}</h3>
+                                                <h3>{{ toDecimal(product.association.stock) +''+ product.weight_unit }}</h3>
                                                 <p>{{ product.product_name }}</p>
                                                 </span>
                                             </div>

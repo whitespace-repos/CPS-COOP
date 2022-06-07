@@ -14,7 +14,7 @@
                 <div class="card-body d-flex justify-content-center">
                     <div class="item mr-3" v-for="product in productCurrentStock" :key="product.id">
                     <div class="itemBox px-4" v-if="product.stock"> <span class="img mr-2"><img :src="product.image" alt="icon" class="img-fluid"></span> <span class="">
-                      <h3>{{ product.association.stock +' ' + product.weight_unit }}</h3>
+                      <h3 style="font-size: 14px !important;">{{ toDecimal(product.association.stock) +' ' + product.weight_unit }}</h3>
                       <p>{{ product.product_name }}</p>
                       </span> </div>
                   </div>
@@ -31,7 +31,7 @@
                     <div class="item" v-for="sale  in sales" :key="sale.id">
                         <div class="itemBox pb-4 pt-4">
                             <span class="img mr-2 my-2"><img :src="sale.product.image" alt="icon" class="img-fluid"></span> <span class="">
-                                <h6>{{ sale.total_sales }} <sup>INR</sup> </h6>
+                                <h6>{{ toDecimal(sale.total_sales) }} <sup>INR</sup> </h6>
                                 <p>{{ sale.product.product_name }}</p>
                             </span>
                         </div>
@@ -93,9 +93,9 @@
                                 <tbody>
                                     <tr v-for="cart in carts" :key="cart.id">
                                         <td>{{ cart.name }}</td>
-                                        <td>{{ cart.attributes.rate }} <sup>INR</sup> </td>
-                                        <td>{{ cart.attributes.weight }} <sup>{{ cart.attributes.product.weight_unit }}</sup></td>
-                                        <td>{{ Number(cart.price).toFixed(2) }}</td>
+                                        <td>{{ toDecimal(cart.attributes.rate) }} <sup>INR</sup> </td>
+                                        <td>{{ toDecimal(cart.attributes.weight) }} <sup>{{ cart.attributes.product.weight_unit }}</sup></td>
+                                        <td>{{ toDecimal(cart.price) }}</td>
                                         <td>
                                             <form  method="POST" class="mr-2 small" @submit.prevent="removeCart($event,cart)">
                                                 <input type="hidden" :value="cart.id" name='id' />
@@ -110,12 +110,12 @@
                     <div class="card-footer p-0 border-0 bg-transparent" :class="{'d-none':!Object.keys(carts).length}">
                         <inertia-link :href="this.route('cart.clear')" @click="clearCart" type="button" method="POST" class="btn btn-warning btn-sm m-1"> Clear Cart </inertia-link>
                         <inertia-link :href="this.route('cart.list')"  type="button" class="btn btn-primary btn-sm m-1"> Generate Bill </inertia-link>
-                        <strong><sup>INR</sup> {{ Number(totalAmount).toFixed(2) }}</strong>
+                        <strong><sup>INR</sup> {{ toDecimal(totalAmount) }}</strong>
                     </div>
                 </div>
             </div>
 
-            <div class="col-lg-6 ">
+            <div class="col-lg-6 pl-0">
                 <div class="customer_info" v-if="existingCustomer">
                     <div class="heading">
                         <h3>Billing System</h3>
@@ -130,11 +130,11 @@
                                             <h4>{{ product.product_name}}</h4>
                                         </em>
                                     </span>
-                                    <span class="product_radio">
+                                    <span class="product_radio d-flex">
                                         <label class="radioPart mr-2">
                                             Retail:
                                             <p>
-                                               <span class="font-weight-normal d-block"  style="font-size:12px">{{ (product.rate == null ) ? ' - ' : product.rate.retail_rate }} <sup v-if="product.rate != null">INR </sup>  {{ ' : ' + product.weight_unit  }} </span>
+                                               <span class="font-weight-normal d-block"  style="font-size:12px">{{ (product.rate == null ) ? ' - ' : toDecimal(product.rate.retail_rate) }} <sup v-if="product.rate != null">INR </sup>  {{ ' : ' + product.weight_unit  }} </span>
                                             </p>
                                             <input type="radio"  :class="['tbName' , 'product_' +product.id+ '_retail_radio' ]" :name="'product_'+product.id+'_radio'" value="retail" data-btn="submit1" />
                                             <span class="checkmark"></span>
@@ -143,7 +143,7 @@
                                             Wholesale:
                                             <!-- JSON.parse(product.rate.wholesale_rate) -->
                                             <p v-if="product.rate != null && product.rate != ''">
-                                               <span class="font-weight-normal d-block" v-for="range in parseToJSON(product.rate.wholesale_rate)" :key="range.id" style="font-size:11px">{{ range.rate }} <sup>INR </sup> {{ ' : ' + range.from +' - ' }} {{ (range.to == 50000) ? 'MAX' : range.to  }}  {{ product.weight_unit }}</span>
+                                               <span class="font-weight-normal d-block" v-for="range in parseToJSON(product.rate.wholesale_rate)" :key="range.id" style="font-size:11px">{{ toDecimal(range.rate) }} <sup>INR </sup> {{ ' : ' + toDecimal(range.from) +' - ' }} {{ (range.to == 50000) ? 'MAX' : toDecimal(range.to)  }}  {{ product.weight_unit }}</span>
                                             </p>
                                             <input type="radio" :name="'product_'+product.id+'_radio'"  :class="['tbName' , 'product_' +product.id+ '_wholesale_radio' ]" value="wholesale" data-btn="submit1">
                                             <span class="checkmark"></span>
@@ -152,7 +152,7 @@
                                     <span class="product_btn">
                                         <form action="#" method="POST" class="font-weight-bold" @submit.prevent="addToCart">
                                             <div class="input-group">
-                                                <input  class="form-control" placeholder="0"  name="weight" v-model="billingWeightInput['product-'+product.id]" @input="calateprice($event,product.wholesale_weight_range)" :data-wholesale-range="(product.rate != null && product.rate != '') ? product.rate.wholesale_rate : []"  :data-retail-rate="(product.rate == null ) ? 0 : product.rate.retail_rate" :data-product="product.product_name" :data-product-id="product.id" :data-wholesale-weight="product.wholesale_weight" autocomplete="off" data-amount="0" data-rate="0"/>
+                                                <input  class="form-control" style="width:80px" placeholder="0"  name="weight" v-model="billingWeightInput['product-'+product.id]" @input="calateprice($event,product.wholesale_weight_range)" :data-wholesale-range="(product.rate != null && product.rate != '') ? product.rate.wholesale_rate : []"  :data-retail-rate="(product.rate == null ) ? 0 : product.rate.retail_rate" :data-product="product.product_name" :data-product-id="product.id" :data-wholesale-weight="product.wholesale_weight" autocomplete="off" data-amount="0" data-rate="0"/>
                                                 <div class="input-group-append">
                                                     <small class="input-group-text">{{product.weight_unit}}</small>
                                                     <p class="price">0 <sup>INR</sup></p>
@@ -172,20 +172,20 @@
                 </div>
             </div>
 
-            <div class="col-lg-3 displayNoneIpad">
+            <div class="col-lg-3 displayNoneIpad pl-0">
                 <div class="Purchase_History" v-if="Object.keys(purchaseHistory).length > 0 ">
                     <h6 class="p-2 text-white"> Purchase History </h6>
                     <div class="accordion" id="accordionExample">
-                        <div class="card" v-for="(data,index) in purchaseHistory" :key="index">
+                        <div class="card small" v-for="(data,index) in purchaseHistory" :key="index">
                             <div class="card-header p-0" id="headingOne">
-                                <ul class="d-flex small justify-content-around align-items-center">
+                                <ul class="d-flex small justify-content-around align-items-center font-weight-bold">
                                     <li>
                                         <button class="btn btn-link btn-block text-left p-1 collapsed border-0" type="button" data-toggle="collapse" :data-target="'#collapse'+index" aria-expanded="true" :aria-controls="'collapse'+index">
                                             {{ parseDate(index,'YY/MM/D') }}
                                         </button>
                                     </li>
-                                    <li> Total : {{ _.sumBy(data, 'total') }} INR</li>
-                                    <li> Received  : {{ _.sumBy(data, 'receive') }}  INR</li>
+                                    <li> Total : {{ toDecimal(_.sumBy(data, 'total')) }} INR</li>
+                                    <li> Received  : {{ toDecimal(_.sumBy(data, 'receive')) }}  INR</li>
                                 </ul>
                             </div>
 
@@ -204,8 +204,8 @@
                                             <tr v-for="history in data" :key="history.id" >
                                                 <td class="border-0 p-0">{{ "-" }}</td>
                                                 <td class="border-0 p-0">{{ history.quantity }}</td>
-                                                <td class="border-0 p-0">{{ history.total }} <sup>INR </sup></td>
-                                                <td class="border-0 p-0">{{ history.receive }} <sup>INR </sup></td>
+                                                <td class="border-0 p-0">{{ toDecimal(history.total) }} <sup>INR </sup></td>
+                                                <td class="border-0 p-0">{{ toDecimal(history.receive) }} <sup>INR </sup></td>
                                             </tr>
                                         </tbody>
                                     </table>

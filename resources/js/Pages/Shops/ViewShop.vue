@@ -14,7 +14,7 @@
             <div class="col-lg-7 col-md-12 ">
               <div class="ShopDtlsHdr align-self-center justify-content-between mt-3">
                 <h6>{{ 'COOP - ' + shop.shop_name }}</h6>
-                <h6 class="dueAmount">Due Amount  -  {{ due_amount }} <sup>INR</sup></h6>
+                <h6 class="dueAmount">Due Amount  -  {{ toDecimal(due_amount) }} <sup>INR</sup></h6>
                 <h6 class="dueAmount">Activate Expense</h6>
                 <label class="switch mt-0">
                   <input type="checkbox" checked>
@@ -42,12 +42,12 @@
               <div class="col-lg-3">
                 <div class="card  h-100 rounded-0  ">
                   <div class="ShopAdrs pb-0"> <span class="PhNo  px-5"> <img src="/assets/img/PhIcon.png" alt="" class="img-fluid"/> {{ shop.phone }} </span>
-                    <ul class="adrs">
+                    <ul class="adrs small">
                       <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon1.png" alt="" class="img-fluid"/></span> <span><span>Address:</span> {{ shop.address }}</span></li>
                       <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon2.png" alt="" class="img-fluid"/></span> <span><span>Distance:</span> {{ shop.distance_from_cps }}</span></li>
                       <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon3.png" alt="" class="img-fluid"/></span> <span><span>Dimensive:</span> {{ shop.shop_dimentions }}</span></li>
-                      <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon4.png" alt="" class="img-fluid"/></span> <span><span>Max Sale Estimation:</span> {{ shop.max_sale_estimate_per_day }}</span></li>
-                      <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon5.png" alt="" class="img-fluid"/></span> <span><span>Max stock capacity:</span> {{ shop.stock_capacity_per_day }}</span></li>
+                      <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon4.png" alt="" class="img-fluid"/></span> <span><span>Max Sale Estimation:</span> {{ toDecimal(shop.max_sale_estimate_per_day) }}</span></li>
+                      <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon5.png" alt="" class="img-fluid"/></span> <span><span>Max stock capacity:</span> {{ toDecimal(shop.stock_capacity_per_day) }}</span></li>
                       <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon6.png" alt="" class="img-fluid"/></span> <span><span>Estimated Start Date:</span> {{ shop.estimated_start_date }}</span></li>
                     </ul>
                   </div>
@@ -74,11 +74,11 @@
                       <div class="item m-2" v-for="sale  in sales" :key="sale.id">
                           <div class="itemBox py-0 justify-content-center">
                               <span class="img mr-2"><img :src="sale.product.image" alt="icon" class=" mr-2 img-fluid"></span> <span class="">
-                                  <h6 class="mb-0">{{ sale.total_quantity }} <sup>{{ sale.product.weight_unit }}</sup> </h6>
+                                  <h6 class="mb-0">{{ toDecimal(sale.total_quantity) }} <sup>{{ sale.product.weight_unit }}</sup> </h6>
                                   <p>{{ sale.product.product_name }}</p>
                               </span>
                           </div>
-                          <h6 class="text-center mt-1">{{ sale.total_sales }} <sup>INR</sup> </h6>
+                          <h6 class="text-center mt-1">{{ toDecimal(sale.total_sales) }} <sup>INR</sup> </h6>
                       </div>
                     </template>
                     <template v-else>
@@ -95,7 +95,7 @@
                   <ul class="m-2">
                     <li v-for="product in shop.products" :key="product.id">
                       <div class="itemBox mb-2" v-if="product.stock"> <span class="img"><img :src="product.image" alt="icon" class="img-fluid"></span> <span class="txt">
-                        <h3>{{ product.association.stock +' '+ product.weight_unit }}</h3>
+                        <h3>{{ toDecimal(product.association.stock) +' '+ product.weight_unit }}</h3>
                         <p>{{ product.product_name }} </p>
                         </span> </div>
                     </li>
@@ -127,7 +127,7 @@
                         <h4>Wholesale:</h4>
                         <span class="AddRate"><a data-toggle="modal" href="#Add_Rate" class="AddRate">+</a></span> </div>
                         <p v-if="productRate.rate != null && productRate.rate != ''">
-                          <span class="badge badge-danger font-weight-normal d-block my-1" v-for="range in parseToJSON(productRate.rate.wholesale_rate)" :key="range.id" style="font-size:11px">{{ range.rate }} <sup>INR </sup> {{ ' : ' + range.from +' - ' }} {{ (range.to == 50000) ? 'MAX' : range.to  }} {{ productRate.weight_unit }}</span>
+                          <span class="badge badge-danger font-weight-normal d-block my-1" v-for="range in parseToJSON(productRate.rate.wholesale_rate)" :key="range.id" style="font-size:11px">{{ toDecimal(range.rate) }} <sup>INR </sup> {{ ' : ' + toDecimal(range.from) +' - ' }} {{ (range.to == 50000) ? 'MAX' : toDecimal(range.to)  }} {{ productRate.weight_unit }}</span>
                         </p>
                     </div>
                     <div class="RetailSaleWrapper">
@@ -135,7 +135,7 @@
                         <h4>Retail:</h4>
                       </div>
                       <p v-if="productRate.rate != null && productRate.rate != ''">
-                        <span class="badge badge-danger font-weight-normal d-block">{{ productRate.rate.retail_rate }} <sup>INR </sup> {{ productRate.weight_unit }}</span>
+                        <span class="badge badge-danger font-weight-normal d-block">{{ toDecimal(productRate.rate.retail_rate) }} <sup>INR </sup> {{ productRate.weight_unit }}</span>
                       </p>
                     </div>
                   </div>
@@ -178,11 +178,11 @@
                                               <div class="item">
                                                   <div class="itemBox py-0 small">
                                                       <span class="img mr-2"><img :src="rp.product.image" alt="icon"  class="img-fluid"></span> <span class="ml-2">
-                                                          <h6 v-if="request.type == 'Direct'" class="mb-0">{{ rp.stock_sent +' ' + rp.product.weight_unit }}</h6>
-                                                          <h6 v-else class="mb-0">{{ rp.stock_request +' ' + rp.product.weight_unit }}</h6>
+                                                          <h6 v-if="request.type == 'Direct'" class="mb-0">{{ toDecimal(rp.stock_sent) +' ' + rp.product.weight_unit }}</h6>
+                                                          <h6 v-else class="mb-0">{{ toDecimal(rp.stock_request) +' ' + rp.product.weight_unit }}</h6>
                                                           <p>{{ rp.product.product_name }}</p>
                                                           <span  v-if="request.status != 'Requested'">Supply Rate <br />
-                                                                                                        {{ rp.supply_rate }} <sup>INR</sup> / {{  rp.product.weight_unit }}
+                                                                                                        {{ toDecimal(rp.supply_rate) }} <sup>INR</sup> / {{  rp.product.weight_unit }}
                                                           </span>
                                                       </span>
                                                   </div>
@@ -216,7 +216,7 @@
                               <div class="col-md-12" v-for="request in shop.stock_requests" :key="request.id">
                                   <div class="card today_sales mb-4" v-if="request.status == 'Completed'">
                                       <div class="card-header d-flex justify-content-between py-0">
-                                          <h6 class="my-2">Status - {{ request.status }}  <small>Actual Payment :{{ request.actual_payment }} <sup>INR</sup>, Receive Payment : {{ request.payment_received }} <sup>INR</sup></small></h6>
+                                          <h6 class="my-2">Status - {{ request.status }}  <small>Actual Payment :{{ toDecimal(request.actual_payment) }} <sup>INR</sup>, Receive Payment : {{ toDecimal(request.payment_received) }} <sup>INR</sup></small></h6>
                                           <button type="button" data-target="#sendStockConfirmRequest" data-toggle="modal" class="btn btn-primary" v-if="request.status == 'Processing'" @click="openSendConfirmationModal(request.id)">Send</button>
                                           <button type="button" class="btn btn-primary" data-target="#completeStockRequestConfirmationModal" data-toggle="modal" v-if="request.status == 'Received'"  @click="openSendConfirmationModal(request.id)">Completed</button>
                                       </div>
@@ -227,21 +227,11 @@
                                                 <div class="itemBox py-0 small">
                                                     <span class="img mr-2"><img :src="rp.product.image" alt="icon" class="img-fluid"></span> <span class="ml-2">
                                                         <h6 v-if="request.type == 'Direct'" class="mb-0">{{ rp.stock_sent +' ' + rp.product.weight_unit }}</h6>
-                                                        <h6 v-else class="mb-0">{{ rp.stock_request +' ' + rp.product.weight_unit }}</h6>
+                                                        <h6 v-else class="mb-0">{{ toDecimal(rp.stock_request) +' ' + rp.product.weight_unit }}</h6>
                                                         <p>{{ rp.product.product_name }}</p>
-                                                        <span  v-if="request.status != 'Requested'">Supply Rate <br /> {{ rp.supply_rate }} <sup>INR</sup> / {{ rp.product.weight_unit  }} </span>
+                                                        <span  v-if="request.status != 'Requested'">Supply Rate <br /> {{ toDecimal(rp.supply_rate) }} <sup>INR</sup> / {{ rp.product.weight_unit  }} </span>
                                                     </span>
                                                 </div>
-                                            </div>
-                                            <div class="form-row align-items-center w-75 my-2 ml-1" v-if="request.status == 'Requested'">
-                                              <div class="col-auto">
-                                                <div class="input-group mb-2">
-                                                  <div class="input-group-prepend">
-                                                    <div class="input-group-text">INR</div>
-                                                  </div>
-                                                  <input type="number" class="form-control" id="inlineFormInputGroup" placeholder="Supply Rate" v-model="form.approvedStockRequest.supply_rates['product-' + rp.id]" />
-                                                </div>
-                                              </div>
                                             </div>
                                           </template>
                                           <button type="submit" class="btn btn-primary mb-2 ml-auto px-5 mx-2 float-right" v-if="request.status == 'Requested'">Confirm</button>
@@ -258,7 +248,7 @@
                         <div id="SendNewStock" class="tab-pane fade" >
                           <form method="POST" @submit.prevent="directStockRequest">
                           <button class="btn btn-primary  px-5" type="submit">Confirm</button>
-                          <label class="ml-5"> Total Price : {{ calculateTotalPrice }} <sup>INR </sup></label>
+                          <label class="ml-5"> Total Price : {{ toDecimal(calculateTotalPrice) }} <sup>INR </sup></label>
                             <hr />
                           <div class="modal-body StockFRm">
 
@@ -272,7 +262,7 @@
                                             <div class="d-flex">
                                               <span class="img"><img :src="product.image" alt="icon" class="img-fluid"></span>
                                               <span class="txt">
-                                                <h3>{{ product.association.stock +' '+ product.weight_unit }}</h3>
+                                                <h3>{{ toDecimal(product.association.stock) +' '+ product.weight_unit }}</h3>
                                                 <p>{{ product.product_name }}</p>
                                               </span>
                                             </div>
@@ -285,11 +275,11 @@
                                                 <small>Supply Rate </small>
                                                 <div class="d-flex align-items-center small">
                                                   <input type="text" class="form-control" maxlength="4" @input="calculateSupplyRate($event,product.id)" placeholder="0" v-model="form.directStockRequest.products['product-'+product.id+'-supply-rate']" />
-                                                  <small class="ml-3 w-75">{{ form.directStockRequest.products['product-'+product.id+'-supply-rate'] }} <sup>INR</sup>/ {{ product.weight_unit }} </small>
+                                                  <small class="ml-3 w-75">{{ toDecimal(form.directStockRequest.products['product-'+product.id+'-supply-rate']) }} <sup>INR</sup>/ {{ product.weight_unit }} </small>
                                                 </div>
                                               </label>
                                             </div>
-                                            <p>{{ form.directStockRequest.products['product-'+product.id+'-total-price'] }} <sup>INR</sup></p>
+                                            <p>{{ toDecimal(form.directStockRequest.products['product-'+product.id+'-total-price']) }} <sup>INR</sup></p>
                                         </div>
                                       </li>
                                     </template>

@@ -34,19 +34,19 @@
 
                   <Link :href="route('shop.show',shop.id)" class="Btn position-relative" ><small style="right: -3px;top: -15px;" class="rounded-circle badge badge-danger font-weight-normal p-2 position-absolute">{{ shopStockReqeustSize(shop) }}</small> View Shop</Link>
                 </div>
-                <div class="ShoplistBoxBody">
+                <div class="ShoplistBoxBody px-0">
                   <ul>
                       <li>
-                        <label>Wholesale Rate <span>{{ (product.rate == null) ? 0 : (JSON.parse(product.rate.wholesale_rate).length == 0) ? 0 : JSON.parse(product.rate.wholesale_rate)[0].rate }} <sup>INR</sup></span></label>
+                        <label>Wholesale Rate <span>{{ (product.rate == null) ? 0 : (JSON.parse(product.rate.wholesale_rate).length == 0) ? 0 : toDecimal(JSON.parse(product.rate.wholesale_rate)[0].rate) }} <sup>INR</sup></span></label>
                       </li>
                       <li>
-                        <label>Retail Rate <span>{{ (product.rate == null) ? 0 : product.rate.retail_rate }} <sup>INR</sup></span></label>
+                        <label>Retail Rate <span>{{ (product.rate == null) ? 0 : toDecimal(product.rate.retail_rate) }} <sup>INR</sup></span></label>
                       </li>
                       <li>
-                        <label>Sale <span> {{ shop.today_sale }} <sup>INR</sup></span></label>
+                        <label>Sale <span> {{ toDecimal(shop.today_sale) }} <sup>INR</sup></span></label>
                       </li>
                       <li>
-                        <label>Stock <span> {{ shop.association.stock +' '+ product.weight_unit }}</span></label>
+                        <label>Stock <span> {{ toDecimal(shop.association.stock) +' '+ product.weight_unit }}</span></label>
                       </li>
                   </ul>
                 </div>
