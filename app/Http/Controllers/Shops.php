@@ -28,13 +28,14 @@ class Shops extends Controller
         if($this->product->shops->count() > 0 ){
             $this->product->shops->map(function($item){
                 if($item->today_sales->count() > 0){
-                    $item->today_sale = $item
+                    $sale = $item
                                             ->today_sales()
                                             ->select(DB::raw('SUM(receive) as total_sales'))
                                             ->orderBy('created_at','desc')
                                             ->where('product_id',$this->product->id)
                                             ->groupBy('product_id')
-                                            ->first()->total_sales;
+                                            ->first();
+                    $item->today_sale = empty($sale) ? 0 : $sale->total_sales;
                 }else{
                     $item->today_sale = 0;
                 }
