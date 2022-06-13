@@ -95,6 +95,13 @@
                   </template>
                 </div>
 
+                <div class="form-group col-md-4" >
+                  <label>Choose Supplier</label>
+                  <select v-model="form.shop.supplier_id" class="form-control">
+                    <option :value="supplier.id" v-for="supplier in suppliers" :key="supplier.id">{{ supplier.name }}</option>
+                  </select>
+                </div>
+
                 <!-- -->
                 <div class="col-md-12">
                   <div class="form-group py-1">
@@ -121,9 +128,9 @@ export default {
         BreezeAuthenticatedLayout,
         Head,
     },
-    props:['products'],
+    props:['products','suppliers'],
     computed (){
-      $('select').selectpicker();
+
     },
     data () {
         return {
@@ -139,7 +146,8 @@ export default {
                                           max_sale_estimate_per_day:'',
                                           estimated_start_date:'',
                                           products:[],
-                                          phone:''
+                                          phone:'',
+                                          supplier_id:'',
                         })
                   }
 
@@ -155,7 +163,7 @@ export default {
         },
     },
     mounted() {
-      $('select').selectpicker();
+
     },
     validations() {
       return {

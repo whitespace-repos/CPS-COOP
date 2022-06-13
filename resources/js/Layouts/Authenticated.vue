@@ -22,9 +22,9 @@
         <div class="wrapper">
             <div class="sideBar">
                 <ul>
-                <li><a href="#"> <img src="/assets/img/menu_icon1.png" alt="icon">
+                <li><Link href="/dashboard"> <img src="/assets/img/menu_icon1.png" alt="icon">
                     <p>Dashboard</p>
-                    </a></li>
+                    </Link></li>
                 <li> <Link href="/product"><img src="/assets/img/menu_icon2.png" alt="icon">
                     <p>Products</p>
                     </Link> </li>
@@ -73,7 +73,6 @@ export default {
         BreezeResponsiveNavLink,
         Link,
     },
-
     data() {
         return {
             showingNavigationDropdown: false,

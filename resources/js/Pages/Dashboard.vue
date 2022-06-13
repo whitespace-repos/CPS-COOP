@@ -1,27 +1,119 @@
-<script setup>
-import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
-import { Head , Link} from '@inertiajs/inertia-vue3';
-</script>
-
 <template>
-    <Head title="Coops" />
-
+    <Head title="Dashboard" />
     <BreezeAuthenticatedLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Dashboard
-            </h2>
-            <Link :href="this.route('user.create')"> User </Link>
-        </template>
+      <div class="main-panel">
+        <div class="d-flex justify-content-between">
+          <h4>Supplier Detail </h4>
+        </div>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200">
-                        You're logged in!
+        <hr class="w-100 border-info bg-info "/>
+
+        <div class="alert alert-warning" role="alert" v-if="suppliers.length == 0 && auth.isAdmin">
+            No supplier found. Go to Users section and add  supplier.
+        </div>
+
+        <div v-for="(supplier , indx ) in suppliers" :key="indx">
+            <div class="accordion" :id="'accordionExample'+indx">
+                <div class="card">
+                    <div class="card-header p-0" :id="'headingOne'+indx">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-left" :class="{'collapsed':(indx != 0)}" type="button" data-toggle="collapse" :data-target="'#collapseOne'+indx" aria-expanded="true" :aria-controls="'collapseOne'+indx">
+                            Supplier  <i> ( {{ supplier.name }} ) </i> Detail
+                            </button>
+                        </h2>
+                    </div>
+
+                    <div :id="'collapseOne'+indx" class="collapse" :class="{'show':(indx == 0)}" :aria-labelledby="'headingOne'+indx" :data-parent="'#accordionExample'+indx">
+                        <div class="card-body px-0 pt-0">
+                            <table class="table table-sm table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Contact</th>
+                                        <th>Email</th>
+                                        <th> Total Shops </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{ supplier.name }}</td>
+                                        <td>{{ supplier.phone }}</td>
+                                        <td>{{ supplier.email }}</td>
+                                        <td>{{ supplier.shops.length }} </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="px-4">
+                                <h6 v-if="supplier.shops.length > 0" class="text-underline my-3" style="text-decoration:underline"> Shop associated with supplier </h6>
+                                <h6 v-else class="text-danger mt-3 mb-0" style="text-decoration:underline"> No shop associated with supplier </h6>
+
+                                <div class="accordion" id="accordionShops">
+                                    <div class="card" v-for="(shop,index) in supplier.shops" :key="index">
+                                        <div class="card-header p-0" :id="'shop'+index">
+                                            <h2 class="mb-0">
+                                                <button class="btn btn-link btn-block text-left collapsed"  type="button" data-toggle="collapse" :data-target="'#collapseShop'+index" aria-expanded="true" :aria-controls="'collapseShop'+index">
+                                                <kbd>{{ '#' + (index + 1) }} </kbd> {{ shop.shop_name }}
+                                                </button>
+                                            </h2>
+                                        </div>
+
+                                        <div :id="'collapseShop'+index" class="collapse fade" :aria-labelledby="'shop'+index" data-parent="#accordionShops">
+
+                                            <div class="card-body px-0 pt-0">
+                                                <table class="table table-sm table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Product</th>
+                                                            <th>Today Retail Rate</th>
+                                                            <th>Today Wholesale Rate</th>
+                                                            <th>Today Sale</th>
+                                                            <th>Current Stock</th>
+                                                            <th  class="text-right"><inertia-link :href="route('shop.show',shop.id)">View {{ shop.shop_name }} Shop Detail</inertia-link></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="product in shop.products" :key="product.id">
+                                                            <td>{{ product.product_name }}</td>
+                                                            <td>{{ (product.rate == null) ? toDecimal(0) : toDecimal(product.rate.retail_rate) }} <sup>INR</sup> </td>
+                                                            <td>{{ (product.rate == null) ? toDecimal(0) : (JSON.parse(product.rate.wholesale_rate).length == 0) ? toDecimal(0) : toDecimal(JSON.parse(product.rate.wholesale_rate)[0].rate) }} <sup>INR</sup> </td>
+                                                            <td>{{ toDecimal(product.today_sale) }} <sup>INR</sup> </td>
+                                                            <td colspan="2">{{ toDecimal(product.association.stock) }} <sup>{{ product.weight_unit }} </sup></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+      </div>
+      <!--  main-panel-->
     </BreezeAuthenticatedLayout>
 </template>
+
+
+<style>
+  .btn:focus,.btn:hover{
+    transition:none !important;
+    text-decoration:none !important;
+  }
+</style>
+
+<script>
+import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue'
+import { Head } from '@inertiajs/inertia-vue3';
+import _ from 'lodash'
+
+export default {
+    props:['suppliers'],
+    components: {
+        BreezeAuthenticatedLayout,
+        Head,
+    }
+}
+</script>

@@ -38,12 +38,13 @@
                                     <small>{{ error.$message }}</small>
                                 </template>
                             </div>
-                            <div class="form-group col-md-4"  :class="{ 'has-error': v$.form.shop_id.$errors.length }">
+                            <div class="form-group col-md-4"  :class="{ 'has-error': v$.form.shop_id.$errors.length }" >
                                 <label>Shop</label>
                                 <v-select
                                     v-model="v$.form.shop_id.$model"
                                     :filter="fuseSearch"
                                     :options="shops"
+                                    :multiple="(form.role == 'Supplier')"
                                     :get-option-key="(option) => option.id"
                                     :get-option-label="(option) => option.shop_name"
                                     >
@@ -101,7 +102,8 @@
                             password_confirmation: '',
                             terms: false,
                             phone:'',
-                            shop_id:1,
+                            role:'',
+                            shop_id:'',
                         })
             }
         },
@@ -127,7 +129,11 @@
         mounted() {
             _.assignIn(this.form,this.user);
             this.form.password = this.user.decrypt;
-            this.form.shop_id = this.user.shop;
+            //
+            setTimeout(()=>{
+                this.form.shop_id = (this.user.role == 'Supplier') ? this.user.shops : this.user.shop;
+            },100);
+
             // this.$set(this.form,'shop_id',this.user.shop_id);
         },
         validations() {

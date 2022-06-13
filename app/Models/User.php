@@ -50,4 +50,12 @@ class User extends Authenticatable
     public function shop(){
         return $this->belongsTo(Shop::class);
     }
+
+    public function shops(){
+        return $this->hasMany(Shop::class,'supplier_id','id');
+    }
+
+    public function products(){
+        return $this->hasMany(Product::class,'supplier_id','id');
+    }
 }

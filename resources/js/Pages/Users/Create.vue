@@ -38,12 +38,22 @@
                                     <small>{{ error.$message }}</small>
                                 </template>
                             </div>
+
+                            <div class="form-group col-md-4">
+                                <label> Role </label>
+                                <!-- array of strings or numbers -->
+                                <v-select :options="['Employee', 'Supplier']" :clearable="false" v-model="form.role"  :disabled="!auth.isAdmin" :noDrop="!auth.isAdmin"></v-select>
+                            </div>
+
+
                             <div class="form-group col-md-4"  :class="{ 'has-error': v$.form.shop_id.$errors.length }">
                                 <label>Shop</label>
+
                                 <v-select
                                     v-model="v$.form.shop_id.$model"
                                     :filter="fuseSearch"
                                     :options="shops"
+                                    :multiple="(form.role=='Supplier') ? true : false"
                                     :get-option-key="(option) => option.id"
                                     :get-option-label="(option) => option.shop_name"
                                     >
@@ -58,8 +68,11 @@
                                     <small>{{ error.$message }}</small>
                                 </template>
                             </div>
+
+
+
                             <div class="form-group col-md-12">
-                                <button class="btn btn-primary add-btn" type="submit" :disabled="v$.form.$invalid">Add Employee</button>
+                                <button class="btn btn-primary add-btn" type="submit" :disabled="v$.form.$invalid">Add {{form.role}}</button>
                             </div>
                         </div>
                     </div>
@@ -99,6 +112,7 @@
                             terms: false,
                             phone:'',
                             shop_id:'',
+                            role:'Employee'
                         })
             }
         },
@@ -119,10 +133,10 @@
             }
         },
         computed (){
-            $('select').selectpicker();
+
         },
         mounted() {
-            $('select').selectpicker();
+
         },
         validations() {
             return {

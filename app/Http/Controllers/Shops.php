@@ -10,6 +10,7 @@ use App\Models\StockRequest;
 use Inertia;
 use User;
 use DB;
+use \Carbon\Carbon;
 
 class Shops extends Controller
 {
@@ -22,10 +23,14 @@ class Shops extends Controller
     public function index()
     {
         //
-        $products = Product::with('rate','shops.stock_requests')->get();
+        $products = auth()->user()->hasRole('Supplier') ?
+                                                            auth()->user()->products()->with('rate','shops.stock_requests')->get()
+                                                        :   Product::with('rate','shops.stock_requests')->get();
+        //
+
         $this->product = $products->first();
 
-        if($this->product->shops->count() > 0 ){
+        if(!empty($this->product) && $this->product->shops->count() > 0 ){
             $this->product->shops->map(function($item){
                 if($item->today_sales->count() > 0){
                     $sale = $item
@@ -47,24 +52,43 @@ class Shops extends Controller
         if($products->count() == 0){
             return Inertia::render('Dependecy', ["message" => "You need to create atleast one product for accessing <b> Shops </b>."]);
         }
-        return Inertia::render('Shops/Shop', [ "product" => $this->product ,"products" => $products ]);
+        return Inertia::render('Shops/Shop', [ "product" => $this->product ,"products" => $products , 'filterProduct' => $this->product->id ,'filterDate' => Carbon::now()->format('d-m-Y') ]);
        // return view('pages.shops.main', compact('shops'));
     }
 
 
-    public function filter_shops_by_product($id){
-        $products = Product::all();
-        $this->product = Product::where('id',$id)->with('rate','shops.stock_requests')->first();
+    public function filter_shops_by_product(Request $request){
+        //
+        $id = $request->id;
+        $date = $request->date;
+
+        \Log::info($date);
+
+        //
+        $products = auth()->user()->hasRole('Supplier') ?
+                                                            auth()->user()->products()->with('rate','shops.stock_requests')->get()
+                                                        :   Product::with('rate','shops.stock_requests')->get();
+        $this->product = Product::where('id',$id)
+                                        ->with(['filterRate' => function($query) use($request) {
+                                            $query->whereDate('date',Carbon::parse($request->date)->format('Y-m-d'));
+                                        },
+                                        'shops.stock_requests'])
+                                        ->first();
+        // add duplicate key rate because we are using filterRate relation in this section.
+        $this->product->rate = $this->product->filterRate;
+
+        //
         if($this->product->shops->count() > 0 ){
-            $this->product->shops->map(function($item){
-                if($item->today_sales->count() > 0){
-                    $sale = $item
-                                            ->today_sales()
-                                            ->select(DB::raw('SUM(receive) as total_sales'))
-                                            ->orderBy('created_at','desc')
-                                            ->where('product_id',$this->product->id)
-                                            ->groupBy('product_id')
-                                            ->first();
+            $this->product->shops->map(function($item) use($date){
+                $filterSale = $item->filter_sales()->where('date',Carbon::parse($date))->get();
+
+                if($filterSale->count() > 0){
+                    $sale = $filterSale
+                                        ->select(DB::raw('SUM(receive) as total_sales'))
+                                        ->orderBy('created_at','desc')
+                                        ->where('product_id',$this->product->id)
+                                        ->groupBy('product_id')
+                                        ->first();
                     $item->today_sale = empty($sale) ? 0 : $sale->total_sales;
                 }else{
                     $item->today_sale = 0;
@@ -73,7 +97,7 @@ class Shops extends Controller
                 return $item;
             });
         };
-        return Inertia::render('Shops/Shop', ["product" => $this->product ,"products" => $products]);
+        return Inertia::render('Shops/Shop', ["product" => $this->product ,"products" => $products, 'filterProduct' => $this->product->id ,'filterDate' => $date ]);
        // return view('pages.shops.main', compact('shops'));
     }
 
@@ -85,8 +109,9 @@ class Shops extends Controller
     public function create()
     {
         //
-        $products = Product::all();
-        return Inertia::render('Shops/NewShop', [ "products" => $products ]);
+        $products = auth()->user()->products;
+        $suppliers = User::role('Supplier')->get();
+        return Inertia::render('Shops/NewShop', [ "products" => $products ,'suppliers' => $suppliers ]);
         //return view('pages.shops.create',compact('products'));
     }
 
@@ -121,7 +146,7 @@ class Shops extends Controller
     public function show($id)
     {
         //
-        $shop = Shop::where("id",$id)->with(['products.rate','stock_requests.requested_products.product','employee'])->first();
+        $shop = Shop::where("id",$id)->with(['products.rate','stock_requests.requested_products.product','employee','supplier'])->first();
         $due_amount  = $shop->stock_requests()->whereNotIn('status',['Rejected','Completed'])->sum('actual_payment');
         $products = Product::with('rate')->get();
 

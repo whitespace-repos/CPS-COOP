@@ -20,7 +20,8 @@ class Shop extends Model
                                 'max_sale_estimate_per_day',
                                 'estimated_start_date',
                                 'status' ,
-                                'phone'
+                                'phone',
+                                'supplier_id'
                 ];
 
 
@@ -57,7 +58,19 @@ class Shop extends Model
     }
 
 
+    public function  filter_sales()
+    {
+        return $this
+                    ->hasMany(Sale::class);
+    }
+
+
     public function employee(){
         return $this->hasOne(User::class);
+    }
+
+
+    public function supplier(){
+        return $this->belongsTo(User::class,'supplier_id');
     }
 }

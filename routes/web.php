@@ -14,6 +14,7 @@ use App\Http\Controllers\Rates;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Stocks;
+use App\Http\Controllers\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,8 +32,11 @@ Route::get('/test', function () {
 });
 
 Route::get('/', function () {
-    return ;
-})->middleware(['auth','guest'])->name('dashboard');
+    return redirect('login');
+});
+
+
+Route::get('/dashboard', [Dashboard::class,'index'])->middleware(['auth'])->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
     /* --- Resource Route --- */
@@ -45,7 +49,7 @@ Route::middleware(['auth'])->group(function () {
 
 
     /* -- Get Route -- */
-    Route::get('filter/product/shops/{product}',[Shops::class,'filter_shops_by_product']);
+    Route::get('filter/product/shops',[Shops::class,'filter_shops_by_product']);
     Route::get('print-receipt',[CartController::class, 'printReceipt'])->name('print-receipt');
     Route::get('stock/view/requests',[Stocks::class,'viewRequests'])->name('stock.view.request');
     Route::get('stock/request/detail/{id}',[Stocks::class,'stock_request_detail'])->name('stock.request.detail');

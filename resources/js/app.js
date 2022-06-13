@@ -10,6 +10,7 @@ import { Calendar, DatePicker } from 'v-calendar';
 
 import 'vue-select/dist/vue-select.css';
 import 'v-calendar/dist/style.css';
+import { Dataset, DatasetItem, DatasetInfo, DatasetPager, DatasetSearch, DatasetShow } from 'vue-dataset'
 
 
 createInertiaApp({
@@ -24,7 +25,14 @@ createInertiaApp({
             .component("v-select", vSelect)
             .component('Calendar', Calendar)
             .component('DatePicker', DatePicker)
+            .component('Dataset', Dataset)
+            .component('DatasetItem', DatasetItem)
+            .component('DatasetInfo', DatasetInfo)
+            .component('DatasetPager', DatasetPager)
+            .component('DatasetSearch', DatasetSearch)
+            .component('DatasetShow', DatasetShow)
             .mixin({
+                props:['auth'],
                 methods: {
                             route,
                             toDecimal : str => Number(str).toFixed(2)

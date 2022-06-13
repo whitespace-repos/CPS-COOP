@@ -686,6 +686,10 @@ select {
   margin-left: auto;
   margin-right: auto;
 }
+.my-3 {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
 .mx-2 {
   margin-left: 0.5rem;
   margin-right: 0.5rem;
@@ -697,10 +701,6 @@ select {
 .my-4 {
   margin-top: 1rem;
   margin-bottom: 1rem;
-}
-.my-3 {
-  margin-top: 0.75rem;
-  margin-bottom: 0.75rem;
 }
 .mx-4 {
   margin-left: 1rem;
@@ -749,6 +749,9 @@ select {
 .mt-6 {
   margin-top: 1.5rem;
 }
+.mb-0 {
+  margin-bottom: 0px;
+}
 .mb-4 {
   margin-bottom: 1rem;
 }
@@ -760,9 +763,6 @@ select {
 }
 .mb-2 {
   margin-bottom: 0.5rem;
-}
-.mb-0 {
-  margin-bottom: 0px;
 }
 .mr-1 {
   margin-right: 0.25rem;
@@ -793,6 +793,9 @@ select {
 }
 .mt-auto {
   margin-top: auto;
+}
+.mb-1 {
+  margin-bottom: 0.25rem;
 }
 .block {
   display: block;
@@ -850,9 +853,6 @@ select {
 }
 .max-w-6xl {
   max-width: 72rem;
-}
-.max-w-7xl {
-  max-width: 80rem;
 }
 .flex-1 {
   flex: 1 1 0%;
@@ -947,9 +947,6 @@ select {
 .border-l-4 {
   border-left-width: 4px;
 }
-.border-b {
-  border-bottom-width: 1px;
-}
 .border-gray-300 {
   --tw-border-opacity: 1;
   border-color: rgb(209 213 219 / var(--tw-border-opacity));
@@ -1040,10 +1037,6 @@ select {
   padding-left: 0.25rem;
   padding-right: 0.25rem;
 }
-.py-12 {
-  padding-top: 3rem;
-  padding-bottom: 3rem;
-}
 .px-0 {
   padding-left: 0px;
   padding-right: 0px;
@@ -1079,11 +1072,11 @@ select {
 .pt-6 {
   padding-top: 1.5rem;
 }
-.pb-0 {
-  padding-bottom: 0px;
-}
 .pt-0 {
   padding-top: 0px;
+}
+.pb-0 {
+  padding-bottom: 0px;
 }
 .pb-4 {
   padding-bottom: 1rem;
@@ -1091,14 +1084,23 @@ select {
 .pt-4 {
   padding-top: 1rem;
 }
+.pl-0 {
+  padding-left: 0px;
+}
+.pt-2 {
+  padding-top: 0.5rem;
+}
 .pt-5 {
   padding-top: 1.25rem;
 }
 .pb-3 {
   padding-bottom: 0.75rem;
 }
-.pl-0 {
-  padding-left: 0px;
+.pt-3 {
+  padding-top: 0.75rem;
+}
+.pb-2 {
+  padding-bottom: 0.5rem;
 }
 .text-left {
   text-align: left;
@@ -1128,10 +1130,6 @@ select {
   font-size: 1rem;
   line-height: 1.5rem;
 }
-.text-xl {
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-}
 .font-medium {
   font-weight: 500;
 }
@@ -1146,9 +1144,6 @@ select {
 }
 .leading-7 {
   line-height: 1.75rem;
-}
-.leading-tight {
-  line-height: 1.25;
 }
 .tracking-wider {
   letter-spacing: 0.05em;
@@ -1199,10 +1194,6 @@ select {
 .text-indigo-700 {
   --tw-text-opacity: 1;
   color: rgb(67 56 202 / var(--tw-text-opacity));
-}
-.text-gray-800 {
-  --tw-text-opacity: 1;
-  color: rgb(31 41 55 / var(--tw-text-opacity));
 }
 .text-green-600 {
   --tw-text-opacity: 1;

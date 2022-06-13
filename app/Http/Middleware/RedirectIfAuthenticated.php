@@ -23,12 +23,17 @@ class RedirectIfAuthenticated
         $guards = empty($guards) ? [null] : $guards;
 
         foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
-                if(Auth::user()->hasRole('Admin')){
-                    if(Product::exists()){
-                        return redirect(RouteServiceProvider::RATE);
+            if (Auth::check()) {
+                if(Auth::user()->hasRole(['Admin','Supplier'])){
+                    //
+                    if(Auth::user()->hasRole(['Supplier'])){
+                        return redirect(RouteServiceProvider::Dashboard);
+                    }else{
+                        if(Product::exists())
+                            return redirect(RouteServiceProvider::RATE);
+                        else
+                            return redirect(RouteServiceProvider::HOME);
                     }
-                    return redirect(RouteServiceProvider::HOME);
                 }else{
                     return redirect(RouteServiceProvider::MakeSale);
                 }

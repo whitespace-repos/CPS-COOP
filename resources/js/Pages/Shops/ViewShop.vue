@@ -49,6 +49,8 @@
                       <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon4.png" alt="" class="img-fluid"/></span> <span><span>Max Sale Estimation:</span> {{ toDecimal(shop.max_sale_estimate_per_day) }}</span></li>
                       <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon5.png" alt="" class="img-fluid"/></span> <span><span>Max stock capacity:</span> {{ toDecimal(shop.stock_capacity_per_day) }}</span></li>
                       <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon6.png" alt="" class="img-fluid"/></span> <span><span>Estimated Start Date:</span> {{ shop.estimated_start_date }}</span></li>
+                      <li><span class="ImgDiv"><img src="/assets/img/ShopAdrsIcon2.png" alt="" class="img-fluid"/></span> <span><span>Supplier : </span> {{ shop.supplier.name }}</span></li>
+
                     </ul>
                   </div>
                   <div class="PrdtPnl">

@@ -38,6 +38,11 @@ class DatabaseSeeder extends Seeder
                 'created_at' => \Carbon\Carbon::now() ,
                 'updated_at' => \Carbon\Carbon::now() ,
                 'guard_name' => 'web' ,
+                'name' => 'Supplier'
+            ],[
+                'created_at' => \Carbon\Carbon::now() ,
+                'updated_at' => \Carbon\Carbon::now() ,
+                'guard_name' => 'web' ,
                 'name' => 'Employee'
             ]
         ]);
@@ -49,6 +54,6 @@ class DatabaseSeeder extends Seeder
             'updated_at' => \Carbon\Carbon::now()
         ]);
 
-        $user->assignRole('Admin');
+        $user->assignRole(['Admin','Supplier']);
     }
 }

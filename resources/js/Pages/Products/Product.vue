@@ -14,10 +14,9 @@
         </div>
 
         <!-- topBar -->
-
         <div class="ProTop mt-4">
           <div class="row TopDiv">
-            <div class="col-lg-4">
+            <div class="col-lg-4" v-if="auth.isAdmin">
               <div class="card h-100">
                 <div class="card-header font-weight-normal"> Create Weight Units </div>
                 <div class="card-body px-0">
@@ -64,7 +63,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-8">
+            <div class="col-lg-8" :class="{'mx-auto':auth.isSupplier}">
               <div class="card h-100">
                 <div class="card-header"> Add New Product </div>
                 <div class="card-body">
@@ -374,7 +373,7 @@ export default {
         BreezeAuthenticatedLayout,
         Head,
     },
-    props:['weightUnits','products','weightRanges'],
+    props:['weightUnits','products','weightRanges','auth'],
     mounted(){},
     computed: {
 

@@ -5,21 +5,23 @@
       <div class="main-panel">
         <div class="topBar">
           <div class="row">
-            <div class="col-lg-6">
-              <div class="SelProduct">
-                <h3 class="heading">Shops</h3>
-                <label>Select Product</label>
-                <div class="select-style">
-                  <select class="custom-select" @change="this.$inertia.get('/filter/product/shops/'+$event.target.value)">
-                    <option v-for="item in products" :key="item.id" :value="item.id" :selected="item.id == product.id"> {{ item.product_name }}</option>
-                  </select>
-                </div>
-              </div>
+            <div class="col-md-2">
+              <h3 class="heading">Shops</h3>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-3">
+              <label>Filter Product</label>
+              <select class="custom-select" @change="filterShop" v-model="filterProduct" >
+                <option v-for="item in products" :key="item.id" :value="item.id" :selected="item.id == product.id"> {{ item.product_name }}</option>
+              </select>
+            </div>
+            <div class="col-lg-3 pt-2">
+                  <input type="date" @change="filterShop" v-model="filterDate" class="form-control mt-4" />
+            </div>
+
+            <div class="col-lg-4">
               <div class="Btnarea">
                 <label> <small>{{ totalStockRequest }}</small> Stock Request Pending</label>
-                <Link class="btn add-btn" :href="route('shop.create')" >Add New Shop</Link> </div>
+                <Link class="btn add-btn" :href="route('shop.create')" v-if="auth.isAdmin">Add New Shop</Link> </div>
             </div>
           </div>
         </div>
@@ -31,7 +33,6 @@
               <div class="ShoplistBox">
                 <div class="ShoplistBoxHr">
                   <h2>{{ shop.shop_name }}</h2>
-
                   <Link :href="route('shop.show',shop.id)" class="Btn position-relative" ><small style="right: -3px;top: -15px;" class="rounded-circle badge badge-danger font-weight-normal p-2 position-absolute">{{ shopStockReqeustSize(shop) }}</small> View Shop</Link>
                 </div>
                 <div class="ShoplistBoxBody px-0">
@@ -65,6 +66,7 @@
 <script>
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue'
 import { Head , Link } from '@inertiajs/inertia-vue3';
+import moment from 'moment';
 
 export default {
     components: {
@@ -72,13 +74,13 @@ export default {
         Head,
         Link,
     },
-    props:['products','shops','product','filterProduct'],
-    date(){
-      return {
-             filterProduct :3
-      }
+    props:['products','shops','product','filterProduct','filterDate'],
+    mounted() {
+        console.log(this);
     },
     computed:{
+
+
       totalStockRequest(){
           let requestsCount = 0;
           //
@@ -100,6 +102,18 @@ export default {
                 requestsCount += (r.status != "Completed") ? 1 : 0;
           });
          return  requestsCount;
+       },
+       filterShop(event){
+          this.$inertia.get('/filter/product/shops',
+          {
+            "id" : this.filterProduct,
+            "date" : this.filterDate,
+          },
+          {
+            onSuccess: (response) => {
+                window.history.pushState('data', 'Filter Shop', '/shop');
+            },
+          });
        }
     }
 }

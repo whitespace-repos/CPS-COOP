@@ -21,10 +21,12 @@ class Rates extends Controller
         //
         $rates = Rate::where( 'date', Carbon::today())
                         ->with('product.weightRanges')
+                        ->whereRelation('product','supplier_id',auth()->id())
                         ->where('status','Active')
                         ->get();
-        $products = Product::all();
-        $product = empty($products) ? [] : Product::with('shops','weightRanges')->first();
+
+        $products = auth()->user()->products;
+        $product = empty($products) ? [] : auth()->user()->products()->with('shops','weightRanges')->first();
         if($products->count() == 0){
             return Inertia::render('Dependecy', ["message" => "You need to create atleast one product for accessing <b> Rate </b> feature"]);
         }
@@ -39,7 +41,7 @@ class Rates extends Controller
     public function create()
     {
         //
-        $products = Product::all();
+        $products = auth()->user()->products;
         return view('pages.rates.create',compact('products'));
     }
 
@@ -103,8 +105,10 @@ class Rates extends Controller
         $rates = Rate::where( 'date', Carbon::today())
                                 ->with('product.weightRanges')
                                 ->where('status','Active')
+                                ->whereRelation('product','supplier_id',auth()->id())
                                 ->get();
-        $products = Product::all();
+
+        $products = auth()->user()->products;
         $product = Product::where('id',$id)->with('shops','weightRanges')->first();
         return Inertia::render('Rate/Rates', ["products"=> $products , "selectedProduct" => $product , "rates" => $rates ]);
     }
@@ -151,6 +155,7 @@ class Rates extends Controller
     //
     public function getRate(Request $request){
         $rates = Rate::with('product.weightRanges')
+                                ->whereRelation('product', 'supplier_id', auth()->id())
                                 ->where('date',$request->date)
                                 ->get();
         return Inertia::render('Rate/Rates', ["rates" => $rates ]);

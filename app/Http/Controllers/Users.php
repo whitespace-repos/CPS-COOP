@@ -53,7 +53,12 @@ class Users extends Controller
         // dd($message->sid);
 
         //
-        $users = User::with('roles','shop')->get();
+
+        $users = (auth()->user()->hasRole('Admin'))
+                                                            ?   User::with('roles','shop')->get()
+                                                            :   User::role('Employee')->with('roles','shop')
+                                                                            ->whereRelation('shop', 'supplier_id', auth()->id())->get();
+
         $shops = Shop::all();
         if($shops->count() == 0){
             return Inertia::render('Dependecy', ["message" => "You need to create atleast one shop for accessing <b> Users </b>."]);
@@ -69,7 +74,10 @@ class Users extends Controller
     public function create()
     {
         //
-        $shops = Shop::all();
+        $shops = (auth()->user()->hasRole('Supplier'))
+                                                            ? auth()->user()->shops
+                                                            : Shop::all();
+        //
         return Inertia::render('Users/Create', [ "shops" => $shops ]);
     }
 
@@ -93,12 +101,28 @@ class Users extends Controller
             'decrypt' => $request->password,
             'password' => Hash::make($request->password),
             'phone' => $request->phone,
-            'shop_id' => $request->shop_id['id'],
+            'shop_id' => ($request->role == 'Employee') ? $request->shop_id['id'] : null,
         ]);
 
         event(new Registered($user));
+
+        if(auth()->user()->hasRole('Admin')){
+            if($request->role == 'Supplier'){
+                $shops = Shop::whereIn('id',collect($request->shop_id)->pluck('id'))->get();
+                foreach($shops as $shop){
+                    $shop->supplier_id = $user->id;
+                    $shop->save();
+                }
+            }
+        }
+
         //
-        $user->assignRole('Employee');
+        if(auth()->user()->hasRole('Admin')){
+            $user->assignRole($request->role);
+        }else{
+            $user->assignRole('Employee');
+        }
+
         //
         return redirect()->route('user.index');
     }
@@ -112,6 +136,34 @@ class Users extends Controller
     public function show($id)
     {
         //
+        $supplier = User::with('shops.products.rate')->find($id);
+        if($supplier->hasRole('Supplier')){
+            if($supplier->shops->count() > 0 ){
+                $supplier->shops->map(function($shop){
+                    if($shop->products->count() > 0){
+                        $shop->products->map(function($product) use ($shop){
+                            if($shop->today_sales->count() > 0){
+                                $sale = $shop
+                                                        ->today_sales()
+                                                        ->select(DB::raw('SUM(receive) as total_sales'))
+                                                        ->orderBy('created_at','desc')
+                                                        ->where('product_id',$product->id)
+                                                        ->groupBy('product_id')
+                                                        ->first();
+                                $product->today_sale = empty($sale) ? 0 : $sale->total_sales;
+                            }else{
+                                $product->today_sale = 0;
+                            }
+                        });
+                    }
+                    //
+                    return $shop;
+                });
+            };
+            return Inertia::render('Users/Supplier', [ "supplier" => $supplier ]);
+        }
+        //
+       return back();
     }
 
     /**
@@ -123,8 +175,12 @@ class Users extends Controller
     public function edit($id)
     {
         //
-        $shops = Shop::all();
-        $user = User::with('shop')->find($id);
+        $shops = (auth()->user()->hasRole('Admin')) ? Shop::all()
+                                            : auth()->user()->shops;
+
+        $user = User::with('shop','shops')->find($id);
+        $user->role = ($user->hasRole(['Supplier','Admin'])) ? 'Supplier' : 'Employee';
+        //
         return Inertia::render('Users/Modify', [ "shops" => $shops , 'user' => $user ]);
     }
 
@@ -145,8 +201,23 @@ class Users extends Controller
             'decrypt' => $request->password,
             'password' => Hash::make($request->password),
             'phone' => $request->phone,
-            'shop_id' => $request->shop_id['id'],
+            'shop_id' => ($request->role == 'Employee') ? $request->shop_id['id'] : null
         ]);
+
+        if(auth()->user()->hasRole('Supplier')){
+            if($request->role == 'Supplier'){
+                //
+                $user->shops()->update(["supplier_id" => null ]);
+                //
+                $shops = Shop::whereIn('id',collect($request->shop_id)->pluck('id'))->get();
+                //
+                foreach($shops as $shop){
+                    $shop->supplier_id = $user->id;
+                    $shop->save();
+                }
+            }
+        }
+
         return redirect()->route('user.index');
     }
 

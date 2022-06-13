@@ -21,7 +21,8 @@ class Product extends Model
                             'conversion_rate',
                             'parent_product_id',
                             'wholesale_weight_range',
-                            'default_wholesale_weight'
+                            'default_wholesale_weight',
+                            'supplier_id'
                         ];
 
      /**
@@ -29,16 +30,22 @@ class Product extends Model
      */
     public function shops()
     {
-        return $this->belongsToMany(Shop::class)->as('association')->withPivot('stock');
+        if(auth()->user()->hasRole(['Supplier']))
+            return $this->belongsToMany(Shop::class)->as('association')->withPivot('stock')->where("supplier_id",auth()->id());
+        else
+            return $this->belongsToMany(Shop::class)->as('association')->withPivot('stock');
     }
 
     /**
      *
      */
     public function rate(){
-        return $this->hasOne(Rate::class)->where( 'date', Carbon::today())->where('status','Active');
+        return $this->hasOne(Rate::class)->where('date', Carbon::today())->where('status','Active');
     }
 
+    public function filterRate(){
+        return $this->hasOne(Rate::class);
+    }
 
     /**
      * product image

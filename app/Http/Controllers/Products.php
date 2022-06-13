@@ -20,7 +20,7 @@ class Products extends Controller
     public function index()
     {
         //
-        $products = Product::with(['shops','weightRanges'])->get();
+        $products = auth()->user()->products()->with(['shops','weightRanges'])->get();
         //return view('pages.products.main',compact('products'));
         $weightUnits  = Setting::where('setting_group_id',1)->get();
         return Inertia::render('Products/Product', [ 'products' => $products , 'weightUnits' => $weightUnits ]);
@@ -51,8 +51,11 @@ class Products extends Controller
             // add new file
             $name = time().'_'.$request->file('product_image')->getClientOriginalName();
             $filePath = $request->file('product_image')->storeAs('products', $name, 'public');
-            $request->request->add(["image" => '/storage/'.$filePath ]);
+            $request->request->add([ "image" => '/storage/'.$filePath]);
         }
+        //
+        $request->request->add([ "supplier_id" => auth()->id() ]);
+        //
         $product = Product::create($request->all());
         //
         if($product->wholesale_weight_range){
