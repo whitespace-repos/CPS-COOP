@@ -70,10 +70,10 @@
                 </div>
 
                  <!-- -->
-                <div class="form-group col-md-4" :class="{ 'has-error': v$.form.shop.products.$errors.length }">
+                <div class="form-group col-md-4" >
                   <label>Select Product</label>
                   <v-select
-                    v-model="v$.form.shop.products.$model"
+                    v-model="form.shop.products"
                     :options="products"
                     :get-option-key="(option) => option.id"
                     :get-option-label="(option) => option.product_name"
@@ -81,9 +81,6 @@
                     multiple
                   >
                   </v-select>
-                  <template v-for="(error, index) of v$.form.shop.products.$errors" :key="index">
-                    <small>{{ error.$message }}</small>
-                  </template>
                 </div>
 
                  <!-- -->
@@ -174,7 +171,6 @@ export default {
                                 shop_dimentions:{required},
                                 stock_capacity_per_day:{required , numeric},
                                 max_sale_estimate_per_day:{required , numeric},
-                                products:{required},
                                 phone:{required , numeric},
                                 estimated_start_date:{required},
                                 distance_from_cps:{required , numeric}

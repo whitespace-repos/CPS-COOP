@@ -74,11 +74,9 @@ class Users extends Controller
     public function create()
     {
         //
-        $shops = (auth()->user()->hasRole('Supplier'))
-                                                            ? auth()->user()->shops
-                                                            : Shop::all();
+        $shops =  auth()->user()->shops;
         //
-        return Inertia::render('Users/Create', [ "shops" => $shops ]);
+        return Inertia::render('Users/Create', [ "shops" => $shops , "allShops" => Shop::all()  ]);
     }
 
     /**

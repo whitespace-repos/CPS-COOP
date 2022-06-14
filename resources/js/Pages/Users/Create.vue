@@ -52,7 +52,7 @@
                                 <v-select
                                     v-model="v$.form.shop_id.$model"
                                     :filter="fuseSearch"
-                                    :options="shops"
+                                    :options="filterShopList"
                                     :multiple="(form.role=='Supplier') ? true : false"
                                     :get-option-key="(option) => option.id"
                                     :get-option-label="(option) => option.shop_name"
@@ -95,7 +95,7 @@
     import Fuse from 'fuse.js'
 
     export default {
-        props:['shops'],
+        props:['shops' , 'allShops'],
         components: {
             BreezeAuthenticatedLayout,
             Head,
@@ -132,8 +132,10 @@
                 });
             }
         },
-        computed (){
-
+        computed:{
+                filterShopList () {
+                    return (this.form.role == 'Employee') ? this.shops : this.allShops;
+                }
         },
         mounted() {
 
