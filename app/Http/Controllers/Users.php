@@ -59,10 +59,8 @@ class Users extends Controller
                                                             :   User::role('Employee')->with('roles','shop')
                                                                             ->whereRelation('shop', 'supplier_id', auth()->id())->get();
 
-        $shops = Shop::all();
-        if($shops->count() == 0){
-            return Inertia::render('Dependecy', ["message" => "You need to create atleast one shop for accessing <b> Users </b>."]);
-        }
+
+
         return Inertia::render('Users/Users', [ "users" => $users ]);
     }
 
@@ -228,5 +226,12 @@ class Users extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function supplierProducts($supplier){
+        $user = User::find($supplier);
+        $products =  ($user->hasRole('Supplier')) ? $user->products : null;
+        return response()->json([ "products" => $products ]);
+        //return Inertia::render('Shops/NewShop', [ "products" => $products ]);
     }
 }

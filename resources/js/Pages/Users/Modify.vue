@@ -38,10 +38,10 @@
                                     <small>{{ error.$message }}</small>
                                 </template>
                             </div>
-                            <div class="form-group col-md-4"  :class="{ 'has-error': v$.form.shop_id.$errors.length }" >
+                            <div class="form-group col-md-4">
                                 <label>Shop</label>
                                 <v-select
-                                    v-model="v$.form.shop_id.$model"
+                                    v-model="form.shop_id"
                                     :filter="fuseSearch"
                                     :options="shops"
                                     :multiple="(form.role == 'Supplier')"
@@ -54,10 +54,6 @@
                                         <cite>{{ shop_id }}</cite>
                                     </template>
                                 </v-select>
-
-                                <template v-for="(error, index) of v$.form.shop_id.$errors" :key="index">
-                                    <small>{{ error.$message }}</small>
-                                </template>
                             </div>
                             <div class="form-group col-md-12">
                                 <hr />
@@ -142,8 +138,7 @@
                             name: { required},
                             email: { email},
                             password: { required},
-                            phone:{ required ,numeric },
-                            shop_id:{ required}
+                            phone:{ required ,numeric }
                         }
             }
         },

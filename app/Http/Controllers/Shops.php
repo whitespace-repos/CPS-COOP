@@ -50,7 +50,7 @@ class Shops extends Controller
         };
         //
         if($products->count() == 0){
-            return Inertia::render('Dependecy', ["message" => "You need to create atleast one product for accessing <b> Shops </b>."]);
+            return Inertia::render('Dependecy', ["message" => "Please <b> add products </b> so that<b> admin </b> can <b> associate </b> those products with  <b> your shop </b>."]);
         }
         return Inertia::render('Shops/Shop', [ "product" => $this->product ,"products" => $products , 'filterProduct' => $this->product->id ,'filterDate' => Carbon::now()->format('d-m-Y') ]);
        // return view('pages.shops.main', compact('shops'));
@@ -111,6 +111,7 @@ class Shops extends Controller
         //
         $products = auth()->user()->products;
         $suppliers = User::role('Supplier')->get();
+        //
         return Inertia::render('Shops/NewShop', [ "products" => $products ,'suppliers' => $suppliers ]);
         //return view('pages.shops.create',compact('products'));
     }

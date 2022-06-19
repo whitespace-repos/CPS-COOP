@@ -59,6 +59,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('cartTest', [CartController::class, 'cartTest'])->name('cart.test');
     Route::get('filter/product/{id}',[Products::class,'filterProduct'])->name('filter.product');
     Route::get('get/rate',[Rates::class,'getRate'])->name('get.rate');
+    Route::get('get/supplier/{supplier}/products',[Users::class,'supplierProducts'])->name('supplier.products.list');
 
 
     /* -- Post Route -- */
