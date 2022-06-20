@@ -126,6 +126,9 @@ class Shops extends Controller
     {
         //
         $request->request->add([ "shop_id" => $this->generateUniqueCode() ]);
+        if(!auth()->user()->hasRole('Admin'))
+            $request->request->add([ "supplier_id" => auth()->id() ]);
+        //
         $shop = Shop::create($request->all());
         //
         foreach($request->products as $product){

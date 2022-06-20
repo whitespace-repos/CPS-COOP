@@ -21,7 +21,7 @@
             <div class="col-lg-4">
               <div class="Btnarea">
                 <label> <small>{{ totalStockRequest }}</small> Stock Request Pending</label>
-                <Link class="btn add-btn" :href="route('shop.create')" v-if="auth.isAdmin">Add New Shop</Link> </div>
+                <Link class="btn add-btn" :href="route('shop.create')" >Add New Shop</Link> </div>
             </div>
           </div>
         </div>

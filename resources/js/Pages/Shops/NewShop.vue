@@ -9,10 +9,16 @@
             <div class="card">
               <div class="card-body row">
                 <div class="form-group col-md-4" >
-                  <label>Choose Supplier</label>
-                  <select v-model="form.shop.supplier_id" class="form-control" @change="loadSupplierProducts">
-                    <option :value="supplier.id" v-for="supplier in suppliers" :key="supplier.id">{{ supplier.name }}</option>
-                  </select>
+                  <template v-if="auth.isAdmin">
+                    <label>Choose Supplier</label>
+                    <select v-model="form.shop.supplier_id" class="form-control" @change="loadSupplierProducts">
+                      <option :value="supplier.id" v-for="supplier in suppliers" :key="supplier.id">{{ supplier.name }}</option>
+                    </select>
+                  </template>
+                  <template v-else>
+                      <label>Supplier</label>
+                      <input :value="auth.user.name" class="form-control" disabled readonly/>
+                  </template>
                 </div>
 
 
