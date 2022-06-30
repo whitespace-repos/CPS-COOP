@@ -70,6 +70,7 @@ class CartController extends Controller
         //
         $product = Product::with('weightRanges')->where("id",$request->product)->first();
         $this->weight = (float) $request->weight;
+
         $ranges = collect(json_decode($product->rate->wholesale_rate),true);
         $wholesale = $ranges->filter(function ($range, $key) {
             return ($range->from <= $this->weight && $this->weight <= $range->to);
@@ -78,7 +79,7 @@ class CartController extends Controller
         $retail = empty($product->rate) ? 0 : $product->rate->retail_rate;
         $rate = ($wholesale->count() == 0)  ? (float) $retail : (float) $wholesale->first()->rate;
         //
-        $weight = (float) $request->weight;
+        $weight = ($product->stock) ? (float) $request->weight : ( (float) $request->weight / (float) $product->conversion_rate );
         //
         $price = $weight * $rate;
         //
@@ -132,19 +133,20 @@ class CartController extends Controller
     public function checkout(Request $request){
         $this->cartItems = Cart::getContent();
         $cartItems = Cart::getContent();
-        $products = Product::with(['shops' => function ($query) {
-                        $query->where('shops.id', auth()->user()->shop->id);
-                    }])->get();
+        $products = auth()->user()->shop->products;
         foreach ($cartItems as $key => $cart) {
             //
             $product = $products->find($cart->attributes->product->id);
-            $currentStock = $product->shops->first()->association;
             //
+            if($product->stock){
+                $currentStock = $product->association;
+            }else{
+                $parent = $products->find($product->parent_product_id);
+                $currentStock = $parent->association;
+            }
             $currentStock->stock -= $cart->attributes->weight;
             $customer = $cart->attributes->customer;
             $currentStock->save();
-
-
             //
 
             $this->weight = (float) $cart->attributes->weight;

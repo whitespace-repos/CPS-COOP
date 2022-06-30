@@ -176,6 +176,10 @@ return [
         App\Providers\RouteServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
         Darryldecode\Cart\CartServiceProvider::class,
+        /*
+            * Package Service Providers...
+        */
+        Maatwebsite\Excel\ExcelServiceProvider::class,
 
     ],
 
@@ -250,6 +254,7 @@ return [
         'SettingTrait' => App\Http\Traits\SettingTrait::class,
         'Carbon' => Carbon\Carbon::class,
         'Inertia' => Inertia\Inertia::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 
     ],
 

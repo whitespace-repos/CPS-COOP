@@ -60,6 +60,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('filter/product/{id}',[Products::class,'filterProduct'])->name('filter.product');
     Route::get('get/rate',[Rates::class,'getRate'])->name('get.rate');
     Route::get('get/supplier/{supplier}/products',[Users::class,'supplierProducts'])->name('supplier.products.list');
+    Route::get('import-data',[Dashboard::class,'import']);
+    Route::post('uploadImport',[Dashboard::class,'uploadImport']);
 
 
     /* -- Post Route -- */
@@ -77,6 +79,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('cart/remove', [CartController::class, 'removeCart'])->name('cart.remove');
     Route::post('cart/clear', [CartController::class, 'clearAllCart'])->name('cart.clear');
     Route::post('cart/checkout',[CartController::class,'checkout'])->name('cart.checkout');
+
+
 });
 
 // Route::get("clear-cache",function(){

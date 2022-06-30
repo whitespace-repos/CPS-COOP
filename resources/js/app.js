@@ -27,7 +27,7 @@ createInertiaApp({
             .use(VueLoading,{
                 // Pass props by their camelCased names
                 color: '#984346',
-                loader: 'dots',
+                loader: 'bars',
                 width: 80,
                 height: 80,
                 backgroundColor: '#ffffff',

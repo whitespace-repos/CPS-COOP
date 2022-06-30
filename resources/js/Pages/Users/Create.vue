@@ -143,7 +143,7 @@
                             email: { email},
                             password: { required},
                             phone:{ required ,numeric },
-                            shop_id:{ required}
+                            shop_id:{}
                         }
             }
         },

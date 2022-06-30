@@ -19,6 +19,7 @@ class Products extends Controller
      */
     public function index()
     {
+
         //
         $products = auth()->user()->products()->with(['shops','weightRanges'])->get();
         //return view('pages.products.main',compact('products'));

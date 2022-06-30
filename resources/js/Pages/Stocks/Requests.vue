@@ -186,7 +186,7 @@
                                                 </span>
                                             </div>
                                             <div class="input-group" >
-                                                <input type="text" class="form-control" placeholder="0" v-model="form.stockRequest.products['product-'+product.id]" />
+                                                <input type="number" min="0" onkeypress="return event.charCode >= 48" class="form-control" placeholder="0" v-model="form.stockRequest.products['product-'+product.id]" />
                                                 <div class="input-group-append">
                                                 <smll class="input-group-text">{{ product.weight_unit }}</smll>
                                                 </div>

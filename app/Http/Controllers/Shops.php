@@ -50,7 +50,7 @@ class Shops extends Controller
         };
         //
         if($products->count() == 0){
-            return Inertia::render('Dependecy', ["message" => "Please <b> add products </b> so that<b> admin </b> can <b> associate </b> those products with  <b> your shop </b>."]);
+            return Inertia::render('Dependecy', ["message" => "Please <b> add products </b> so that<b> You / Admin </b> can <b> associate </b> those products with  <b> your shop </b>."]);
         }
         return Inertia::render('Shops/Shop', [ "product" => $this->product ,"products" => $products , 'filterProduct' => $this->product->id ,'filterDate' => Carbon::now()->format('d-m-Y') ]);
        // return view('pages.shops.main', compact('shops'));
@@ -61,9 +61,6 @@ class Shops extends Controller
         //
         $id = $request->id;
         $date = $request->date;
-
-        \Log::info($date);
-
         //
         $products = auth()->user()->hasRole('Supplier') ?
                                                             auth()->user()->products()->with('rate','shops.stock_requests')->get()
@@ -71,24 +68,28 @@ class Shops extends Controller
         $this->product = Product::where('id',$id)
                                         ->with(['filterRate' => function($query) use($request) {
                                             $query->whereDate('date',Carbon::parse($request->date)->format('Y-m-d'));
+                                            $query->where('status','Active');
                                         },
                                         'shops.stock_requests'])
                                         ->first();
         // add duplicate key rate because we are using filterRate relation in this section.
         $this->product->rate = $this->product->filterRate;
+        //
 
         //
         if($this->product->shops->count() > 0 ){
             $this->product->shops->map(function($item) use($date){
-                $filterSale = $item->filter_sales()->where('date',Carbon::parse($date))->get();
+                $filterSale = $item->filter_sales()->where('date',Carbon::parse($date))->exists();
+                \Log::info($filterSale);
 
-                if($filterSale->count() > 0){
-                    $sale = $filterSale
-                                        ->select(DB::raw('SUM(receive) as total_sales'))
-                                        ->orderBy('created_at','desc')
-                                        ->where('product_id',$this->product->id)
-                                        ->groupBy('product_id')
-                                        ->first();
+                if($filterSale){
+                    $sale = $item->filter_sales()
+                                    ->select(DB::raw('SUM(receive) as total_sales'))
+                                    ->where('date',Carbon::parse($date))
+                                    ->orderBy('created_at','desc')
+                                    ->where('product_id',$this->product->id)
+                                    ->groupBy('product_id')
+                                    ->first();
                     $item->today_sale = empty($sale) ? 0 : $sale->total_sales;
                 }else{
                     $item->today_sale = 0;
@@ -152,7 +153,7 @@ class Shops extends Controller
         //
         $shop = Shop::where("id",$id)->with(['products.rate','stock_requests.requested_products.product','employee','supplier'])->first();
         $due_amount  = $shop->stock_requests()->whereNotIn('status',['Rejected','Completed'])->sum('actual_payment');
-        $products = Product::with('rate')->get();
+        $products = $shop->supplier->products()->with('rate')->get();
 
         if($shop->today_sales->count() > 0){
             $sales = $shop
@@ -199,7 +200,7 @@ class Shops extends Controller
         $shop = Shop::find($id);
         $shop->update($request->all());
         //
-        $shop->products()->sync($request->products);
+        $shop->products()->sync(collect($request->products)->pluck('id'));
         $shop->save();
         return redirect()->route('shop.show',$shop->id);
     }

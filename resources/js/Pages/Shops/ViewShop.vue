@@ -170,10 +170,10 @@
                                             <h6 class="my-2">Status - {{ request.status }} </h6>
                                           </template>
 
-                                          <button type="button" data-target="#sendStockConfirmRequest" data-toggle="modal" class="btn btn-primary" v-if="request.status == 'Processing'" @click="openSendConfirmationModal(request.id)">Send</button>
-                                          <button type="button" class="btn btn-primary" data-target="#completeStockRequestConfirmationModal" data-toggle="modal" v-if="request.status == 'Received'"  @click="openSendConfirmationModal(request.id)">Completed</button>
+                                          <button type="button" data-target="#sendStockConfirmRequest" data-toggle="modal" class="btn btn-primary my-1" v-if="request.status == 'Processing'" @click="openSendConfirmationModal(request.id)">Send</button>
+                                          <button type="button" class="btn btn-primary  my-1" data-target="#completeStockRequestConfirmationModal" data-toggle="modal" v-if="request.status == 'Received'"  @click="openSendConfirmationModal(request.id)">Completed</button>
                                       </div>
-                                      <div class="card-body d-flex px-0 py-1">
+                                      <div class="card-body d-flex px-0 py-1 overflow-auto">
                                         <form @submit.prevent="approveStockRequest(request.id)" class="w-100">
                                           <div class="d-flex">
                                             <template  v-for="rp  in request.requested_products" :key="rp.id">
@@ -194,7 +194,10 @@
                                                         <div class="input-group-prepend">
                                                           <div class="input-group-text">INR</div>
                                                         </div>
-                                                        <input type="number" class="form-control" id="inlineFormInputGroup" placeholder="Supply Rate" v-model="form.approvedStockRequest.supply_rates['product-' + rp.id]" />
+                                                        <input type="number" min="0" onkeypress="return event.charCode >= 48" class="form-control" id="inlineFormInputGroup" placeholder="Supply Rate" v-model="form.approvedStockRequest.supply_rates['product-' + rp.id]" />
+                                                        <div class="input-group-prepend">
+                                                          <div class="input-group-text">{{ rp.product.weight_unit }}</div>
+                                                        </div>
                                                       </div>
                                                     </div>
                                                   </div>
@@ -412,10 +415,7 @@
                   <form method="POST" @submit.prevent="addProductsToShop">
                     <ul>
                       <li>
-                        <label>Select Product</label>
-                        <select class="selectpicker" multiple aria-label="Default select example" data-live-search="false" id="style-3" v-model="form.addProduct.products">
-                          <option v-for="product in products" :key="product.id" :value="product.id">{{ product.product_name }}</option>
-                        </select>
+                        <v-select label="selectProduct" v-model="form.addProduct.products" multiple="true" :options="products" :get-option-label="(option) => option.product_name" :get-option-key="(option) => option.id"></v-select>
                       </li>
                       <li>
                         <button class="btn btn-primary add-btn" type="submit" >Add Product</button>
@@ -487,14 +487,14 @@ export default {
     mounted (){
       var _this = this;
       $.each(this.shop.products,function(i,e){
-        _this.form.addProduct.products.push(e.id);
+        _this.form.addProduct.products.push(e);
       });
-      $('select').selectpicker();
+      // $('select').selectpicker();
       //
 
       this.form.assignEmployee.employee = this.isEmpty(this.shop.employee) ? '' : this.shop.employee.id;
       setTimeout(function(){
-        $('select').selectpicker('refresh');
+        // $('select').selectpicker('refresh');
       },1000);
 
       _.forEach(this.shop.products,function(e,i){
@@ -536,9 +536,8 @@ export default {
         addProductsToShop() {
             this.form.addProduct.patch(this.route('shop.update',this.shop.id), {
                 onSuccess: (response) => {
-                                    this.form.addProduct.reset();
                                     $("#Add_Product").modal("hide");
-                                    $('select').selectpicker('refresh');
+                                    //$('select').selectpicker('refresh');
                 },
             })
         },

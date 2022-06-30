@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use User;
 use DB;
 use Inertia;
+use Excel;
+use App\Exports\RatesExport;
+
 
 class Dashboard extends Controller
 {
@@ -42,5 +45,15 @@ class Dashboard extends Controller
         }
         //
         return Inertia::render('Dashboard', [ "suppliers" => $suppliers ]);
+    }
+
+
+    public function import(){
+        return view('import');
+    }
+
+
+    public function uploadImport(Request $request){
+        dd($request);
     }
 }

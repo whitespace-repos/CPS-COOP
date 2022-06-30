@@ -55,8 +55,9 @@
                     </div>
                     <div class="CI_body card-body p-0" style="height: 242px;overflow: auto;">
                         <div class="info_input">
-                            <form action="#" method="POST" class="container my-4" @submit.prevent="saveCustomerForm">
+                            <form action="#" method="POST" class="container mb-4" @submit.prevent="saveCustomerForm">
                                 <ul>
+                                    <li  class="text-center  small" style="color:#984346;font-weight: 600;" v-if="existingCustomer"> {{ form.customer.name }}</li>
                                     <li>
                                         <input placeholder="Mobile" id="customer" autocomplete="off" v-model="v$.form.customer.phone.$model" :disabled="Object.keys(carts).length > 0">
                                         <template v-for="(error, index) of v$.form.customer.phone.$errors" :key="index">
@@ -64,8 +65,7 @@
                                         </template>
                                     </li>
                                     <li :class="{'border-0 text-danger': existingCustomer }" class="pb-0">
-                                        <h4 v-if="existingCustomer" class="text-center"> {{ form.customer.name }}</h4>
-                                        <div class="input-group" v-else>
+                                        <div class="input-group" v-if="!existingCustomer">
                                             <input name="name"  placeholder="Name" class="form-control" autocomplete="off" v-model="v$.form.customer.name.$model" />
                                             <div class="input-group-append">
                                                 <button class="btn btn-outline-secondary border-0 btn-sm rounded" type="submit" id="button-addon2">Save</button>
@@ -79,15 +79,15 @@
                             </form>
                         </div>
 
-                        <div class="info_table" v-if="Object.keys(carts).length > 0">
-                            <table class="table">
+                        <div class="" v-if="Object.keys(carts).length > 0">
+                            <table class="table table-sm table-striped small table-hover">
                                 <thead>
                                     <tr class="font-weight-bold">
-                                        <th>Product</th>
-                                        <th>Rate</th>
-                                        <th>Qty</th>
-                                        <th>Total</th>
-                                        <th></th>
+                                        <th class="border-top-0">Product</th>
+                                        <th class="border-top-0">Rate</th>
+                                        <th class="border-top-0">Qty</th>
+                                        <th class="border-top-0">Total</th>
+                                        <th class="border-top-0"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -96,10 +96,10 @@
                                         <td>{{ toDecimal(cart.attributes.rate) }} <sup>INR</sup> </td>
                                         <td>{{ toDecimal(cart.attributes.weight) }} <sup>{{ cart.attributes.product.weight_unit }}</sup></td>
                                         <td>{{ toDecimal(cart.price) }}</td>
-                                        <td>
+                                        <td class="p-0">
                                             <form  method="POST" class="mr-2 small" @submit.prevent="removeCart($event,cart)">
                                                 <input type="hidden" :value="cart.id" name='id' />
-                                                <button class="btn text-danger small" type="submit">x</button>
+                                                <button class="btn text-danger small p-0" type="submit">x</button>
                                             </form>
                                         </td>
                                     </tr>
@@ -124,6 +124,7 @@
                         <div class="Stock_list" id="style-3">
                             <ul>
                                 <li v-for="product in shop.products" :key="product.product_name">
+
                                     <span class="product_info">
                                         <em class="img"><img :src="product.image" alt="icon" class="img-fluid"></em>
                                         <em class="txt">
@@ -150,6 +151,7 @@
                                         </label>
                                     </span>
                                     <span class="product_btn">
+                                        <small class="d-block fs-10 ml-4" v-if="!product.stock">CR : {{ toDecimal(product.conversion_rate) }} <sup> INR </sup></small>
                                         <form action="#" method="POST" class="font-weight-bold" @submit.prevent="addToCart">
                                             <div class="input-group">
                                                 <input  class="form-control" style="width:80px" placeholder="0"  name="weight" v-model="billingWeightInput['product-'+product.id]" @input="calateprice($event,product.wholesale_weight_range)" :data-wholesale-range="(product.rate != null && product.rate != '') ? product.rate.wholesale_rate : []"  :data-retail-rate="(product.rate == null ) ? 0 : product.rate.retail_rate" :data-product="product.product_name" :data-product-id="product.id" :data-wholesale-weight="product.wholesale_weight" autocomplete="off" data-amount="0" data-rate="0"/>
@@ -316,11 +318,14 @@ export default {
           //
           let _this = this;
           _.forIn(this.carts, function(o, k) {
-            _this.currentStock.filter(function(s){
-                 if(o.attributes.product.id == s.id){
-                     s.association.stock = s.association.stock - o.attributes.weight;
-                 }
-            })
+
+            let prod = _this.currentStock.find(function(p){ return p.id == o.attributes.product.id; });
+            if(prod.stock){
+                prod.association.stock -= o.attributes.weight;
+            }else{
+                let parent = _this.currentStock.find(function(p){ return p.id == o.attributes.product.parent_product_id; });
+                parent.association.stock -= ( o.attributes.weight / prod.conversion_rate );
+            }
           });
       }
 
@@ -412,16 +417,17 @@ export default {
             this.form.cart.product = $el.data('productId');
             this.form.cart.weight = $el.val();
             //
-            this.currentStock.filter(function(o) {
-                    console.log("o.id"+ o.id);
-                    console.log("_this.form.cart.product"+ _this.form.cart.product);
+            let prod = this.productCurrentStock.find(function(p){ return p.id == _this.form.cart.product; });
 
-                    if(o.id == _this.form.cart.product){
-                        if(o.association.stock < $el.val()){
-                            InsufficientStock = true;
-                        }
-                    }
-            })
+            if(prod.stock){
+                if(prod.association.stock < $el.val())
+                    InsufficientStock = true;
+            }else{
+                let parent = this.productCurrentStock.find(function(p){ return p.id == prod.parent_product_id; });
+                //
+                if(parent.association.stock < $el.val())
+                    InsufficientStock = true;
+            }
 
             //
             if(InsufficientStock){
@@ -441,11 +447,13 @@ export default {
                     onSuccess: (response) => {
                                     window.history.pushState('data', 'Add to Cart', '/make-sale');
 
-                                    this.currentStock.filter(function(o) {
-                                            if(o.id == _this.form.cart.product){
-                                                o.association.stock = o.association.stock - _this.form.cart.weight;
-                                            }
-                                    })
+                                    if(prod.stock){
+                                        prod.association.stock = prod.association.stock - _this.form.cart.weight;
+                                    }else{
+                                        let parent = this.productCurrentStock.find(function(p){ return p.id == prod.parent_product_id; });
+                                        parent.association.stock = parent.association.stock -  ( _this.form.cart.weight / prod.conversion_rate );
+                                    }
+                                    //
                                     this.billingWeightInput["product-"+this.form.cart.product] = 0;
                                     $el.closest('form').find(".price").html(parseFloat(0));
                                     $(".product_"+_this.form.cart.product+"_retail_radio").prop("checked",true);
@@ -479,36 +487,29 @@ export default {
                     onSuccess: (response) => {
                                     window.history.pushState('data', 'Remove from Cart', '/make-sale');
                                     //
-                                    this.currentStock.filter(function(o) {
-                                        if(o.id == item.attributes.product.id){
-                                            o.association.stock = o.association.stock + item.attributes.weight;
-                                        }
-                                    })
+                                    let _this = this;
                                     //
-                                    // if(Object.keys(this.carts).length == 0 ){
-
-                                    // }
+                                    let prod = this.currentStock.find(function(p){ return p.id == item.attributes.product.id; });
+                                    if(prod.stock){
+                                        prod.association.stock += item.attributes.weight;
+                                    }else{
+                                        let parent = this.currentStock.find(function(p){ return p.id == prod.parent_product_id; });
+                                        //
+                                        parent.association.stock += ( item.attributes.weight / prod.conversion_rate );
+                                    }
                     },
                 })
-            //   event.preventDefault();
-            //   $form = $(event.target);
-            //   $.post($form.attr("action"),$form.serialize(),function(response){
-            //       vue.carts = response;
-            //       if(_.size(vue.carts))
-            //           vue.cartFlag = true;
-            //       else
-            //           vue.cartFlag = false;
-
-            //   });
           },
           calateprice(event , wholesale_weight_range){
                 let $el = $(event.target) ,
-                weight = $el.val(),
+                product = $el.data('product'),
+                productId = $el.data('productId'),
+                prod = this.shop.products.find(function(p){ return p.id == productId; }),
+                orignalWeight = parseInt($el.val()),
+                weight = (prod.stock) ? parseInt($el.val()) : ( parseInt($el.val()) / prod.conversion_rate ),
                 wholesale = (wholesale_weight_range) ? _.find($el.data('wholesaleRange'), function(r) { return  (r.from <= weight && weight <= r.to) ; }) : null,
                 retail = $el.data('retailRate'),
                 rate = (_.isNaN(wholesale) || _.isNil(wholesale)) ? parseFloat(retail) : parseFloat(wholesale.rate),
-                product = $el.data('product'),
-                productId = $el.data('productId'),
                 totalCost = Number(parseFloat(rate) * parseFloat(weight)).toFixed(2);
                 //
                 if(_.isNaN(wholesale) || _.isNil(wholesale)){
@@ -518,7 +519,11 @@ export default {
                 }
                 //
                 if(weight > 0){
-                    $el.closest('form').find(".price").html(parseFloat(totalCost)+"<sup>INR</sup>");
+                    if(prod.stock)
+                        $el.closest('form').find(".price").html(parseFloat(totalCost)+"<sup>INR</sup>");
+                    else
+                        $el.closest('form').find(".price").html("<small class='fs-10'>"+orignalWeight+" / " + prod.conversion_rate + " * " + rate +" = </small>"+parseFloat(totalCost)+"<sup>INR</sup>");
+                    //
                     $el.attr('data-amount',totalCost).attr('data-rate',rate);
                 }else{
                     $el.closest('form').find(".price").html(parseFloat(weight));
@@ -535,7 +540,14 @@ export default {
           },
           disableAddToCartButton(id){
             let product = this.productCurrentStock.find(function(p){ return p.id == id; });
-            return (product.association.stock > 0 ) ? false : true ;
+            if(product.stock){
+                return (product.association.stock > 0 ) ? false : true ;
+            }else{
+                let parent = this.productCurrentStock.find(function(p){ return p.id == product.parent_product_id; });
+                return (parent.association.stock > 0 ) ? false : true ;
+            }
+
+            return false
           },
           clearCart(){
                 let _this = this;
@@ -570,5 +582,10 @@ export default {
   }
   .cursor-not-allowed{
       cursor:not-allowed;
+  }
+
+  .fs-10{
+        font-size: 10px;
+        font-weight: 600;
   }
 </style>

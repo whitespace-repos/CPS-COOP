@@ -46,7 +46,7 @@
                       <li>
                         <label>Sale <span> {{ toDecimal(shop.today_sale) }} <sup>INR</sup></span></label>
                       </li>
-                      <li>
+                      <li v-if="product.stock">
                         <label>Stock <span> {{ toDecimal(shop.association.stock) +' '+ product.weight_unit }}</span></label>
                       </li>
                   </ul>
