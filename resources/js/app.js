@@ -15,6 +15,8 @@ import { Dataset, DatasetItem, DatasetInfo, DatasetPager, DatasetSearch, Dataset
 //
 import VueLoading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
+import Maska from 'maska'
+import { maska } from 'maska'
 
 
 createInertiaApp({
@@ -24,6 +26,7 @@ createInertiaApp({
         const myApp = createApp({ render: () => h(app, props) })
             .use(plugin)
             .use(VCalendar, {})
+            .use(Maska)
             .use(VueLoading,{
                 // Pass props by their camelCased names
                 color: '#984346',
@@ -46,6 +49,7 @@ createInertiaApp({
             .component('DatasetSearch', DatasetSearch)
             .component('DatasetShow', DatasetShow)
             .mixin({
+                directives: { maska },
                 props:['auth'],
                 methods: {
                             route,

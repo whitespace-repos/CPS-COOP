@@ -25,7 +25,7 @@
                           <div class="col-md-4">
                             <div class="form-group" :class="{ 'has-error': v$.form.rate.retail_rate.$errors.length }">
                                 <label>Retail Rate </label>
-                                <input class="form-control" name="retail_rate" v-model="v$.form.rate.retail_rate.$model"/>
+                                <input v-maska="'#*.##'" class="form-control" name="retail_rate" v-model="v$.form.rate.retail_rate.$model"/>
                                 <template v-for="(error, index) of v$.form.rate.retail_rate.$errors" :key="index">
                                   <small>{{ error.$message }}</small>
                                 </template>
@@ -36,7 +36,7 @@
                             <div class="col" v-for="(range , index ) in selectedProduct.weight_ranges" :key="range.id" >
                               <div class="form-group" v-if = "range.from != 0 || range.to != 0 " :class="{'has-error':v$.form.rate.range['range-'+range.id].$error}">
                                   <label>Range {{index + 1 }} : <label class="badge badge-danger font-weight-normal"> {{ toDecimal(range.from) + ' - ' }} {{ (range.to == 50000) ? 'MAX' : toDecimal(range.to)  }} {{ selectedProduct.weight_unit }} </label> </label>
-                                  <input class="form-control" :name="range.id" v-model="v$.form.rate.range['range-'+range.id].$model"/>
+                                  <input v-maska="'#*.##'" class="form-control" :name="range.id" v-model="v$.form.rate.range['range-'+range.id].$model"/>
                                   <small v-if="v$.form.rate.range['range-'+range.id].$error">{{ 'Please Enter a Valid Rate' }} </small>
                               </div>
                             </div>
@@ -114,7 +114,7 @@ import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue'
 import { Head } from '@inertiajs/inertia-vue3';
 import useVuelidate from '@vuelidate/core'
 import { required, email, minLength , numeric , integer ,helpers , requiredIf} from '@vuelidate/validators'
-const rateValidation = helpers.regex(/^[1-9][0-9]*$/);
+const rateValidation = helpers.regex(/^\d+(?:\.\d{1,2})?$/);
 import _ from 'lodash'
 
 

@@ -256,13 +256,10 @@
                           <label class="ml-5"> Total Price : {{ toDecimal(calculateTotalPrice) }} <sup>INR </sup></label>
                             <hr />
                           <div class="modal-body StockFRm">
-
-                            <div class="setRateList">
-
-                              <ul class="Frm">
+                              <ul class="row">
                                 <template v-for="product in shop.products" :key="product.id">
                                     <template v-if="product.stock">
-                                      <li>
+                                      <li class="col-md-4 px-1">
                                         <div class="itemBox flex-column">
                                             <div class="d-flex">
                                               <span class="img"><img :src="product.image" alt="icon" class="img-fluid"></span>
@@ -274,13 +271,20 @@
                                             <div class="d-flex" >
                                               <label>
                                                 <small>Request Quantity</small>
-                                                <input type="text" class="form-control" @input="calculateSupplyRate($event,product.id)" placeholder="0" v-model="form.directStockRequest.products['product-'+product.id]" />
+                                                <div class="input-group mb-3">
+                                                    <input type="text" v-maska="'#*.##'" class="form-control" @input="calculateSupplyRate($event,product.id)" placeholder="0" v-model="form.directStockRequest.products['product-'+product.id]" />
+                                                    <div class="input-group-append">
+                                                      <span class="input-group-text">{{ product.weight_unit }}</span>
+                                                    </div>
+                                                </div>
                                               </label>
                                               <label class="ml-2">
                                                 <small>Supply Rate </small>
-                                                <div class="d-flex align-items-center small">
-                                                  <input type="text" class="form-control" maxlength="4" @input="calculateSupplyRate($event,product.id)" placeholder="0" v-model="form.directStockRequest.products['product-'+product.id+'-supply-rate']" />
-                                                  <small class="ml-3 w-75">{{ toDecimal(form.directStockRequest.products['product-'+product.id+'-supply-rate']) }} <sup>INR</sup>/ {{ product.weight_unit }} </small>
+                                                <div class="input-group mb-3">
+                                                    <input type="text" v-maska="'#*.##'" class="form-control" @input="calculateSupplyRate($event,product.id)" placeholder="0" v-model="form.directStockRequest.products['product-'+product.id+'-supply-rate']" />
+                                                    <div class="input-group-append">
+                                                      <small class="input-group-text text-lowercase"> / {{ product.weight_unit }}</small>
+                                                    </div>
                                                 </div>
                                               </label>
                                             </div>
@@ -291,7 +295,6 @@
                                 </template>
                               </ul>
                             </div>
-                          </div>
                           </form>
                         </div>
 
